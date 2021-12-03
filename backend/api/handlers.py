@@ -9,7 +9,7 @@ from utils.redis_utils import get_redis_cursor
 api_router = APIRouter()
 
 
-@api_router.get('/courses/all', response_model=AllCourses)
+@api_router.get('/course/all', response_model=AllCourses)
 async def get_all_courses_view(
         redis_cursor: Redis = Depends(get_redis_cursor)
 ):
@@ -21,7 +21,7 @@ async def get_all_courses_view(
     return all_courses
 
 
-@api_router.get('/courses/{course_id}', response_model=EntireCourse)
+@api_router.get('/course/{course_id}', response_model=EntireCourse)
 async def get_entire_course_view(
         course_id: str,
         redis_cursor: Redis = Depends(get_redis_cursor)
