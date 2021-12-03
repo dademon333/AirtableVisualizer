@@ -1,5 +1,3 @@
-import time
-
 from fastapi import APIRouter, Depends, HTTPException
 from redis import Redis
 
