@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Path
 from redis import Redis
 
 from api.modules import get_all_courses, get_entire_course
@@ -13,6 +13,9 @@ api_router = APIRouter()
 async def get_all_courses_view(
         redis_cursor: Redis = Depends(get_redis_cursor)
 ):
+    """Возвращает информацию о всех курсах, темах, знаниях, квантах и компетенциях.
+    Предполагается, что при входе на главную страницу пользователю будут отображаться данные отсюда
+    """
     if (all_courses := redis_cursor.get('cache:all_courses')) is not None:
         all_courses = AllCourses.parse_raw(all_courses)
     else:
@@ -23,9 +26,10 @@ async def get_all_courses_view(
 
 @api_router.get('/course/{course_id}', response_model=EntireCourse)
 async def get_entire_course_view(
-        course_id: str,
+        course_id: str = Path(..., description="Идентификатор курса"),
         redis_cursor: Redis = Depends(get_redis_cursor)
 ):
+    """Возвращает полную информацию о конкретном курсе вплоть до профессий и компетенций СУОС"""
     if (course := redis_cursor.get(f'cache:courses:{course_id}')) is not None:
         course = EntireCourse.parse_raw(course)
     else:

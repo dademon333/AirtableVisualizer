@@ -17,12 +17,13 @@ def when_ready(_):
 
 
 worker_class = 'uvicorn.workers.UvicornWorker'
-workers = psutil.cpu_count(logical=False) * 2 + 1
 raw_env = ['PYTHONUNBUFFERED=1']
 
 if Config.DEBUG:
     certfile = './ssl/certificate.pem'
     keyfile = './ssl/key.pem'
     bind = '0.0.0.0:443'
+    workers = 1
 else:
     bind = 'localhost:8000'
+    workers = psutil.cpu_count(logical=False) * 2 + 1
