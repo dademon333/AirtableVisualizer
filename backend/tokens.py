@@ -7,6 +7,7 @@ load_dotenv()
 
 class Tokens:
     AIRTABLE_TOKEN = os.getenv('AIRTABLE_TOKEN')
+    AIRTABLE_DATABASE_ID = os.getenv('AIRTABLE_DATABASE_ID')
 
     PSQL_USER = os.getenv('PSQL_USER')
     PSQL_PASSWORD = os.getenv('PSQL_PASSWORD')

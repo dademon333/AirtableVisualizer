@@ -17,9 +17,9 @@ async def list_airtable_page(table_name, offset=None):
             'Authorization': f'Bearer {Tokens.AIRTABLE_TOKEN}'
         }
         if offset is None:
-            url = f'https://api.airtable.com/v0/apphcpN0Z7lAWveyC/{table_name}'
+            url = f'https://api.airtable.com/v0/{Tokens.AIRTABLE_DATABASE_ID}/{table_name}'
         else:
-            url = f'https://api.airtable.com/v0/apphcpN0Z7lAWveyC/{table_name}?offset={offset}'
+            url = f'https://api.airtable.com/v0/{Tokens.AIRTABLE_DATABASE_ID}/{table_name}?offset={offset}'
         response = await session.get(url, headers=headers)
         response = await response.json()
         return response
