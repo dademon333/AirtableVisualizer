@@ -1,0 +1,41 @@
+h1 {
+    text-align: center;
+}
+
+.courses {
+    list-style: none;
+    text-align: center;
+    display: grid;
+    grid-template-rows: 150px 150px 150px;
+    grid-template-columns: 33% 33% 33%;
+    padding: 0;
+}
+
+.courses li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+}
+
+.courses li a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border-radius: 10px;
+    text-decoration: none;
+    width: 90%;
+    height: 70%;
+    background-color: darkblue;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.courses li a:hover {
+    background-color: rgb(0, 130, 255);
+}
+
+.courses li a:active {
+    background-color: rgb(0, 83, 167);
+}
