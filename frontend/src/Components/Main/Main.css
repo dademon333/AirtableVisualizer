@@ -6,7 +6,7 @@ h1 {
     list-style: none;
     text-align: center;
     display: grid;
-    grid-template-rows: 150px 150px 150px;
+    grid-template-rows: 170px 170px 170px;
     grid-template-columns: 33% 33% 33%;
     padding: 0;
 }
@@ -21,21 +21,29 @@ h1 {
 
 .courses li a {
     display: flex;
+    position: relative;
     align-items: center;
     justify-content: center;
     color: white;
+    opacity: 1;
     border-radius: 10px;
     text-decoration: none;
     width: 90%;
-    height: 70%;
-    background-color: darkblue;
-    transition: background-color 0.15s ease-in-out;
+    height: 80%;
+    background-blend-mode: luminosity;	
+	background:
+		linear-gradient(rgb(1, 74, 122), transparent),
+		linear-gradient(to top left, rgb(5, 201, 250), transparent),
+		linear-gradient(to top right, rgb(1, 1, 109), transparent);
+    transition: all 0.15s ease-in-out;
 }
 
 .courses li a:hover {
-    background-color: rgb(0, 130, 255);
+    transform: scale(1.05);
+    box-shadow: 0px 12px 25px -2px rgb(34, 60, 80);
+    background-color: rgb(255, 187, 0);
 }
 
 .courses li a:active {
-    background-color: rgb(0, 83, 167);
+    background-color: rgb(252, 66, 9);
 }

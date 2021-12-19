@@ -1,19 +1,19 @@
 import React, {Component} from "react"
 import { NavLink } from "react-router-dom"
-import DataJSON from '../../ALL Courses.json'
 import './Course.css'
 
 class Course extends Component {
     state = {
         id: window.location.pathname.split('/')[2],
-        themes: DataJSON.themes,
-        knowledges: DataJSON.knowledges
+        courses: this.props.courses,
+        themes: this.props.themes,
+        knowledges: this.props.knowledges
     }
-
+    
     renderKnowledges = (id) => {
         const knowledges = this.getKnowledges(id)
         return (
-            <div className="knowledges">
+            <div className="knowledgesInTheme">
                 <h4>Знания:</h4>
                 
                     { knowledges.length === 0
@@ -54,8 +54,7 @@ class Course extends Component {
     }
 
     render() {
-        const currentCourse = DataJSON.courses.filter(course => course.id === this.state.id)[0]
-
+        const currentCourse = this.state.courses.filter(course => course.id === this.state.id)[0]
         return (
             <div className='course'>
                 <h1>{currentCourse.name}</h1>

@@ -7,7 +7,7 @@ const Main = props => {
         <React.Fragment>
             <h1>Все курсы</h1>
             <ul className='courses'>
-                {props.data.map(course => {
+                {props.courses.map(course => {
                     return (
                         <li key={course.id}>
                             <NavLink to={'/course/' + course.id}>
