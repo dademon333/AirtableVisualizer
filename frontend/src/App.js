@@ -51,13 +51,7 @@ class App extends Component {
               quantums={this.state.quantums}
             />} 
           />
-          <Route path='/course/:id' element={
-            <Course
-              courses={this.state.courses}
-              themes={this.state.themes}
-              knowledges={this.state.knowledges}
-            />} 
-          />
+          <Route path='/course/:id' element={ <Course /> }/>
           <Route path='/' element={
             this.state.loading 
             ? <Loader />

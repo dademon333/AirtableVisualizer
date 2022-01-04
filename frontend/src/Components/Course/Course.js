@@ -1,13 +1,37 @@
 import React, {Component} from "react"
 import { NavLink } from "react-router-dom"
+import Loader from "../../Loader/Loader"
 import './Course.css'
+import Back from "../../Back/Back"
 
 class Course extends Component {
     state = {
         id: window.location.pathname.split('/')[2],
-        courses: this.props.courses,
-        themes: this.props.themes,
-        knowledges: this.props.knowledges
+        courses: [],
+        themes: [],
+        knowledges: [],
+        loading: true,
+        error: []
+    }
+
+    componentDidMount() {
+        fetch('http://164.92.253.119/course/all')
+            .then(res => res.json())
+            .then(
+                (res) => {
+                    this.setState({
+                        courses: res.courses,
+                        themes: res.themes,
+                        knowledges: res.knowledges,
+                        loading: false
+                    })
+                },
+                (error) => {
+                    this.setState({
+                        error
+                    })
+                }
+            )
     }
     
     renderKnowledges = (id) => {
@@ -15,11 +39,10 @@ class Course extends Component {
         return (
             <div className="knowledgesInTheme">
                 <h4>Знания:</h4>
-                
-                    { knowledges.length === 0
-                    ? <p>Пусто</p> 
-                    : <ol>{ knowledges }</ol>
-                    }
+                { knowledges.length === 0
+                ? <p>Пусто</p> 
+                : <ol>{ knowledges }</ol>
+                }
             </div>
         )
     }
@@ -56,12 +79,14 @@ class Course extends Component {
     render() {
         const currentCourse = this.state.courses.filter(course => course.id === this.state.id)[0]
         return (
+            this.state.loading
+            ? <Loader /> :
             <div className='course'>
+                <NavLink to='/'><Back /></NavLink>
                 <h1>{currentCourse.name}</h1>
                 <ul className="themes">
                     { this.renderThemes() }
                 </ul>
-                <NavLink to='/'>На главную</NavLink>
             </div>
         )
     }

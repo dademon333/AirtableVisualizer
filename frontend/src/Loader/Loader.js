@@ -3,7 +3,7 @@ import "./Loader.css"
 
 const Loader = () => {
     return (
-        <div class="lds-default">
+        <div className="lds-default">
             <div />
             <div />
             <div />

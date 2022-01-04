@@ -20,3 +20,11 @@
     text-transform: uppercase;
     color: gray;
 }
+
+.themeName {
+    margin: 30px 60px 30px 60px;
+} 
+
+.empty {
+    font-size: 30px;
+}

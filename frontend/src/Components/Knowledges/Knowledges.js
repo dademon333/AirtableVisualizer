@@ -1,4 +1,6 @@
 import React, {Component} from "react"
+import { NavLink } from "react-router-dom"
+import Back from "../../Back/Back"
 import './Knowledges.css'
 
 class Knowledges extends Component {
@@ -6,7 +8,8 @@ class Knowledges extends Component {
         themes: this.props.themes,
         knowledges: this.props.knowledges,
         quantums: this.props.quantums,
-        themeID: window.location.pathname.split('/')[3]
+        themeID: window.location.pathname.split('/')[3],
+        courseID: window.location.pathname.split('/')[2]
     }
 
     renderKnowledges = () => {
@@ -34,9 +37,10 @@ class Knowledges extends Component {
         const knowledges = this.renderKnowledges(); 
         return (
             <React.Fragment>
-                <h1>{themeName}</h1>
+                <NavLink to={'/course/' + this.state.courseID}><Back /></NavLink>
+                <h1 className="themeName">{themeName}</h1>
                 { knowledges.length === 0
-                ? <h1>Знаний здесь пока нет</h1>
+                ? <h1 className="empty">Знаний здесь пока нет</h1>
                 : <ul className="knowledges">{ knowledges }</ul>
                 }
             </React.Fragment>

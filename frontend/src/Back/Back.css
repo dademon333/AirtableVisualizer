@@ -1,0 +1,27 @@
+.back {
+    position: absolute;
+    border: 2px solid gray;
+    border-radius: 5px;
+    padding: 5px 15px;
+    color: white;
+    top: 55px;
+    left: 10px;
+    transition: all 0.1s;
+}
+
+.back:hover {
+    background-color: rgba(238, 238, 238, 0.5);
+    transform: scale(1.1);
+}
+
+.back:active {
+    transform: scale(0.95);
+}
+
+.arrow {
+    transform: rotate(180deg) scale(1.5);
+}
+
+.arrow::after {
+    content: '\279C';
+}

@@ -17,7 +17,6 @@ const Main = props => {
                     )
                 })}
             </ul>
-            
       </React.Fragment>
     )    
 }
