@@ -47,3 +47,71 @@ h1 {
 .courses li a:active {
     background-color: rgb(252, 66, 9);
 }
+
+.themesAndKnowledges {
+    display: flex;
+    position: fixed;
+    justify-content: space-around;
+    align-items: center;
+    list-style: none;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(0);
+    background-color: azure;
+    box-shadow: 0 0 20px 0 black;
+    border-radius: 10px;
+    margin: 0;
+    padding: 10px;
+    text-align: center;
+    width: 30%;
+    height: 7%;
+    z-index: 20;
+    transition: all 0.3s;
+}
+
+.themesAndKnowledges a {
+    color: rgb(34, 60, 80);
+    text-decoration: none;
+    transition: all 0.2s;
+    padding: 5px;
+    border-radius: 7px;
+}
+
+.themesAndKnowledges a:hover {
+    background-color: rgb(8, 0, 124);
+    box-shadow: inset 0 0 5px 0 black;
+    color: white;
+}
+
+.themesAndKnowledges a:active {
+    box-shadow: inset 0 0 12px 3px black;
+}
+
+
+.themesAndKnowledges.opened {
+    bottom: 30px;
+    transform: translate(-50%, -50%) scale(1);
+    opacity: 1;
+}
+
+.themesAndKnowledges.closed {
+    opacity: 0;
+    bottom: -40px;
+}
+
+.pages {
+    position: fixed;
+    z-index: 20;
+    bottom: -5px;
+    left: 50%;
+    transform: translate(-50%, -50%) scale(1.5);
+    cursor: pointer;
+    transition: transform 0.3s;
+}
+
+.pages.closed:hover {
+    transform: translate(-50%, -70%) scale(1.5);
+}
+
+.pages.opened {
+    transform: translate(-50%, -70%) scale(1.5) rotate(180deg);
+}

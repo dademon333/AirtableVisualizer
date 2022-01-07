@@ -6,6 +6,8 @@ import Course from './Components/Course/Course'
 import './App.css'
 import Knowledges from './Components/Knowledges/Knowledges'
 import Loader from './Loader/Loader'
+import AllKnowledges from './Components/KnowledgesAndThemes/AllKnowledges/AllKnowledges'
+import AllThemes from './Components/KnowledgesAndThemes/AllKnowledges/AllThemes'
 
 class App extends Component {
   state = {
@@ -44,6 +46,8 @@ class App extends Component {
     return (
       <div className='app'>
         <Routes>
+          <Route path='/themes' element={ <AllThemes /> } />
+          <Route path='/knowledges' element={ <AllKnowledges /> } />
           <Route path='/course/:id/:id' element={
             <Knowledges
               themes={this.state.themes}
@@ -51,7 +55,7 @@ class App extends Component {
               quantums={this.state.quantums}
             />} 
           />
-          <Route path='/course/:id' element={ <Course /> }/>
+          <Route path='/course/:id' element={ <Course /> } />
           <Route path='/' element={
             this.state.loading 
             ? <Loader />
@@ -60,7 +64,6 @@ class App extends Component {
             />}
           />
         </Routes>
-        
       </div>
     )
   }
