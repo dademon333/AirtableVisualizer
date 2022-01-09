@@ -21,18 +21,18 @@ class AllKnowledges extends Component {
             .then(res => res.json())
             .then(
                 (res) => {
-                this.setState({
-                    courses: res.courses,
-                    knowledges: res.knowledges,
-                    themes: res.themes,
-                    quantums: res.quantums,
-                    loading: false
-                })
+                    this.setState({
+                        courses: res.courses,
+                        knowledges: res.knowledges,
+                        themes: res.themes,
+                        quantums: res.quantums,
+                        loading: false
+                    })
                 },
                 (error) => {
-                this.setState({
-                    error
-                })
+                    this.setState({
+                        error
+                    })
                 }
             )
     }
@@ -52,7 +52,6 @@ class AllKnowledges extends Component {
             this.state.knowledges.map((knowledge, index) => {
                 const quantumID = knowledge.quantums[0]
                 const quantum = this.state.quantums.filter(quantum => quantum.id === quantumID)[0]
-                console.log(quantum)
                 return (
                     <li key={index}>
                         <NavLink to='/'>

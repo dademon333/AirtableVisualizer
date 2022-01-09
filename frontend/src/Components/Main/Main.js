@@ -46,7 +46,7 @@ class Main extends Component {
                 <div className={'pages ' + classes.join(' ')} onClick={this.onOpen}>⮝</div>
                 <ul className={'themesAndKnowledges ' + classes.join(' ')}>
                     <li><NavLink to='/themes'>Все темы</NavLink></li>
-                    <li><NavLink to='/knowledges'>Все знания</NavLink></li>
+                    <li><NavLink to='/knowledge'>Все знания</NavLink></li>
                 </ul>
                 { this.state.isBackDropOpen
                 ? <BackDrop onClick={this.onBackDrop} />

@@ -7,21 +7,71 @@
 }
 
 .allKnowledges a,
-.allThemes a {
-    border: 1px solid rgb(188, 188, 188);
+.allThemes li {
+    border: 1px solid gray;
     background-color: rgba(209, 209, 209, 0.15);
     border-radius: 5px;
-    display: flex;
-    flex-direction: column;
     padding: 10px;
+    text-align: center;
     margin: 10px 0;
     text-decoration: none;
     color: white;
     transition: all 0.2s;
 }
 
-.allKnowledges a:hover,
-.allThemes a:hover {
+.allKnowledges a {
+    display: flex;
+    flex-direction: column;
+}
+
+.themesName {
+    margin-top: 5px;
+}
+
+.themesName .course {
+    transition: transform 0.15s;
+    color: rgb(110, 202, 255);
+    padding: 5px;
+    text-decoration: none;
+    color: white;
+    font-size: 21px;
+    width: fit-content;
+    transition: all 0.3s;
+    background-image: linear-gradient(currentColor, currentColor);
+    background-position: 50% 100%;
+    background-repeat: no-repeat;
+    background-size: 0% 2px;
+}
+
+.themesName i {
+    opacity: 0;
+    font-style: normal;
+    transition: opacity 0.2s;
+    margin-left: 5px;
+}
+
+.themesName .course:hover {
+    transform: scale(1.04);
+    background-size: 100% 2px;
+}
+
+.themesName .course:hover i {
+    opacity: 1;
+}
+
+fieldset {
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+}
+
+legend {
+    text-transform: uppercase;
+    font-size: 18px;
+    text-align: left;
+}
+
+.allKnowledges a:hover {
     background-color: rgba(2, 12, 71, 0.5);
     transform: scaleY(1.05) scaleX(1.01);
 }

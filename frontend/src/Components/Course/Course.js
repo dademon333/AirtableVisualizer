@@ -37,13 +37,13 @@ class Course extends Component {
     renderKnowledges = (id) => {
         const knowledges = this.getKnowledges(id)
         return (
-            <div className="knowledgesInTheme">
-                <h4>Знания:</h4>
+            <fieldset className="knowledgesInTheme">
+                <legend>Знания</legend>
                 { knowledges.length === 0
                 ? <p>Пусто</p> 
                 : <ol>{ knowledges }</ol>
                 }
-            </div>
+            </fieldset>
         )
     }
 
@@ -67,7 +67,7 @@ class Course extends Component {
                 return (
                     <li key={index} className="theme">
                         <NavLink to={'/course/' + this.state.id + '/' + theme.id}>
-                            { <h4 className="title">{theme.name}</h4> }
+                            { <h3>{theme.name}</h3> }
                             { this.renderKnowledges(theme.id) }
                         </NavLink>
                     </li>

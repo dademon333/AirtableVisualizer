@@ -47,7 +47,7 @@ class App extends Component {
       <div className='app'>
         <Routes>
           <Route path='/themes' element={ <AllThemes /> } />
-          <Route path='/knowledges' element={ <AllKnowledges /> } />
+          <Route path='/knowledge' element={ <AllKnowledges /> } />
           <Route path='/course/:id/:id' element={
             <Knowledges
               themes={this.state.themes}
