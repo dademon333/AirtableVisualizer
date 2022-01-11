@@ -37,13 +37,12 @@ class Course extends Component {
     renderKnowledges = (id) => {
         const knowledges = this.getKnowledges(id)
         return (
-            <fieldset className="knowledgesInTheme">
-                <legend>Знания</legend>
-                { knowledges.length === 0
-                ? <p>Пусто</p> 
-                : <ol>{ knowledges }</ol>
-                }
-            </fieldset>
+                knowledges.length === 0
+                ? null
+                : <fieldset className="knowledgesInTheme">
+                    <legend>Знания</legend>
+                    <ol>{ knowledges }</ol>
+                  </fieldset>
         )
     }
 

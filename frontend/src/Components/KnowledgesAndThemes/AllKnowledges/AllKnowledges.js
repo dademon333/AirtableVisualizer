@@ -12,8 +12,7 @@ class AllKnowledges extends Component {
         themes: [],
         quantums: [],
         loading: true,
-        error: [],
-        duplicates: []
+        error: []
     }
 
     componentDidMount() {
@@ -36,34 +35,50 @@ class AllKnowledges extends Component {
                 }
             )
     }
-
-    /* updateDuplicate = (knowledge) => {
-        const count = this.state.knowledges.reduce((total, e) => (
-            e.name == knowledge.name ? total + 1 : total
-        ), 0)
-        const dup = this.state.duplicates
-        if (count > 1) {
-            dup.push(knowledge)
-        }
-    } */
     
     getKnowledges = () => {
         return (
             this.state.knowledges.map((knowledge, index) => {
                 const quantumID = knowledge.quantums[0]
                 const quantum = this.state.quantums.filter(quantum => quantum.id === quantumID)[0]
+                const themesID = knowledge.themes
+                const themes = themesID.map(id => this.state.themes.filter(theme => theme.id === id))
+                const themesName = themes.map(theme => theme[0].name)
+                const coursesID = themes.map(theme => theme[0].courses[0])
                 return (
                     <li key={index}>
-                        <NavLink to='/'>
-                            <div className="name">{knowledge.name}</div>
-                            <div className="quantum">
-                                {quantum == undefined ? null : 
-                                <React.Fragment>
-                                    <p className="type">Тип</p>
-                                    {quantum.name}
-                                </React.Fragment>}
+                        <React.Fragment>
+                            <div className="wrapper">
+                                <div className="name">{knowledge.name}</div>
+                                <div className="quantum">
+                                    {quantum == undefined ? null : 
+                                    <React.Fragment>
+                                        <p className="type">Тип</p>
+                                        {quantum.name}
+                                    </React.Fragment>}
+                                </div>
                             </div>
-                        </NavLink>
+                            {themesName.length === 0 ? null
+                            : themesName.length === 1 ?
+                            <fieldset className="themesName">
+                                <legend>Тема</legend>
+                                <NavLink to={coursesID.length === 0 ? null 
+                                : '/course/' + coursesID[0] + '/' + themesID[0]}>
+                                    {themesName}
+                                    <i>➜</i>
+                                </NavLink>
+                            </fieldset>
+                            : <fieldset className="themesName">
+                                <legend>Темы</legend>
+                                {themesName.map((name, index) => 
+                                    <NavLink key={index} to={coursesID.length === 0 ? null 
+                                    : '/course/' + coursesID[index] + '/' + themesID[index]}>
+                                        {name}
+                                        <i>➜</i>
+                                    </NavLink>
+                                )}
+                                </fieldset>}
+                        </React.Fragment>
                     </li>
                 )
             })

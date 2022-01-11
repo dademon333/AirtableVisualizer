@@ -6,29 +6,27 @@
     padding: 0;
 }
 
-.allKnowledges a,
+.allKnowledges li,
 .allThemes li {
     border: 1px solid gray;
     background-color: rgba(209, 209, 209, 0.15);
     border-radius: 5px;
     padding: 10px;
-    text-align: center;
     margin: 10px 0;
     text-decoration: none;
     color: white;
     transition: all 0.2s;
 }
 
-.allKnowledges a {
-    display: flex;
-    flex-direction: column;
+.allThemes li {
+    text-align: center;
 }
 
 .themesName {
     margin-top: 5px;
 }
 
-.themesName .course {
+.themesName a {
     transition: transform 0.15s;
     color: rgb(110, 202, 255);
     padding: 5px;
@@ -43,6 +41,11 @@
     background-size: 0% 2px;
 }
 
+.themesName a:hover {
+    transform: scale(1.04);
+    background-size: 100% 2px;
+}
+
 .themesName i {
     opacity: 0;
     font-style: normal;
@@ -50,13 +53,17 @@
     margin-left: 5px;
 }
 
-.themesName .course:hover {
-    transform: scale(1.04);
-    background-size: 100% 2px;
+.themesName a:hover i {
+    opacity: 1;
 }
 
-.themesName .course:hover i {
-    opacity: 1;
+.wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.wrapper .quantum .type {
+    text-align: center;
 }
 
 fieldset {
@@ -69,9 +76,4 @@ legend {
     text-transform: uppercase;
     font-size: 18px;
     text-align: left;
-}
-
-.allKnowledges a:hover {
-    background-color: rgba(2, 12, 71, 0.5);
-    transform: scaleY(1.05) scaleX(1.01);
 }

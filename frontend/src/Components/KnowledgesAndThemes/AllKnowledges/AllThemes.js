@@ -45,16 +45,16 @@ class AllThemes extends Component {
                             {id.length === 0 ? null 
                             : id.length === 1
                             ? <fieldset>
-                                <legend>Тема</legend>
+                                <legend>Курс</legend>
                                 <NavLink to={'/course/' + id} className="course">{names[0]}<i>➜</i></NavLink>
                               </fieldset>
                             : <fieldset>
-                                <legend>Темы</legend>
+                                <legend>Курсы</legend>
                                 {id.map((i, index) => 
-                                <NavLink to={'/course/' + i} key={index} className="course">
-                                    {names[index]}
-                                    <i>➜</i>
-                                </NavLink>)}
+                                    <NavLink to={'/course/' + i} key={index} className="course">
+                                        {names[index]}
+                                        <i>➜</i>
+                                    </NavLink>)}
                               </fieldset>
                             }
                         </div>
