@@ -2,8 +2,13 @@ aiohttp
 python-dotenv
 psycopg2-binary
 fastapi
+jinja2
+starlette
 psutil
 redis
 pydantic
 gunicorn
 uvicorn
+yappi
+contextvars
+orjson
