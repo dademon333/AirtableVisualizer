@@ -1,13 +1,14 @@
-from typing import Any, Sequence, Union
+from typing import Any, Sequence, Union, Type
 
 from fastapi import Request
 from fastapi.routing import APIRouter
 from pydantic import BaseModel
+from pydantic.main import ModelMetaclass
 from starlette.responses import StreamingResponse
 from starlette.routing import Match
 
 
-def parse_raw(model: BaseModel, content: Union[bytes, str]):
+def parse_raw(model: Type[BaseModel], content: Union[bytes, str]):
     """Обертка над методом pydantic.BaseModel.parse_raw
 
     Создано, чтобы замерять скорость этого метода при вызове в response_validation_middleware
@@ -52,9 +53,10 @@ async def response_validation_middleware(request: Request, call_next):
     router: APIRouter = request.scope['router']
     for route in router.routes:
         match, _ = route.matches(request.scope)
-        if match == Match.FULL:
-            if hasattr(route, 'response_model') and route.response_model is not None:
-                parse_raw(route.response_model, response_body[0])
+        if match == Match.FULL \
+                and hasattr(route, 'response_model') \
+                and issubclass(route.response_model.__class__, ModelMetaclass):
+            parse_raw(route.response_model, response_body[0])
             break
 
     return response
