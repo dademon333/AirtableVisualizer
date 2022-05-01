@@ -1,6 +1,7 @@
 from typing import Any, Sequence, Union, Type
 
 from fastapi import Request
+from fastapi.responses import ORJSONResponse
 from fastapi.routing import APIRouter
 from pydantic import BaseModel
 from pydantic.main import ModelMetaclass
@@ -9,16 +10,16 @@ from starlette.routing import Match
 
 
 def parse_raw(model: Type[BaseModel], content: Union[bytes, str]):
-    """Обертка над методом pydantic.BaseModel.parse_raw
+    """Wrapper over pydantic.BaseModel.parse_raw method.
 
-    Создано, чтобы замерять скорость этого метода при вызове в response_validation_middleware
-    Замеряется с помощью ServerTimingMiddleware, результат попадает в header 'server-timing' всех ответов
+    Created to measure execution time of this method inside response_validation_middleware.
+    Measured with ServerTimingMiddleware, result passes to the header 'server-timing' in all server responses.
     """
     return model.parse_raw(content)
 
 
 class AsyncGenerator:
-    """Возвращает async версию генератора на основе переданной последовательности"""
+    """Returns async version of generator based on passed sequence"""
     def __init__(self, items: Sequence[Any]):
         self.items = items
         self.iterator = items.__iter__()
@@ -34,17 +35,17 @@ class AsyncGenerator:
 
 
 async def response_validation_middleware(request: Request, call_next):
-    """Валидирует ответ сервера с помощью pydantic
+    """Validates server response using pydantic models.
 
-    Проблема: fastapi.routing.serialize_response, который используется для валидации ответа endpoint'а,
-    слишком медленный (160 кб валидируются ~300-400 мсек)
-    Решение: возвращать ORJSONResponse. В этом случае fastapi не проводит валидацию
-    Эту функцию берет на себя данный middleware.
-    Из ответа он вытаскивает response_model и проводит проверку простым вызовом parse_raw
-    При размере в 160 кб достигается ускорение в 10 раз (~30 мсек)
+    Issue: fastapi.routing.serialize_response, which fastapi uses to validate endpoint responses,
+    is too slow (10 kb validates ~300-400 ms).
+    Solution: Return ORJSONResponse. In this case fastapi does not validate response.
+    That middleware does this.
+    It extracts response_model from response and validates response just calling .parse_raw().
+    At 160 kb size speedup reaches 10 times (~30 ms).
 
-    Дополнительно: с помощью замера скорости этой функции также вычисляется итоговое время ответа сервера
-    и добавляется в header 'server-timing' с помощью ServerTimingMiddleware
+    Additionally: by measuring execution time of this function, ServerTimingMiddleware calculates
+    total server response time and passes it to the 'server-timing' header
     """
     response: StreamingResponse = await call_next(request)
     response_body = [x async for x in response.body_iterator]  # Ответ представлен в виде async-генератора
@@ -54,6 +55,9 @@ async def response_validation_middleware(request: Request, call_next):
     for route in router.routes:
         match, _ = route.matches(request.scope)
         if match == Match.FULL \
+                and hasattr(route, 'response_class') \
+                and route.response_class is ORJSONResponse \
+                and response.status_code == 200 \
                 and hasattr(route, 'response_model') \
                 and issubclass(route.response_model.__class__, ModelMetaclass):
             parse_raw(route.response_model, response_body[0])

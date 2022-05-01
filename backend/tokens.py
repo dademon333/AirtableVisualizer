@@ -1,18 +1,17 @@
 import os
 
-from dotenv import load_dotenv
-
-load_dotenv()
-
 
 class Tokens:
-    AIRTABLE_TOKEN = os.getenv('AIRTABLE_TOKEN')
-    AIRTABLE_DATABASE_ID = os.getenv('AIRTABLE_DATABASE_ID')
-
-    PSQL_USER = os.getenv('PSQL_USER')
-    PSQL_PASSWORD = os.getenv('PSQL_PASSWORD')
-    PSQL_HOST = os.getenv('PSQL_HOST')
-    PSQL_PORT = os.getenv('PSQL_PORT')
-    PSQL_DATABASE = os.getenv('PSQL_DATABASE')
+    POSTGRESQL_USER = os.getenv('POSTGRESQL_USER')
+    POSTGRESQL_PASSWORD = os.getenv('POSTGRESQL_PASSWORD')
+    POSTGRESQL_HOST = os.getenv('POSTGRESQL_HOST')
+    POSTGRESQL_DATABASE = os.getenv('POSTGRESQL_DATABASE')
 
     REDIS_HOST = os.getenv('REDIS_HOST')
+
+    ALEMBIC_POSTGRESQL_HOST = os.getenv('ALEMBIC_POSTGRESQL_HOST')
+
+    POSTGRESQL_URL = f'postgresql+asyncpg://{POSTGRESQL_USER}:{POSTGRESQL_PASSWORD}' \
+                     f'@{POSTGRESQL_HOST}/{POSTGRESQL_DATABASE}'
+    ALEMBIC_POSTGRESQL_URL = f'postgresql://{POSTGRESQL_USER}:{POSTGRESQL_PASSWORD}' \
+                             f'@{ALEMBIC_POSTGRESQL_HOST}/{POSTGRESQL_DATABASE}'

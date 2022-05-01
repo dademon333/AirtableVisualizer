@@ -1,0 +1,53 @@
+volumes:
+    postgres:
+    redis:
+    media:
+
+services:
+    app:
+        build: ./backend
+        environment:
+            POSTGRESQL_USER: $POSTGRESQL_USER
+            POSTGRESQL_PASSWORD: $POSTGRESQL_PASSWORD
+            POSTGRESQL_HOST: $POSTGRESQL_HOST
+            POSTGRESQL_DATABASE: $POSTGRESQL_DATABASE
+
+            REDIS_HOST: $REDIS_HOST
+            DEBUG: $DEBUG
+            PYTHONUNBUFFERED: 1
+            SQLALCHEMY_WARN_20: 1
+
+        volumes:
+            - media:/usr/media
+            - ./frontend/build:/usr/src/frontend/build:ro
+        deploy:
+            replicas: $APP_REPLICAS
+        depends_on:
+            - postgres
+            - nginx
+            - redis
+
+    postgres:
+        image: postgres:14-alpine
+        command: -c listen_addresses='$POSTGRESQL_LISTEN_ADDRESSES'
+        ports:
+            - "5432:5432"
+        environment:
+            POSTGRES_PASSWORD: $POSTGRESQL_PASSWORD
+        volumes:
+            - postgres:/var/lib/postgres/data
+
+    nginx:
+        build:
+            context: ./backend/docker_files
+            dockerfile: nginx.dockerfile
+        ports:
+            - "80:80"
+        volumes:
+            - /var/log/nginx:/var/log/nginx
+            - ./frontend/build:/usr/src/app/frontend/build:ro
+
+    redis:
+        image: redis:7-alpine
+        volumes:
+            - redis:/data

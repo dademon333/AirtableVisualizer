@@ -1,16 +1,16 @@
-import fastapi.encoders
+import fastapi
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from sqlalchemy.util import greenlet_spawn
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from api.handlers import api_router
-from index_router import index_router
+from middlewares.html_page import html_page_middleware
 from middlewares.response_validation import response_validation_middleware, parse_raw
 from middlewares.server_timing import ServerTimingMiddleware
+from root_router import root_router
 
 app = FastAPI()
-app.include_router(api_router)
-app.include_router(index_router)
+app.include_router(root_router)
 
 app.add_middleware(
     CORSMiddleware,
@@ -25,6 +25,11 @@ app.add_middleware(
     dispatch=response_validation_middleware
 )
 
+app.add_middleware(
+    BaseHTTPMiddleware,
+    dispatch=html_page_middleware
+)
+
 app.add_middleware(ServerTimingMiddleware, calls_to_track={
     'dependencies_execution': (fastapi.routing.solve_dependencies,),
     'endpoint_running': (fastapi.routing.run_endpoint_function,),
@@ -33,5 +38,6 @@ app.add_middleware(ServerTimingMiddleware, calls_to_track={
         fastapi.responses.JSONResponse.render,
         fastapi.responses.ORJSONResponse.render,
     ),
+    'sql_requests': (greenlet_spawn,),
     'total': (response_validation_middleware,)
 })

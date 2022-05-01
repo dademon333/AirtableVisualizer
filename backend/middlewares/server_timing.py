@@ -1,7 +1,10 @@
-"""Middleware для замера скорости исполнения определенных функций
-Добавляет ко всем ответам header 'server-timing'
+"""Middleware for measuring execution time of functions.
+Adds 'server-timing' header to all server responses.
 
-Пример конфигурации:
+Configuration examples:
+
+import fastapi
+
 app.add_middleware(ServerTimingMiddleware, calls_to_track={
     'dependencies_execution': (fastapi.routing.solve_dependencies,),
     'endpoint_running': (fastapi.routing.run_endpoint_function,),
@@ -13,7 +16,24 @@ app.add_middleware(ServerTimingMiddleware, calls_to_track={
     )
 })
 
-Взято с https://github.com/sm-Fifteen/asgi-server-timing-middleware
+
+import fastapi
+from sqlalchemy.util import greenlet_spawn
+from middlewares.response_validation import response_validation_middleware, parse_raw
+
+app.add_middleware(ServerTimingMiddleware, calls_to_track={
+    'dependencies_execution': (fastapi.routing.solve_dependencies,),
+    'endpoint_running': (fastapi.routing.run_endpoint_function,),
+    'pydantic_validation': (parse_raw,),
+    'json_rendering': (
+        fastapi.responses.JSONResponse.render,
+        fastapi.responses.ORJSONResponse.render,
+    ),
+    'sql_requests': (greenlet_spawn,),
+    'total': (response_validation_middleware,)
+})
+
+Took from: https://github.com/sm-Fifteen/asgi-server-timing-middleware
 """
 
 from contextvars import ContextVar
