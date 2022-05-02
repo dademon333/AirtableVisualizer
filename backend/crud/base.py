@@ -1,6 +1,7 @@
 from typing import Generic, TypeVar, Type
 
 from pydantic import BaseModel
+from sqlalchemy import insert, delete, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.base import Base
@@ -27,24 +28,31 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             db: AsyncSession,
             create_instance: CreateSchemaType
     ) -> ModelType:
-        orm_instance = self.model(**create_instance.dict())
-        db.add(orm_instance)
-        return orm_instance
+        result = await db.execute(
+            insert(self.model)
+            .values(**create_instance.dict())
+        )
+        return await self.get_by_id(db, result.inserted_primary_key)
 
-    # noinspection PyMethodMayBeStatic
+    # noinspection PyShadowingBuiltins
     async def update(
             self,
             db: AsyncSession,
-            *,
-            orm_instance: ModelType,
+            id: int,
             update_instance: UpdateSchemaType
     ) -> ModelType:
-        update_instance = update_instance.dict(exclude_unset=True)
-        for key, value in update_instance.items():
-            setattr(orm_instance, key, value)
-        db.add(orm_instance)
-        return orm_instance
+        update_values = update_instance.dict(exclude_unset=True)
+        if update_values != {}:
+            await db.execute(
+                update(self.model).
+                where(self.model.id == id).
+                values(**update_values)
+            )
+        return await self.get_by_id(db, id)
 
-    # noinspection PyMethodMayBeStatic
-    async def remove(self, db: AsyncSession, orm_instance: ModelType) -> None:
-        await db.delete(orm_instance)
+    # noinspection PyShadowingBuiltins
+    async def delete(self, db: AsyncSession, id: int) -> None:
+        await db.execute(
+            delete(self.model).
+            where(self.model.id == id)
+        )

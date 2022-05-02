@@ -1,13 +1,11 @@
-from hashlib import sha256
-
 from fastapi import Depends, HTTPException, status, Cookie
 from sqlalchemy.ext.asyncio import AsyncSession
 from aioredis.client import Redis
 
 import crud
 from db import UserStatus, user_status_weights, get_db
-from .project_cookies import ProjectCookies, get_delete_cookie_header
-from .redis import get_redis_cursor
+from ..project_cookies import ProjectCookies, get_delete_cookie_header
+from ..redis import get_redis_cursor
 
 
 async def get_user_id(
@@ -57,12 +55,6 @@ async def check_auth(
     """
     if user_id is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
-
-
-def hash_password(user_id: int, password: str) -> str:
-    """Returns password in hashed form, like it stores in database."""
-    password = f'{password}|{user_id}'
-    return sha256(password.encode()).hexdigest()
 
 
 class UserStatusChecker:

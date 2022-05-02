@@ -29,8 +29,8 @@ def upgrade():
         sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
         sa.PrimaryKeyConstraint('id', name=op.f('pk_users'))
     )
-    op.create_index(op.f('ix_users_email'), 'users', ['email'], unique=True)
     # ### end Alembic commands ###
+    op.create_index(op.f('ix_users_email'), 'users', [sa.text('LOWER(email)')], unique=True)
 
 
 def downgrade():

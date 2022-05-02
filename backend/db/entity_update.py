@@ -5,7 +5,7 @@ from sqlalchemy import Column, Integer, ForeignKey, Enum, Text
 from db.base import Base, get_enum_values
 
 
-class EntityColumn(enum.Enum):
+class EntityColumn(str, enum.Enum):
     NAME = 'name'
     type = 'type'
     SIZE = 'size'

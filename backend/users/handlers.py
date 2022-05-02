@@ -1,60 +1,16 @@
-from aioredis import Redis
-from fastapi import APIRouter, Depends, HTTPException, status, Cookie
-from fastapi.responses import JSONResponse
+import sqlalchemy.exc
+from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette.status import HTTP_404_NOT_FOUND
 
 import crud
-from common.project_cookies import ProjectCookies
-from common.redis import get_redis_cursor
-from common.security import hash_password, get_user_id, check_auth, UserStatusChecker
+from common.responses import OkResponse
+from common.security.auth import get_user_id, check_auth, UserStatusChecker
 from db import get_db, UserStatus
-from .schemas import LoginForm, LoginErrorResponse, UserInfo, OkResponse, UserNotFoundResponse
+from schemas.user import UserCreate, UserUpdate, UserInfo
+from .schemas import UserNotFoundResponse, UserRegistrationErrorResponse
 
 users_router = APIRouter()
-
-
-@users_router.post(
-    '/login',
-    response_model=UserInfo,
-    responses={403: {'model': LoginErrorResponse}}
-)
-async def login(
-        form_data: LoginForm,
-        db: AsyncSession = Depends(get_db),
-        redis_cursor: Redis = Depends(get_redis_cursor)
-):
-    """Адрес этого endpoint'а дает исчерпывающую информацию о его предназначении.
-    Если все окей, устанавливает cookie 'session_id' и возвращает информацию о пользователе.
-    Срок жизни сессии - 30 дней.
-    """
-    user = await crud.user.get_by_email(db, form_data.email)
-
-    if user is not None:
-        hashed_password = hash_password(user.id, form_data.password)
-        if hashed_password == user.password:
-            session_id = await crud.user_session.create(user.id, redis_cursor)
-            response = JSONResponse(UserInfo.from_orm(user).dict())
-            response.set_cookie(key=ProjectCookies.SESSION_ID.value, value=session_id)
-            return response
-
-    raise HTTPException(
-        status_code=status.HTTP_403_FORBIDDEN,
-        detail=LoginErrorResponse().detail
-    )
-
-
-@users_router.post('/logout', response_model=OkResponse)
-async def logout(
-        redis_cursor: Redis = Depends(get_redis_cursor),
-        session_id: str = Cookie(default=None, include_in_schema=False)
-):
-    """Адрес этого endpoint'а дает исчерпывающую информацию о его предназначении.
-    Удаляет cookie 'session_id' и информацию о сессии на сервере.
-    """
-    response = JSONResponse(OkResponse().dict())
-    response.delete_cookie(key=ProjectCookies.SESSION_ID.value)
-    await crud.user_session.delete(session_id, redis_cursor)
-    return response
 
 
 @users_router.get(
@@ -90,3 +46,68 @@ async def get_user_info(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=UserNotFoundResponse().detail
         )
+
+
+@users_router.post(
+    '/create',
+    response_model=UserInfo,
+    responses={400: {'model': UserRegistrationErrorResponse}},
+    dependencies=[Depends(UserStatusChecker(min_status=UserStatus.ADMIN))]
+)
+async def create_user(
+        create_instance: UserCreate,
+        db: AsyncSession = Depends(get_db)
+):
+    """Создает нового пользователя. Требует статус admin или выше."""
+    try:
+        user = await crud.user.create(db, create_instance)
+    except sqlalchemy.exc.IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=UserRegistrationErrorResponse().detail
+        )
+    else:
+        return UserInfo.from_orm(user)
+
+
+@users_router.put(
+    '/update/{user_id}',
+    response_model=OkResponse,
+    responses={404: {'model': UserNotFoundResponse}},
+    dependencies=[Depends(UserStatusChecker(min_status=UserStatus.ADMIN))]
+)
+async def update_user(
+        user_id: int,
+        update_form: UserUpdate,
+        db: AsyncSession = Depends(get_db)
+):
+    """Обновляет данные о пользователе. Требует статус admin или выше."""
+    user = await crud.user.get_by_id(db, user_id)
+    if user is None:
+        raise HTTPException(
+            status_code=HTTP_404_NOT_FOUND,
+            detail=UserNotFoundResponse().detail
+        )
+    await crud.user.update(db, user_id, update_form)
+    return OkResponse()
+
+
+@users_router.delete(
+    '/delete/{user_id}',
+    response_model=OkResponse,
+    responses={404: {'model': UserNotFoundResponse}},
+    dependencies=[Depends(UserStatusChecker(min_status=UserStatus.ADMIN))]
+)
+async def delete_user(
+        user_id: int,
+        db: AsyncSession = Depends(get_db)
+):
+    """Удаляет пользователя. Требует статус admin или выше."""
+    user = await crud.user.get_by_id(db, user_id)
+    if user is None:
+        raise HTTPException(
+            status_code=HTTP_404_NOT_FOUND,
+            detail=UserNotFoundResponse().detail
+        )
+    await crud.user.delete(db, user_id)
+    return OkResponse()

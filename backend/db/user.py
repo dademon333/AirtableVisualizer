@@ -1,6 +1,7 @@
 import enum
 
-from sqlalchemy import Column, Integer, String, Enum, DateTime, func
+from sqlalchemy import Column, Integer, String, Enum, DateTime, func, Index
+from sqlalchemy.sql.expression import text
 
 from .base import Base, get_enum_values
 
@@ -23,7 +24,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False)
-    email = Column(String, nullable=False, index=True, unique=True)
+    email = Column(String, nullable=False)
     password = Column(String, nullable=False)
     status = Column(
         Enum(UserStatus, name='user_status', values_callable=get_enum_values),
@@ -31,3 +32,7 @@ class User(Base):
         server_default=UserStatus.USER
     )
     created_at = Column(DateTime, nullable=False, server_default=func.now())
+
+    __table_args__ = (
+        Index('ix_users_email', text('LOWER(email)'), unique=True),
+    )
