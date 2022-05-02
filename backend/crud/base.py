@@ -1,7 +1,7 @@
 from typing import Generic, TypeVar, Type
 
 from pydantic import BaseModel
-from sqlalchemy import insert, delete, update
+from sqlalchemy import insert, delete, update, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from db.base import Base
@@ -22,6 +22,20 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
     # noinspection PyShadowingBuiltins
     async def get_by_id(self, db: AsyncSession, id: int) -> ModelType | None:
         return await db.get(self.model, id)
+
+    async def get_many(
+            self,
+            db: AsyncSession,
+            limit: int = 100,
+            offset: int = 0
+    ):
+        result = await db.scalars(
+            select(self.model).
+            limit(limit).
+            offset(offset).
+            order_by(self.model.id)
+        )
+        return result.all()
 
     async def create(
             self,

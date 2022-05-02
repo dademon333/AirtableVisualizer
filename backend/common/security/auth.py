@@ -4,8 +4,8 @@ from aioredis.client import Redis
 
 import crud
 from db import UserStatus, user_status_weights, get_db
-from ..project_cookies import ProjectCookies, get_delete_cookie_header
-from ..redis import get_redis_cursor
+from common.project_cookies import ProjectCookies, get_delete_cookie_header
+from common.redis import get_redis_cursor
 
 
 async def get_user_id(

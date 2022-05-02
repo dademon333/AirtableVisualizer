@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from pydantic import BaseModel, Field
 
 from db import UserStatus
@@ -17,7 +19,7 @@ class UserUpdate(BaseModel):
     status: UserStatus | None = None
 
 
-class UserInfo(BaseModel):
+class UserInfoBase(BaseModel):
     id: int
     name: str
     email: str
@@ -25,3 +27,11 @@ class UserInfo(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class UserInfo(UserInfoBase):
+    pass
+
+
+class UserInfoExtended(UserInfoBase):
+    created_at: datetime
