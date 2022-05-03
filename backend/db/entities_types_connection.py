@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Integer, Enum, String, UniqueConstraint
+from sqlalchemy.orm import relationship
 
 from .base import Base, get_enum_values
 from .entity import EntityType
@@ -18,6 +19,8 @@ class EntitiesTypesConnection(Base):
     )
     parent_column_name = Column(String)
     child_column_name = Column(String)
+
+    connections = relationship('EntitiesConnection', backref='types_connection')
 
     __table_args__ = (
         UniqueConstraint('parent_type', 'child_type'),

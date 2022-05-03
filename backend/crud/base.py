@@ -30,10 +30,10 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             offset: int = 0
     ):
         result = await db.scalars(
-            select(self.model).
-            limit(limit).
-            offset(offset).
-            order_by(self.model.id)
+            select(self.model)
+            .limit(limit)
+            .offset(offset)
+            .order_by(self.model.id)
         )
         return result.all()
 
@@ -58,15 +58,15 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         update_values = update_instance.dict(exclude_unset=True)
         if update_values != {}:
             await db.execute(
-                update(self.model).
-                where(self.model.id == id).
-                values(**update_values)
+                update(self.model)
+                .where(self.model.id == id)
+                .values(**update_values)
             )
         return await self.get_by_id(db, id)
 
     # noinspection PyShadowingBuiltins
     async def delete(self, db: AsyncSession, id: int) -> None:
         await db.execute(
-            delete(self.model).
-            where(self.model.id == id)
+            delete(self.model)
+            .where(self.model.id == id)
         )

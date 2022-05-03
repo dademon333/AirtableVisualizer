@@ -8,8 +8,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import crud
 from common.project_cookies import ProjectCookies
 from common.redis import get_redis_cursor
-from common.responses import OkResponse
-from common.security.auth import UserStatusChecker
+from common.responses import OkResponse, UnauthorizedResponse, EditorStatusRequiredResponse
+from common.security.auth import UserStatusChecker, check_auth
 from common.security.users import hash_password
 from db import UserStatus, get_db
 from schemas.user import UserInfo
@@ -21,6 +21,10 @@ stuff_router = APIRouter()
 @stuff_router.get(
     '/hostname',
     response_model=HostnameResponse,
+    responses={
+        401: {'model': UnauthorizedResponse},
+        403: {'model': EditorStatusRequiredResponse},
+    },
     dependencies=[Depends(UserStatusChecker(min_status=UserStatus.EDITOR))]
 )
 async def get_hostname():
@@ -61,7 +65,12 @@ async def login(
     )
 
 
-@stuff_router.post('/logout', response_model=OkResponse)
+@stuff_router.post(
+    '/logout',
+    response_model=OkResponse,
+    responses={401: {'model': UnauthorizedResponse}},
+    dependencies=[Depends(check_auth)]
+)
 async def logout(
         redis_cursor: Redis = Depends(get_redis_cursor),
         session_id: str = Cookie(default=None, include_in_schema=False)

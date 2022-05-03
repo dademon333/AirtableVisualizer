@@ -12,8 +12,8 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
     @staticmethod
     async def get_by_email(db: AsyncSession, email: str) -> User | None:
         user = await db.scalars(
-            select(User).
-            where(User.email == func.lower(email))
+            select(User)
+            .where(User.email == func.lower(email))
         )
         return user.first()
 

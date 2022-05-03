@@ -19,6 +19,12 @@ class EntitiesConnection(Base):
         nullable=False,
         index=True
     )
+    types_connection_id = Column(
+        Integer,
+        ForeignKey('entities_types_connections.id', onupdate='CASCADE', ondelete='CASCADE'),
+        nullable=False,
+        index=True
+    )
 
     __table_args__ = (
         UniqueConstraint('parent_id', 'child_id'),
