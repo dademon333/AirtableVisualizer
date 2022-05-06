@@ -1,7 +1,6 @@
 volumes:
     postgres:
     redis:
-    media:
 
 services:
     app:
@@ -18,7 +17,6 @@ services:
             SQLALCHEMY_WARN_20: 1
 
         volumes:
-            - media:/usr/media
             - ./frontend/build:/usr/src/frontend/build:ro
         deploy:
             replicas: $APP_REPLICAS

@@ -10,6 +10,3 @@ from .user import User, UserStatus, user_status_weights
 from .change_log import ChangeLog, ChangeType, ChangedTable
 from .db_element_update import DbElementUpdate
 from .archived_db_element import ArchivedDbElement
-
-from .source import Source
-from .attachment import Attachment
