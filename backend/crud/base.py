@@ -4,7 +4,7 @@ from pydantic import BaseModel
 from sqlalchemy import insert, delete, update, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db.base import Base
+from db import Base
 
 ModelType = TypeVar('ModelType', bound=Base)
 CreateSchemaType = TypeVar('CreateSchemaType', bound=BaseModel)
@@ -28,14 +28,26 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
             db: AsyncSession,
             limit: int = 100,
             offset: int = 0
-    ):
+    ) -> list[ModelType]:
         result = await db.scalars(
             select(self.model)
             .limit(limit)
             .offset(offset)
             .order_by(self.model.id)
         )
-        return result.all()
+        return result.unique().all()
+
+    async def get_by_ids(
+            self,
+            db: AsyncSession,
+            ids: list[int]
+    ) -> list[ModelType]:
+        result = await db.scalars(
+            select(self.model)
+            .where(self.model.id.in_(ids))
+            .order_by(self.model.id)
+        )
+        return result.unique().all()
 
     async def create(
             self,
@@ -45,6 +57,18 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         result = await db.execute(
             insert(self.model)
             .values(**create_instance.dict())
+        )
+        return await self.get_by_id(db, result.inserted_primary_key)
+
+    async def create_from_dict(
+            self,
+            db: AsyncSession,
+            create_instance: dict
+    ):
+        """Special method to restore elements from archive."""
+        result = await db.execute(
+            insert(self.model)
+            .values(**create_instance)
         )
         return await self.get_by_id(db, result.inserted_primary_key)
 

@@ -3,9 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from common.security.users import hash_password
-from crud.base import CRUDBase
 from db import User
 from schemas.user import UserCreate, UserUpdate
+from .base import CRUDBase
 
 
 class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):

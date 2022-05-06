@@ -11,5 +11,5 @@ class UserNotFoundResponse(BaseModel):
     detail: str = 'user not found'
 
 
-class UserRegistrationErrorResponse(BaseModel):
+class UserEmailAlreadyExistsResponse(BaseModel):
     detail: str = 'email already exists'

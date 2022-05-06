@@ -4,8 +4,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 import crud
 from common.responses import OkResponse, UnauthorizedResponse, AdminStatusRequiredResponse
-from common.security.auth import UserStatusChecker
-from db import UserStatus, get_db
+from common.security.auth import UserStatusChecker, get_user_id
+from db import UserStatus, get_db, ChangedTable
 from entities_types_connections.schemas import EntitiesTypesConnectionNotFoundResponse, \
     EntitiesTypesConnectionCreateErrorResponse
 from schemas.entities_types_connection import EntitiesTypesConnectionUpdate, EntitiesTypesConnectionInfo, \
@@ -41,12 +41,12 @@ async def list_connections(
 )
 async def create_connection(
         create_form: EntitiesTypesConnectionCreate,
+        user_id: int = Depends(get_user_id),
         db: AsyncSession = Depends(get_db)
 ):
     """Создает связь между типами сущностей.
     Требует статус admin.
     """
-    # Проверка длины
     try:
         connection = await crud.entities_types_connection.create(db, create_form)
     except sqlalchemy.exc.IntegrityError:
@@ -54,8 +54,14 @@ async def create_connection(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=EntitiesTypesConnectionCreateErrorResponse().detail
         )
-    else:
-        return EntitiesTypesConnectionInfo.from_orm(connection)
+
+    await crud.change_log.log_create_operation(
+        db=db,
+        editor_id=user_id,
+        table=ChangedTable.ENTITIES_TYPES_CONNECTIONS,
+        element_id=connection.id
+    )
+    return EntitiesTypesConnectionInfo.from_orm(connection)
 
 
 @types_connections_router.put(
@@ -71,6 +77,7 @@ async def create_connection(
 async def update_column_name(
         connection_id: int,
         update_form: EntitiesTypesConnectionUpdate,
+        user_id: int = Depends(get_user_id),
         db: AsyncSession = Depends(get_db)
 ):
     """Обновляет название колонки связей в таблице.
@@ -83,7 +90,18 @@ async def update_column_name(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=EntitiesTypesConnectionNotFoundResponse().detail
         )
+
+    old_instance = dict(connection.__dict__)
     await crud.entities_types_connection.update(db, connection_id, update_form)
+
+    await crud.change_log.log_update_operation(
+        db=db,
+        editor_id=user_id,
+        table=ChangedTable.ENTITIES_TYPES_CONNECTIONS,
+        update_form=update_form,
+        old_instance=old_instance,
+        new_instance=connection
+    )
     return OkResponse()
 
 
@@ -99,6 +117,7 @@ async def update_column_name(
 )
 async def delete_connection(
         connection_id: int,
+        user_id: int = Depends(get_user_id),
         db: AsyncSession = Depends(get_db)
 ):
     """Удаляет связь между типами сущностей.
@@ -110,5 +129,21 @@ async def delete_connection(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=EntitiesTypesConnectionNotFoundResponse().detail
         )
+
+    delete_log = await crud.change_log.log_delete_operation(
+        db,
+        editor_id=user_id,
+        table=ChangedTable.ENTITIES_TYPES_CONNECTIONS,
+        element_instance=connection
+    )
+    for entities_connection in connection.entities_connections:
+        await crud.change_log.log_delete_operation(
+            db,
+            editor_id=user_id,
+            table=ChangedTable.ENTITIES_CONNECTIONS,
+            element_instance=entities_connection,
+            parent_change_id=delete_log.id
+        )
+
     await crud.entities_types_connection.delete(db, connection_id)
     return OkResponse()

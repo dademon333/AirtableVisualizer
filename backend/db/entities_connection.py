@@ -10,8 +10,7 @@ class EntitiesConnection(Base):
     parent_id = Column(
         Integer,
         ForeignKey('entities.id', onupdate='CASCADE', ondelete='CASCADE'),
-        nullable=False,
-        index=True
+        nullable=False
     )
     child_id = Column(
         Integer,

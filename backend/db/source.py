@@ -12,4 +12,4 @@ class Source(Base):
     url = Column(Text)
     description = Column(Text)
 
-    attachments = relationship('Attachment', backref='source')
+    attachments = relationship('Attachment', backref='source', lazy='joined')

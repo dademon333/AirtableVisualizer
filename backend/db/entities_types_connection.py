@@ -20,7 +20,7 @@ class EntitiesTypesConnection(Base):
     parent_column_name = Column(String)
     child_column_name = Column(String)
 
-    connections = relationship('EntitiesConnection', backref='types_connection')
+    entities_connections = relationship('EntitiesConnection', backref='types_connection', lazy='joined')
 
     __table_args__ = (
         UniqueConstraint('parent_type', 'child_type'),

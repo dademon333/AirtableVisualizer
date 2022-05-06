@@ -5,9 +5,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import crud
 from common.responses import OkResponse, UnauthorizedResponse, AdminStatusRequiredResponse
 from common.security.auth import get_user_id, check_auth, UserStatusChecker
-from db import get_db, UserStatus
+from db import get_db, UserStatus, ChangedTable
 from schemas.user import UserCreate, UserUpdate, UserInfo, UserInfoExtended
-from .schemas import UserNotFoundResponse, UserRegistrationErrorResponse, UserSelfUpdateForm
+from .schemas import UserNotFoundResponse, UserEmailAlreadyExistsResponse, UserSelfUpdateForm
 
 users_router = APIRouter()
 
@@ -56,7 +56,7 @@ async def get_user_info(
     '/create',
     response_model=UserInfo,
     responses={
-        400: {'model': UserRegistrationErrorResponse},
+        400: {'model': UserEmailAlreadyExistsResponse},
         401: {'model': UnauthorizedResponse},
         403: {'model': AdminStatusRequiredResponse}
     },
@@ -64,6 +64,7 @@ async def get_user_info(
 )
 async def create_user(
         create_form: UserCreate,
+        editor_id: int = Depends(get_user_id),
         db: AsyncSession = Depends(get_db)
 ):
     """Создает нового пользователя. Требует статус admin."""
@@ -72,16 +73,25 @@ async def create_user(
     except sqlalchemy.exc.IntegrityError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=UserRegistrationErrorResponse().detail
+            detail=UserEmailAlreadyExistsResponse().detail
         )
-    else:
-        return UserInfo.from_orm(user)
+
+    await crud.change_log.log_create_operation(
+        db=db,
+        editor_id=editor_id,
+        table=ChangedTable.USERS,
+        element_id=user.id
+    )
+    return UserInfo.from_orm(user)
 
 
 @users_router.put(
     '/update/me',
     response_model=OkResponse,
-    responses={401: {'model': UnauthorizedResponse}},
+    responses={
+        400: {'model': UserEmailAlreadyExistsResponse},
+        401: {'model': UnauthorizedResponse}
+    },
     dependencies=[Depends(check_auth)]
 )
 async def update_self(
@@ -92,7 +102,25 @@ async def update_self(
     """Обновляет данные о текущем пользователе. Все поля в теле запроса являются необязательными,
     передавать нужно только необходимые дня обновления.
     """
-    await crud.user.update(db, user_id, update_form)
+    user = await crud.user.get_by_id(db, user_id)
+    old_instance = dict(user.__dict__)
+
+    try:
+        await crud.user.update(db, user_id, update_form)
+    except sqlalchemy.exc.IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=UserEmailAlreadyExistsResponse().detail
+        )
+
+    await crud.change_log.log_update_operation(
+        db=db,
+        editor_id=user_id,
+        table=ChangedTable.USERS,
+        update_form=update_form,
+        old_instance=old_instance,
+        new_instance=user
+    )
     return OkResponse()
 
 
@@ -109,6 +137,7 @@ async def update_self(
 async def update_user(
         user_id: int,
         update_form: UserUpdate,
+        editor_id: int = Depends(get_user_id),
         db: AsyncSession = Depends(get_db)
 ):
     """Обновляет данные о пользователе. Все поля в теле запроса являются необязательными,
@@ -120,22 +149,24 @@ async def update_user(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=UserNotFoundResponse().detail
         )
-    await crud.user.update(db, user_id, update_form)
-    return OkResponse()
 
+    old_instance = dict(user.__dict__)
+    try:
+        await crud.user.update(db, user_id, update_form)
+    except sqlalchemy.exc.IntegrityError:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=UserEmailAlreadyExistsResponse().detail
+        )
 
-@users_router.delete(
-    '/delete/me',
-    response_model=OkResponse,
-    responses={401: {'model': UnauthorizedResponse}},
-    dependencies=[Depends(check_auth)]
-)
-async def delete_self(
-        user_id: int = Depends(get_user_id),
-        db: AsyncSession = Depends(get_db)
-):
-    """Удаляет текущего пользователя."""
-    await crud.user.delete(db, user_id)
+    await crud.change_log.log_update_operation(
+        db=db,
+        editor_id=editor_id,
+        table=ChangedTable.USERS,
+        update_form=update_form,
+        old_instance=old_instance,
+        new_instance=user
+    )
     return OkResponse()
 
 
@@ -151,6 +182,7 @@ async def delete_self(
 )
 async def delete_user(
         user_id: int,
+        editor_id: int = Depends(get_user_id),
         db: AsyncSession = Depends(get_db)
 ):
     """Удаляет пользователя. Требует статус admin."""
@@ -161,6 +193,12 @@ async def delete_user(
             detail=UserNotFoundResponse().detail
         )
     await crud.user.delete(db, user_id)
+    await crud.change_log.log_delete_operation(
+        db,
+        editor_id=editor_id,
+        table=ChangedTable.USERS,
+        element_instance=user
+    )
     return OkResponse()
 
 

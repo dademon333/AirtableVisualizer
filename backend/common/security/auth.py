@@ -28,14 +28,19 @@ async def get_user_id(
     return int(user_id)
 
 
-async def _get_user_status(
+async def get_user_status(
         db: AsyncSession = Depends(get_db),
         user_id: int | None = Depends(get_user_id)
 ) -> UserStatus | None:
     if user_id is None:
         return None
 
-    user = await crud.user.get_by_id(db, user_id)
+    # If user was deleted, but session wasn't
+    if (user := await crud.user.get_by_id(db, user_id)) is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            headers={'set-cookie': get_delete_cookie_header(ProjectCookies.SESSION_ID)}
+        )
     return user.status
 
 
@@ -72,7 +77,7 @@ class UserStatusChecker:
         """
         self.min_status = min_status
 
-    def __call__(self, user_status: UserStatus | None = Depends(_get_user_status)):
+    def __call__(self, user_status: UserStatus | None = Depends(get_user_status)):
         if user_status is None:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 

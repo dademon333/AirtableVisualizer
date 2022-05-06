@@ -44,10 +44,7 @@ class Entity(Base):
     )
     description = Column(Text)
     study_time = Column(Integer)
-    is_deleted = Column(Boolean, nullable=False, server_default='false')
-    deleted_at = Column(DateTime)
 
     __table_args__ = (
-        Index('type__name', 'type', 'name'),
-        UniqueConstraint('name', 'type')
+        UniqueConstraint('name', 'type'),
     )

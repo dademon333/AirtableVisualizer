@@ -1,6 +1,6 @@
 from sqlalchemy import Integer, Column, ForeignKey
 
-from db.base import Base
+from db import Base
 
 
 class HiddenCourse(Base):

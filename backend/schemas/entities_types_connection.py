@@ -30,5 +30,7 @@ class EntitiesTypesConnectionUpdate(EntitiesTypesConnectionBase):
 
 
 class EntitiesTypesConnectionInfo(EntitiesTypesConnectionBaseExtended):
+    id: int
+
     class Config:
         orm_mode = True

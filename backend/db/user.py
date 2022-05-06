@@ -1,6 +1,7 @@
 import enum
 
 from sqlalchemy import Column, Integer, String, Enum, DateTime, func, Index
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql.expression import text
 
 from .base import Base, get_enum_values
@@ -32,6 +33,12 @@ class User(Base):
         server_default=UserStatus.USER
     )
     created_at = Column(DateTime, nullable=False, server_default=func.now())
+
+    db_changes = relationship(
+        'ChangeLog',
+        backref=backref('editor_data', lazy='joined', uselist=False),
+        lazy='joined'
+    )
 
     __table_args__ = (
         Index('ix_users_email', text('LOWER(email)'), unique=True),

@@ -1,7 +1,10 @@
+import json
+
 from sqlalchemy import MetaData
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker, declarative_base
 
+from common.json import json_serializer, json_deserializer
 from config import Config
 from tokens import Tokens
 
@@ -13,7 +16,13 @@ naming_convention = {
     'pk': 'pk_%(table_name)s'
 }
 
-engine = create_async_engine(Tokens.POSTGRESQL_URL, future=True, echo=Config.DEBUG)
+engine = create_async_engine(
+    Tokens.POSTGRESQL_URL,
+    future=True,
+    echo=Config.DEBUG,
+    json_serializer=lambda obj: json.dumps(obj, default=json_serializer, ensure_ascii=False),
+    json_deserializer=lambda obj: json.loads(obj, object_pairs_hook=json_deserializer)
+)
 session_factory = sessionmaker(bind=engine, class_=AsyncSession)
 metadata = MetaData(bind=engine, naming_convention=naming_convention)
 

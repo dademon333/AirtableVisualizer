@@ -17,5 +17,3 @@ class Attachment(Base):
         nullable=False,
         index=True
     )
-
-    thumbnails = relationship('Thumbnail', backref='attachment')
