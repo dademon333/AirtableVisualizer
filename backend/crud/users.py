@@ -4,11 +4,11 @@ from sqlalchemy.future import select
 
 from common.security.users import hash_password
 from db import User
-from schemas.user import UserCreate, UserUpdate
+from schemas.users import UserCreate, UserUpdate
 from .base import CRUDBase
 
 
-class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
+class CRUDUsers(CRUDBase[User, UserCreate, UserUpdate]):
     @staticmethod
     async def get_by_email(db: AsyncSession, email: str) -> User | None:
         user = await db.scalars(
@@ -41,4 +41,4 @@ class CRUDUser(CRUDBase[User, UserCreate, UserUpdate]):
         )
 
 
-user = CRUDUser(User)
+users = CRUDUsers(User)

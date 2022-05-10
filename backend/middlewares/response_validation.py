@@ -1,4 +1,4 @@
-from typing import Any, Sequence, Union, Type
+from typing import Any, Sequence, Type
 
 from fastapi import Request
 from fastapi.responses import ORJSONResponse
@@ -9,7 +9,7 @@ from starlette.responses import StreamingResponse
 from starlette.routing import Match
 
 
-def parse_raw(model: Type[BaseModel], content: Union[bytes, str]):
+def parse_raw(model: Type[BaseModel], content: str | bytes):
     """Wrapper over pydantic.BaseModel.parse_raw method.
 
     Created to measure execution time of this method inside response_validation_middleware.

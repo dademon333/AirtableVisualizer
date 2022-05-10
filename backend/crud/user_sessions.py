@@ -4,7 +4,7 @@ from string import ascii_lowercase, digits
 from aioredis import Redis
 
 
-class UserSessionCRUD:
+class CRUDUserSessions:
     @staticmethod
     async def get_user_id_by_session_id(session_id: str, redis_cursor: Redis) -> int | None:
         """Returns user id by session_id cookie value."""

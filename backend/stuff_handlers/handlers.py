@@ -12,7 +12,7 @@ from common.responses import OkResponse, UnauthorizedResponse, EditorStatusRequi
 from common.security.auth import UserStatusChecker, check_auth
 from common.security.users import hash_password
 from db import UserStatus, get_db
-from schemas.user import UserInfo
+from schemas.users import UserInfo
 from .schemas import HostnameResponse, LoginErrorResponse, LoginForm
 
 stuff_router = APIRouter()
@@ -49,12 +49,12 @@ async def login(
     Если все окей, устанавливает cookie 'session_id' и возвращает информацию о пользователе.
     Срок жизни сессии - 30 дней.
     """
-    user = await crud.user.get_by_email(db, form_data.email)
+    user = await crud.users.get_by_email(db, form_data.email)
 
     if user is not None:
         hashed_password = hash_password(user.id, form_data.password)
         if hashed_password == user.password:
-            session_id = await crud.user_session.create(user.id, redis_cursor)
+            session_id = await crud.user_sessions.create(user.id, redis_cursor)
             response = JSONResponse(UserInfo.from_orm(user).dict())
             response.set_cookie(key=ProjectCookies.SESSION_ID.value, value=session_id)
             return response
@@ -80,5 +80,5 @@ async def logout(
     """
     response = JSONResponse(OkResponse().dict())
     response.delete_cookie(key=ProjectCookies.SESSION_ID.value)
-    await crud.user_session.delete(session_id, redis_cursor)
+    await crud.user_sessions.delete(session_id, redis_cursor)
     return response

@@ -19,7 +19,7 @@ async def get_user_id(
     if session_id is None:
         return None
 
-    user_id = await crud.user_session.get_user_id_by_session_id(session_id, redis_cursor)
+    user_id = await crud.user_sessions.get_user_id_by_session_id(session_id, redis_cursor)
     if user_id is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -36,12 +36,20 @@ async def get_user_status(
         return None
 
     # If user was deleted, but session wasn't
-    if (user := await crud.user.get_by_id(db, user_id)) is None:
+    if (user := await crud.users.get_by_id(db, user_id)) is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             headers={'set-cookie': get_delete_cookie_header(ProjectCookies.SESSION_ID)}
         )
     return user.status
+
+
+def can_access(
+        user_status: UserStatus | None,
+        min_status: UserStatus
+) -> bool:
+    """Returns True, if user status is greater or equal than min_status, else - False."""
+    return user_status_weights[user_status] >= user_status_weights[min_status]
 
 
 async def check_auth(

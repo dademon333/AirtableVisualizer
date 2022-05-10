@@ -24,7 +24,8 @@ from middlewares.response_validation import response_validation_middleware, pars
 app.add_middleware(ServerTimingMiddleware, calls_to_track={
     'dependencies_execution': (fastapi.routing.solve_dependencies,),
     'endpoint_running': (fastapi.routing.run_endpoint_function,),
-    'pydantic_validation': (parse_raw,),
+    'pydantic_validation': (fastapi.routing.serialize_response,),
+    'pydantic_validation_': (parse_raw,),
     'json_rendering': (
         fastapi.responses.JSONResponse.render,
         fastapi.responses.ORJSONResponse.render,
@@ -117,7 +118,6 @@ class ServerTimingMiddleware:
                 ]).encode('ascii')
 
                 if server_timing:
-                    # FIXME: Doesn't check if a server-timing header is already set
                     response['headers'].append([b'server-timing', server_timing])
 
                 if yappi.get_mem_usage() >= self.max_profiler_mem:

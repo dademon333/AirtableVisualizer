@@ -6,12 +6,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from common.sqlalchemy_modules import convert_instance_to_dict
 from db import ChangeLog, ChangeType, ChangedTable
-from schemas.archived_db_element import ArchivedDbElementCreate
+from schemas.archived_db_elements import ArchivedDbElementCreate
 from schemas.change_log import ChangeLogCreate, ChangeLogUpdate
-from schemas.db_element_update import DbElementUpdateCreate
-from .archived_db_element import archived_db_element
+from schemas.db_elements_updates import DbElementUpdateCreate
+from .archived_db_elements import archived_db_elements
 from .base import Base, CRUDBase
-from .db_element_update import db_element_update
+from .db_elements_updates import db_elements_updates
 
 
 class CRUDChangeLog(CRUDBase[ChangeLog, ChangeLogCreate, ChangeLogUpdate]):
@@ -35,9 +35,9 @@ class CRUDChangeLog(CRUDBase[ChangeLog, ChangeLogCreate, ChangeLogUpdate]):
         result = await db.scalars(
             select(ChangeLog)
             .where(where_clause)
+            .order_by(ChangeLog.id)
             .limit(limit)
             .offset(offset)
-            .order_by(ChangeLog.id)
         )
         return result.unique().all()
 
@@ -84,7 +84,7 @@ class CRUDChangeLog(CRUDBase[ChangeLog, ChangeLogCreate, ChangeLogUpdate]):
                     element_id=new_instance.id
                 )
             )
-            await db_element_update.create(
+            await db_elements_updates.create(
                 db,
                 DbElementUpdateCreate(
                     column=key,
@@ -115,7 +115,7 @@ class CRUDChangeLog(CRUDBase[ChangeLog, ChangeLogCreate, ChangeLogUpdate]):
         )
 
         element_data = convert_instance_to_dict(element_instance)
-        await archived_db_element.create(
+        await archived_db_elements.create(
             db,
             ArchivedDbElementCreate(
                 element_data=element_data,

@@ -1,9 +1,10 @@
 from pydantic import BaseModel, Field
 
 from db import EntityType
+from .entities_connections import EntitiesConnectionInfoReduced
 
 
-class EntitiesTypesConnectionBase(BaseModel):
+class EntitiesTypesConnectionNamesBase(BaseModel):
     parent_column_name: str | None = Field(
         None,
         description='Название родительской колонки в дочерней таблице',
@@ -16,21 +17,34 @@ class EntitiesTypesConnectionBase(BaseModel):
     )
 
 
-class EntitiesTypesConnectionBaseExtended(EntitiesTypesConnectionBase):
+class EntitiesTypesConnectionTypesBase(BaseModel):
     parent_type: EntityType = Field(..., description='Родительский тип сущности (из него выходят стрелки)')
     child_type: EntityType = Field(..., description='Дочерний тип сущности (в него входят стрелки)')
 
 
-class EntitiesTypesConnectionCreate(EntitiesTypesConnectionBaseExtended):
+class EntitiesTypesConnectionFullBase(
+    EntitiesTypesConnectionTypesBase,
+    EntitiesTypesConnectionNamesBase
+):
     pass
 
 
-class EntitiesTypesConnectionUpdate(EntitiesTypesConnectionBase):
+class EntitiesTypesConnectionCreate(EntitiesTypesConnectionFullBase):
     pass
 
 
-class EntitiesTypesConnectionInfo(EntitiesTypesConnectionBaseExtended):
+class EntitiesTypesConnectionUpdate(EntitiesTypesConnectionNamesBase):
+    pass
+
+
+class EntitiesTypesConnectionInfo(EntitiesTypesConnectionFullBase):
     id: int
 
     class Config:
         orm_mode = True
+
+
+class CoursesEntitiesTypesConnectionInfo(EntitiesTypesConnectionTypesBase):
+    """Special version for courses info."""
+    id: int
+    entities_connections: list[EntitiesConnectionInfoReduced]

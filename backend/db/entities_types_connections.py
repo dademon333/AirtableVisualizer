@@ -2,7 +2,7 @@ from sqlalchemy import Column, Integer, Enum, String, UniqueConstraint
 from sqlalchemy.orm import relationship
 
 from .base import Base, get_enum_values
-from .entity import EntityType
+from .entities import EntityType
 
 
 class EntitiesTypesConnection(Base):

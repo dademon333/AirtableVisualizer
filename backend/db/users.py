@@ -14,6 +14,7 @@ class UserStatus(str, enum.Enum):
 
 
 user_status_weights = {
+    None: 0,
     UserStatus.USER: 0,
     UserStatus.EDITOR: 10,
     UserStatus.ADMIN: 20
@@ -36,8 +37,7 @@ class User(Base):
 
     db_changes = relationship(
         'ChangeLog',
-        backref=backref('editor_data', lazy='joined', uselist=False),
-        lazy='joined'
+        backref=backref('editor_data', lazy='joined', uselist=False)
     )
 
     __table_args__ = (

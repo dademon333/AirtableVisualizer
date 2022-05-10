@@ -1,6 +1,6 @@
 import enum
 
-from sqlalchemy import Column, Integer, String, Text, Index, Enum, Boolean, DateTime, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Text, Enum, UniqueConstraint
 
 from .base import Base, get_enum_values
 

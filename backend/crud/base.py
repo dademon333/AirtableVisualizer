@@ -20,22 +20,12 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         self.model = model
 
     # noinspection PyShadowingBuiltins
-    async def get_by_id(self, db: AsyncSession, id: int) -> ModelType | None:
-        return await db.get(self.model, id)
-
-    async def get_many(
+    async def get_by_id(
             self,
             db: AsyncSession,
-            limit: int = 100,
-            offset: int = 0
-    ) -> list[ModelType]:
-        result = await db.scalars(
-            select(self.model)
-            .limit(limit)
-            .offset(offset)
-            .order_by(self.model.id)
-        )
-        return result.unique().all()
+            id: int
+    ) -> ModelType | None:
+        return await db.get(self.model, id)
 
     async def get_by_ids(
             self,
@@ -45,6 +35,30 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         result = await db.scalars(
             select(self.model)
             .where(self.model.id.in_(ids))
+            .order_by(self.model.id)
+        )
+        return result.unique().all()
+
+    async def get_many(
+            self,
+            db: AsyncSession,
+            limit: int = 100,
+            offset: int = 0
+    ) -> list[ModelType]:
+        result = await db.scalars(
+            select(self.model)
+            .order_by(self.model.id)
+            .limit(limit)
+            .offset(offset)
+        )
+        return result.unique().all()
+
+    async def get_all(
+            self,
+            db: AsyncSession
+    ) -> list[ModelType]:
+        result = await db.scalars(
+            select(self.model)
             .order_by(self.model.id)
         )
         return result.unique().all()

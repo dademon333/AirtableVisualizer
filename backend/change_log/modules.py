@@ -1,11 +1,13 @@
+import sqlalchemy.exc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 import crud
 from common.sqlalchemy_modules import convert_instance_to_dict
 from db import ChangeLog, ChangedTable, Base
-from schemas.entities_connection import EntitiesConnectionInfo
-from schemas.entities_types_connection import EntitiesTypesConnectionInfo, EntitiesTypesConnectionUpdate
-from schemas.user import UserInfo, UserUpdate
+from schemas.entities_connections import EntitiesConnectionInfo
+from schemas.entities_types_connections import CoursesEntitiesTypesConnectionInfo, EntitiesTypesConnectionUpdate
+from schemas.hidden_courses import HiddenCourseInfo
+from schemas.users import UserInfo, UserUpdate
 
 
 async def find_elements_data(
@@ -25,7 +27,7 @@ async def find_elements_data(
         elements = await _search_elements_with_crud(db, table, ids)
         elements = [convert_instance_to_dict(x) for x in elements]
 
-        archived_elements = await crud.archived_db_element.search(
+        archived_elements = await crud.archived_db_elements.search(
             db=db,
             table=table,
             ids=ids - set(x['id'] for x in elements)
@@ -47,11 +49,13 @@ async def _search_elements_with_crud(
 ) -> list[Base]:
     match table:
         case ChangedTable.USERS:
-            return await crud.user.get_by_ids(db, ids)
+            return await crud.users.get_by_ids(db, ids)
+        case ChangedTable.HIDDEN_COURSES:
+            return await crud.hidden_courses.get_by_ids(db, ids)
         case ChangedTable.ENTITIES_TYPES_CONNECTIONS:
-            return await crud.entities_types_connection.get_by_ids(db, ids)
+            return await crud.entities_types_connections.get_by_ids(db, ids)
         case ChangedTable.ENTITIES_CONNECTIONS:
-            return await crud.entities_connection.get_by_ids(db, ids)
+            return await crud.entities_connections.get_by_ids(db, ids)
         case _:
             raise NotImplementedError(f"Table '{table}' handle not implemented")
 
@@ -60,13 +64,16 @@ def convert_to_info_model(
         element_data: dict,
         table: ChangedTable
 ) -> UserInfo \
-        | EntitiesTypesConnectionInfo \
-        | EntitiesConnectionInfo:
+     | CoursesEntitiesTypesConnectionInfo \
+     | EntitiesConnectionInfo \
+     | HiddenCourseInfo:
     match table:
         case ChangedTable.USERS:
             return UserInfo(**element_data)
+        case ChangedTable.HIDDEN_COURSES:
+            return HiddenCourseInfo(**element_data)
         case ChangedTable.ENTITIES_TYPES_CONNECTIONS:
-            return EntitiesTypesConnectionInfo(**element_data)
+            return CoursesEntitiesTypesConnectionInfo(**element_data)
         case ChangedTable.ENTITIES_CONNECTIONS:
             return EntitiesConnectionInfo(**element_data)
         case _:
@@ -74,13 +81,23 @@ def convert_to_info_model(
 
 
 async def revert_create_change(db: AsyncSession, change_data: ChangeLog) -> None:
+    element_data = await _search_elements_with_crud(
+        db,
+        change_data.table,
+        {change_data.element_id}
+    )
+    if element_data == []:
+        raise sqlalchemy.exc.IntegrityError(None, None, None)
+
     match change_data.table:
         case ChangedTable.USERS:
-            return await crud.user.delete(db, change_data.element_id)
+            return await crud.users.delete(db, change_data.element_id)
+        case ChangedTable.HIDDEN_COURSES:
+            return await crud.hidden_courses.delete(db, change_data.element_id)
         case ChangedTable.ENTITIES_TYPES_CONNECTIONS:
-            return await crud.entities_types_connection.delete(db, change_data.element_id)
+            return await crud.entities_types_connections.delete(db, change_data.element_id)
         case ChangedTable.ENTITIES_CONNECTIONS:
-            return await crud.entities_connection.delete(db, change_data.element_id)
+            return await crud.entities_connections.delete(db, change_data.element_id)
         case _:
             raise NotImplementedError(f"Table '{change_data.table}' handle not implemented")
 
@@ -89,19 +106,20 @@ async def revert_update_change(db: AsyncSession, change_data: ChangeLog) -> None
     arg = {change_data.update_instance.column: change_data.update_instance.old_value}
     match change_data.table:
         case ChangedTable.USERS:
-            return await crud.user.update(
+            return await crud.users.update(
                 db,
                 change_data.element_id,
                 UserUpdate(**arg)
             )
         case ChangedTable.ENTITIES_TYPES_CONNECTIONS:
-            return await crud.entities_types_connection.update(
+            return await crud.entities_types_connections.update(
                 db,
                 change_data.element_id,
                 EntitiesTypesConnectionUpdate(**arg)
             )
-        case ChangedTable.ENTITIES_CONNECTIONS:
-            raise ValueError(f'can\'t change entities connections table, '
+        case ChangedTable.ENTITIES_CONNECTIONS | ChangedTable.HIDDEN_COURSES:
+            # This tables can't be changed
+            raise ValueError(f'can\'t change {change_data.table.value} table, '
                              f'change_id: {change_data.id}')
         case _:
             raise NotImplementedError(f"Table '{change_data.table}' handle not implemented")
@@ -112,10 +130,12 @@ async def revert_delete_change(db: AsyncSession, change_data: ChangeLog) -> None
     element_data = change_data.delete_instance.element_data
     match change_data.table:
         case ChangedTable.USERS:
-            return await crud.user.create_from_dict(db, element_data)
+            return await crud.users.create_from_dict(db, element_data)
+        case ChangedTable.HIDDEN_COURSES:
+            return await crud.hidden_courses.create_from_dict(db, element_data)
         case ChangedTable.ENTITIES_TYPES_CONNECTIONS:
-            return await crud.entities_types_connection.create_from_dict(db, element_data)
+            return await crud.entities_types_connections.create_from_dict(db, element_data)
         case ChangedTable.ENTITIES_CONNECTIONS:
-            return await crud.entities_connection.create_from_dict(db, element_data)
+            return await crud.entities_connections.create_from_dict(db, element_data)
         case _:
             raise NotImplementedError(f"Table '{change_data.table}' handle not implemented")

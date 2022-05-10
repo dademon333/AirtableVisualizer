@@ -1,9 +1,12 @@
-from .user import user
-from .user_session import UserSessionCRUD as user_session  # noqa
+from .users import users
+from .user_sessions import CRUDUserSessions as user_sessions  # noqa
 
-from .entities_types_connection import entities_types_connection
-from .entities_connection import entities_connection
+from .entities import entities
+from .hidden_courses import hidden_courses
+
+from .entities_types_connections import entities_types_connections
+from .entities_connections import entities_connections
 
 from .change_log import change_log
-from .db_element_update import db_element_update
-from .archived_db_element import archived_db_element
+from .db_elements_updates import db_elements_updates
+from .archived_db_elements import archived_db_elements

@@ -5,10 +5,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 import crud
 from common.responses import OkResponse, UnauthorizedResponse, AdminStatusRequiredResponse
 from common.security.auth import UserStatusChecker, get_user_id
-from db import UserStatus, get_db, ChangedTable
-from entities_types_connections.schemas import EntitiesTypesConnectionNotFoundResponse, \
-    EntitiesTypesConnectionCreateErrorResponse
-from schemas.entities_types_connection import EntitiesTypesConnectionUpdate, EntitiesTypesConnectionInfo, \
+from db import UserStatus, get_db, ChangedTable, EntitiesTypesConnection
+from entities_types_connections.modules import have_cycle
+from entities_types_connections.schemas import ConnectionNotFoundResponse, \
+    ConnectionCreateErrorResponse, ConnectionCreatesCycleErrorResponse
+from schemas.entities_types_connections import EntitiesTypesConnectionUpdate, CoursesEntitiesTypesConnectionInfo, \
     EntitiesTypesConnectionCreate
 
 types_connections_router = APIRouter()
@@ -16,7 +17,7 @@ types_connections_router = APIRouter()
 
 @types_connections_router.get(
     '/list',
-    response_model=list[EntitiesTypesConnectionInfo]
+    response_model=list[CoursesEntitiesTypesConnectionInfo]
 )
 async def list_connections(
         db: AsyncSession = Depends(get_db)
@@ -26,14 +27,14 @@ async def list_connections(
     Если в названии колонки указан null, её отображать не надо.
     Также можно использовать эту информацию при построении графа.
     """
-    return await crud.entities_types_connection.get_many(db, limit=1000)
+    return await crud.entities_types_connections.get_many(db, limit=1000)
 
 
 @types_connections_router.post(
     '/create',
-    response_model=EntitiesTypesConnectionInfo,
+    response_model=CoursesEntitiesTypesConnectionInfo,
     responses={
-        400: {'model': EntitiesTypesConnectionCreateErrorResponse},
+        400: {'model': ConnectionCreateErrorResponse | ConnectionCreatesCycleErrorResponse},
         401: {'model': UnauthorizedResponse},
         403: {'model': AdminStatusRequiredResponse}
     },
@@ -47,12 +48,20 @@ async def create_connection(
     """Создает связь между типами сущностей.
     Требует статус admin.
     """
+    connections = await crud.entities_types_connections.get_all(db)
+    connections.append(EntitiesTypesConnection(parent_type=create_form.parent_type, child_type=create_form.child_type))
+    if have_cycle(connections):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=ConnectionCreatesCycleErrorResponse().detail
+        )
+
     try:
-        connection = await crud.entities_types_connection.create(db, create_form)
+        connection = await crud.entities_types_connections.create(db, create_form)
     except sqlalchemy.exc.IntegrityError:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=EntitiesTypesConnectionCreateErrorResponse().detail
+            detail=ConnectionCreateErrorResponse().detail
         )
 
     await crud.change_log.log_create_operation(
@@ -61,7 +70,7 @@ async def create_connection(
         table=ChangedTable.ENTITIES_TYPES_CONNECTIONS,
         element_id=connection.id
     )
-    return EntitiesTypesConnectionInfo.from_orm(connection)
+    return CoursesEntitiesTypesConnectionInfo.from_orm(connection)
 
 
 @types_connections_router.put(
@@ -70,7 +79,7 @@ async def create_connection(
     responses={
         401: {'model': UnauthorizedResponse},
         403: {'model': AdminStatusRequiredResponse},
-        404: {'model': EntitiesTypesConnectionNotFoundResponse}
+        404: {'model': ConnectionNotFoundResponse}
     },
     dependencies=[Depends(UserStatusChecker(min_status=UserStatus.ADMIN))]
 )
@@ -84,15 +93,15 @@ async def update_column_name(
     Если указать null, колонка скроется.
     Требует статус admin.
     """
-    connection = await crud.entities_types_connection.get_by_id(db, connection_id)
+    connection = await crud.entities_types_connections.get_by_id(db, connection_id)
     if connection is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=EntitiesTypesConnectionNotFoundResponse().detail
+            detail=ConnectionNotFoundResponse().detail
         )
 
     old_instance = dict(connection.__dict__)
-    await crud.entities_types_connection.update(db, connection_id, update_form)
+    await crud.entities_types_connections.update(db, connection_id, update_form)
 
     await crud.change_log.log_update_operation(
         db=db,
@@ -111,7 +120,7 @@ async def update_column_name(
     responses={
         401: {'model': UnauthorizedResponse},
         403: {'model': AdminStatusRequiredResponse},
-        404: {'model': EntitiesTypesConnectionNotFoundResponse}
+        404: {'model': ConnectionNotFoundResponse}
     },
     dependencies=[Depends(UserStatusChecker(min_status=UserStatus.ADMIN))]
 )
@@ -123,11 +132,11 @@ async def delete_connection(
     """Удаляет связь между типами сущностей.
     Требует статус admin.
     """
-    connection = await crud.entities_types_connection.get_by_id(db, connection_id)
+    connection = await crud.entities_types_connections.get_by_id(db, connection_id)
     if connection is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=EntitiesTypesConnectionNotFoundResponse().detail
+            detail=ConnectionNotFoundResponse().detail
         )
 
     delete_log = await crud.change_log.log_delete_operation(
@@ -145,5 +154,5 @@ async def delete_connection(
             parent_change_id=delete_log.id
         )
 
-    await crud.entities_types_connection.delete(db, connection_id)
+    await crud.entities_types_connections.delete(db, connection_id)
     return OkResponse()

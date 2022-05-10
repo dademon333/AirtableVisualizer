@@ -33,7 +33,8 @@ app.add_middleware(
 app.add_middleware(ServerTimingMiddleware, calls_to_track={
     'dependencies_execution': (fastapi.routing.solve_dependencies,),
     'endpoint_running': (fastapi.routing.run_endpoint_function,),
-    'pydantic_validation': (parse_raw,),
+    'pydantic_validation': (fastapi.routing.serialize_response,),
+    'pydantic_validation_': (parse_raw,),
     'json_rendering': (
         fastapi.responses.JSONResponse.render,
         fastapi.responses.ORJSONResponse.render,

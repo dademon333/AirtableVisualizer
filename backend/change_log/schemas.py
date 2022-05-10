@@ -3,10 +3,11 @@ from datetime import datetime
 from pydantic import BaseModel, Field
 
 from db import ChangeType, ChangedTable
-from schemas.db_element_update import DbElementUpdateInfo
-from schemas.entities_connection import EntitiesConnectionInfo
-from schemas.entities_types_connection import EntitiesTypesConnectionInfo
-from schemas.user import UserInfo
+from schemas.db_elements_updates import DbElementUpdateInfo
+from schemas.entities_connections import EntitiesConnectionInfo
+from schemas.entities_types_connections import CoursesEntitiesTypesConnectionInfo
+from schemas.hidden_courses import HiddenCourseInfo
+from schemas.users import UserInfo
 
 
 class ChangeLogRecord(BaseModel):
@@ -17,8 +18,9 @@ class ChangeLogRecord(BaseModel):
     created_at: datetime
     element_data: \
         UserInfo \
-        | EntitiesTypesConnectionInfo \
+        | CoursesEntitiesTypesConnectionInfo \
         | EntitiesConnectionInfo \
+        | HiddenCourseInfo \
         = Field(
             ...,
             description='Последняя найденная в бд информация об элементе'
@@ -36,7 +38,7 @@ class ChangeLogRecord(BaseModel):
 
 
 class CantRevertChangeResponse(BaseModel):
-    detail: str = 'Can\t revert this change'
+    detail: str = 'Can\'t revert this change'
 
 
 class ChangeLogNotFoundResponse(BaseModel):

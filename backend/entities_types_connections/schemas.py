@@ -1,9 +1,13 @@
 from pydantic import BaseModel
 
 
-class EntitiesTypesConnectionNotFoundResponse(BaseModel):
-    detail: str = 'connection not found'
+class ConnectionNotFoundResponse(BaseModel):
+    detail: str = 'Connection not found'
 
 
-class EntitiesTypesConnectionCreateErrorResponse(BaseModel):
-    detail: str = 'connection already exists'
+class ConnectionCreateErrorResponse(BaseModel):
+    detail: str = 'Connection already exists'
+
+
+class ConnectionCreatesCycleErrorResponse(BaseModel):
+    detail: str = 'This connection creates connections cycle'
