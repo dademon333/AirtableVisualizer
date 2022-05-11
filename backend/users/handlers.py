@@ -2,11 +2,11 @@ import sqlalchemy.exc
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
-import crud
+from common import crud
 from common.responses import OkResponse, UnauthorizedResponse, AdminStatusRequiredResponse
 from common.security.auth import get_user_id, check_auth, UserStatusChecker
-from db import get_db, UserStatus, ChangedTable
-from schemas.users import UserCreate, UserUpdate, UserInfo, UserInfoExtended
+from common.db import get_db, UserStatus, ChangedTable
+from common.schemas.users import UserCreate, UserUpdate, UserInfo, UserInfoExtended
 from .schemas import UserNotFoundResponse, UserEmailAlreadyExistsResponse, UserSelfUpdateForm
 
 users_router = APIRouter()

@@ -2,7 +2,7 @@ import enum
 
 from sqlalchemy.orm.collections import InstrumentedList
 
-from db import Base
+from common.db import Base
 
 
 def convert_instance_to_dict(element_instance: Base):

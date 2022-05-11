@@ -1,8 +1,8 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db import Entity, EntityType
-from schemas.entities import EntityCreate, EntityUpdate
+from common.db import Entity, EntityType
+from common.schemas.entities import EntityCreate, EntityUpdate
 from .base import CRUDBase
 
 

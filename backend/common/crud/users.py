@@ -3,8 +3,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 
 from common.security.users import hash_password
-from db import User
-from schemas.users import UserCreate, UserUpdate
+from common.db import User
+from common.schemas.users import UserCreate, UserUpdate
 from .base import CRUDBase
 
 

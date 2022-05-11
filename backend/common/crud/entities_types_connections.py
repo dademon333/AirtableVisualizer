@@ -2,9 +2,9 @@ import sqlalchemy.exc
 from sqlalchemy import select, bindparam, cast, Enum
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from crud.base import CRUDBase
-from db import EntitiesTypesConnection
-from schemas.entities_types_connections import EntitiesTypesConnectionCreate, \
+from common.crud.base import CRUDBase
+from common.db import EntitiesTypesConnection
+from common.schemas.entities_types_connections import EntitiesTypesConnectionCreate, \
     EntitiesTypesConnectionUpdate
 
 

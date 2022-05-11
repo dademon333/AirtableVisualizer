@@ -3,12 +3,12 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import ORJSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-import crud
+from common import crud
 from common.responses import OkResponse, EditorStatusRequiredResponse, UnauthorizedResponse
 from common.security.auth import UserStatusChecker, get_user_id, get_user_status, can_access
-from db import get_db, UserStatus, EntityType, ChangedTable
-from schemas.entities import EntityInfo, CourseInfo, CoursesSetInfo
-from schemas.hidden_courses import HiddenCourseCreate
+from common.db import get_db, UserStatus, EntityType, ChangedTable
+from common.schemas.entities import EntityInfo, CourseInfo, CoursesSetInfo
+from common.schemas.hidden_courses import HiddenCourseCreate
 from .modules import get_course_info, get_all_courses_info
 from .schemas import CourseNotFoundResponse, NotACourseErrorResponse
 

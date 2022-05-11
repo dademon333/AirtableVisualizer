@@ -5,10 +5,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from common.sqlalchemy_modules import convert_instance_to_dict
-from db import ChangeLog, ChangeType, ChangedTable
-from schemas.archived_db_elements import ArchivedDbElementCreate
-from schemas.change_log import ChangeLogCreate, ChangeLogUpdate
-from schemas.db_elements_updates import DbElementUpdateCreate
+from common.db import ChangeLog, ChangeType, ChangedTable
+from common.schemas.archived_db_elements import ArchivedDbElementCreate
+from common.schemas.change_log import ChangeLogCreate, ChangeLogUpdate
+from common.schemas.db_elements_updates import DbElementUpdateCreate
 from .archived_db_elements import archived_db_elements
 from .base import Base, CRUDBase
 from .db_elements_updates import db_elements_updates

@@ -1,10 +1,10 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 
-import crud
-from db import EntityType, EntitiesTypesConnection, EntitiesConnection, Entity
-from schemas.entities import CourseInfo, EntityInfo, CoursesSetInfo
-from schemas.entities_connections import EntitiesConnectionInfoReduced
-from schemas.entities_types_connections import CoursesEntitiesTypesConnectionInfo
+from common import crud
+from common.db import EntityType, EntitiesTypesConnection, EntitiesConnection, Entity
+from common.schemas.entities import CourseInfo, EntityInfo, CoursesSetInfo
+from common.schemas.entities_connections import EntitiesConnectionInfoReduced
+from common.schemas.entities_types_connections import EntitiesTypesConnectionInfoExtended
 
 
 def connectivity_component_dfs(
@@ -277,7 +277,7 @@ def prepare_result(
     entities = [EntityInfo.from_orm(x) for x in entities]
 
     connections = [
-        CoursesEntitiesTypesConnectionInfo(
+        EntitiesTypesConnectionInfoExtended(
             id=types_conn.id,
             parent_type=types_conn.parent_type,
             child_type=types_conn.child_type,

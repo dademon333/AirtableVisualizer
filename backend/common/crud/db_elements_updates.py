@@ -1,5 +1,5 @@
-from db import DbElementUpdate
-from schemas.db_elements_updates import DbElementUpdateCreate, DbElementUpdateUpdate
+from common.db import DbElementUpdate
+from common.schemas.db_elements_updates import DbElementUpdateCreate, DbElementUpdateUpdate
 from .base import CRUDBase
 
 

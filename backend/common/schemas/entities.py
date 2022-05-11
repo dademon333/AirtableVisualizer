@@ -1,7 +1,7 @@
 from pydantic import BaseModel, Field
 
-from db import EntityType, EntitySize
-from .entities_types_connections import CoursesEntitiesTypesConnectionInfo
+from common.db import EntityType, EntitySize
+from .entities_types_connections import EntitiesTypesConnectionInfoExtended
 
 
 class EntityBase(BaseModel):
@@ -32,10 +32,10 @@ class EntityInfo(EntityBase):
 
 class CourseInfo(EntityBase):
     id: int
-    connections: list[CoursesEntitiesTypesConnectionInfo]
+    connections: list[EntitiesTypesConnectionInfoExtended]
     entities: list[EntityInfo]
 
 
 class CoursesSetInfo(BaseModel):
-    connections: list[CoursesEntitiesTypesConnectionInfo]
+    connections: list[EntitiesTypesConnectionInfoExtended]
     entities: list[EntityInfo]

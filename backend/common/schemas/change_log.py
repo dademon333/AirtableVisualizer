@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel
 
-from db import ChangeType, ChangedTable
+from common.db import ChangeType, ChangedTable
 
 
 class ChangeLogCreate(BaseModel):

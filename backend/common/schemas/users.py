@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, Field
 
-from db import UserStatus
+from common.db import UserStatus
 
 
 class UserCreate(BaseModel):

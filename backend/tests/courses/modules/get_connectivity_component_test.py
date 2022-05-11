@@ -1,5 +1,5 @@
 from courses.modules import get_connectivity_component
-from db import EntityType, EntitiesTypesConnection
+from common.db import EntityType, EntitiesTypesConnection
 
 
 def test_no_connections():

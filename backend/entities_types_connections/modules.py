@@ -1,6 +1,6 @@
 from enum import Enum
 
-from db import EntitiesTypesConnection, EntityType
+from common.db import EntitiesTypesConnection, EntityType
 
 
 class Color(Enum):

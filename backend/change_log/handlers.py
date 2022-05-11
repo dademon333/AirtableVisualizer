@@ -2,14 +2,14 @@ import sqlalchemy.exc
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-import crud
+from common import crud
 from common.responses import UnauthorizedResponse, EditorStatusRequiredResponse, \
     OkResponse, AdminStatusRequiredResponse
 from common.security.auth import UserStatusChecker, get_user_status
 from common.sqlalchemy_modules import convert_instance_to_dict
-from db import UserStatus, get_db, ChangeType, ChangedTable
-from schemas.db_elements_updates import DbElementUpdateInfo
-from schemas.users import UserInfo
+from common.db import UserStatus, get_db, ChangeType, ChangedTable
+from common.schemas.db_elements_updates import DbElementUpdateInfo
+from common.schemas.users import UserInfo
 from .modules import find_elements_data, convert_to_info_model, revert_delete_change, \
     revert_update_change, revert_create_change
 from .schemas import ChangeLogRecord, ChangeLogNotFoundResponse, CantRevertChangeResponse

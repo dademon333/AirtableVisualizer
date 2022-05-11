@@ -2,8 +2,8 @@ from fastapi import Depends, HTTPException, status, Cookie
 from sqlalchemy.ext.asyncio import AsyncSession
 from aioredis.client import Redis
 
-import crud
-from db import UserStatus, user_status_weights, get_db
+from common import crud
+from common.db import UserStatus, user_status_weights, get_db
 from common.project_cookies import ProjectCookies, get_delete_cookie_header
 from common.redis import get_redis_cursor
 

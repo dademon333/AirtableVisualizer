@@ -1,8 +1,8 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db import ArchivedDbElement, ChangedTable, ChangeLog
-from schemas.archived_db_elements import ArchivedDbElementCreate, ArchivedDbElementUpdate
+from common.db import ArchivedDbElement, ChangedTable, ChangeLog
+from common.schemas.archived_db_elements import ArchivedDbElementCreate, ArchivedDbElementUpdate
 from .base import CRUDBase
 
 

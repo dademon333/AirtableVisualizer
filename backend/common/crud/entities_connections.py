@@ -1,5 +1,5 @@
-from db import EntitiesConnection
-from schemas.entities_connections import EntitiesConnectionCreate, EntitiesConnectionUpdate
+from common.db import EntitiesConnection
+from common.schemas.entities_connections import EntitiesConnectionCreate, EntitiesConnectionUpdate
 from .base import CRUDBase
 
 

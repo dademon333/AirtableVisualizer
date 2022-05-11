@@ -1,5 +1,5 @@
 from courses.modules import get_dependent_branches_heads
-from db import EntitiesTypesConnection, EntityType
+from common.db import EntitiesTypesConnection, EntityType
 
 
 def test_no_heads():

@@ -1,8 +1,8 @@
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from db import HiddenCourse
-from schemas.hidden_courses import HiddenCourseCreate, HiddenCourseUpdate
+from common.db import HiddenCourse
+from common.schemas.hidden_courses import HiddenCourseCreate, HiddenCourseUpdate
 from .base import CRUDBase
 
 

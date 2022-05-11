@@ -2,22 +2,22 @@ import sqlalchemy.exc
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-import crud
+from common import crud
 from common.responses import OkResponse, UnauthorizedResponse, AdminStatusRequiredResponse
 from common.security.auth import UserStatusChecker, get_user_id
-from db import UserStatus, get_db, ChangedTable, EntitiesTypesConnection
+from common.db import UserStatus, get_db, ChangedTable, EntitiesTypesConnection
 from entities_types_connections.modules import have_cycle
 from entities_types_connections.schemas import ConnectionNotFoundResponse, \
     ConnectionCreateErrorResponse, ConnectionCreatesCycleErrorResponse
-from schemas.entities_types_connections import EntitiesTypesConnectionUpdate, CoursesEntitiesTypesConnectionInfo, \
-    EntitiesTypesConnectionCreate
+from common.schemas.entities_types_connections import EntitiesTypesConnectionUpdate, \
+    EntitiesTypesConnectionCreate, EntitiesTypesConnectionInfo
 
 types_connections_router = APIRouter()
 
 
 @types_connections_router.get(
     '/list',
-    response_model=list[CoursesEntitiesTypesConnectionInfo]
+    response_model=list[EntitiesTypesConnectionInfo]
 )
 async def list_connections(
         db: AsyncSession = Depends(get_db)
@@ -27,12 +27,13 @@ async def list_connections(
     Если в названии колонки указан null, её отображать не надо.
     Также можно использовать эту информацию при построении графа.
     """
-    return await crud.entities_types_connections.get_many(db, limit=1000)
+    connections = await crud.entities_types_connections.get_many(db, limit=1000)
+    return [EntitiesTypesConnectionInfo.from_orm(x) for x in connections]
 
 
 @types_connections_router.post(
     '/create',
-    response_model=CoursesEntitiesTypesConnectionInfo,
+    response_model=EntitiesTypesConnectionInfo,
     responses={
         400: {'model': ConnectionCreateErrorResponse | ConnectionCreatesCycleErrorResponse},
         401: {'model': UnauthorizedResponse},
@@ -70,7 +71,7 @@ async def create_connection(
         table=ChangedTable.ENTITIES_TYPES_CONNECTIONS,
         element_id=connection.id
     )
-    return CoursesEntitiesTypesConnectionInfo.from_orm(connection)
+    return EntitiesTypesConnectionInfo.from_orm(connection)
 
 
 @types_connections_router.put(

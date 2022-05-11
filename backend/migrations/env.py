@@ -9,7 +9,7 @@ from alembic import context
 load_dotenv('../.env')
 
 from tokens import Tokens  # noqa: E402
-from db import metadata  # noqa: E402
+from common.db import metadata  # noqa: E402
 
 
 # this is the Alembic Config object, which provides

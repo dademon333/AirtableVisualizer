@@ -1,6 +1,6 @@
 from pydantic import BaseModel, Field
 
-from db import EntityType
+from common.db import EntityType
 from .entities_connections import EntitiesConnectionInfoReduced
 
 
@@ -44,7 +44,10 @@ class EntitiesTypesConnectionInfo(EntitiesTypesConnectionFullBase):
         orm_mode = True
 
 
-class CoursesEntitiesTypesConnectionInfo(EntitiesTypesConnectionTypesBase):
+class EntitiesTypesConnectionInfoExtended(EntitiesTypesConnectionTypesBase):
     """Special version for courses info."""
     id: int
     entities_connections: list[EntitiesConnectionInfoReduced]
+
+    class Config:
+        orm_mode = True

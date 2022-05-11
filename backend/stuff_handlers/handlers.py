@@ -5,14 +5,14 @@ from fastapi import APIRouter, Depends, Cookie, status, HTTPException
 from fastapi.responses import JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-import crud
+from common import crud
 from common.project_cookies import ProjectCookies
 from common.redis import get_redis_cursor
 from common.responses import OkResponse, UnauthorizedResponse, EditorStatusRequiredResponse
 from common.security.auth import UserStatusChecker, check_auth
 from common.security.users import hash_password
-from db import UserStatus, get_db
-from schemas.users import UserInfo
+from common.db import UserStatus, get_db
+from common.schemas.users import UserInfo
 from .schemas import HostnameResponse, LoginErrorResponse, LoginForm
 
 stuff_router = APIRouter()

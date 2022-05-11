@@ -1,13 +1,14 @@
 import sqlalchemy.exc
 from sqlalchemy.ext.asyncio import AsyncSession
 
-import crud
+from common import crud
 from common.sqlalchemy_modules import convert_instance_to_dict
-from db import ChangeLog, ChangedTable, Base
-from schemas.entities_connections import EntitiesConnectionInfo
-from schemas.entities_types_connections import CoursesEntitiesTypesConnectionInfo, EntitiesTypesConnectionUpdate
-from schemas.hidden_courses import HiddenCourseInfo
-from schemas.users import UserInfo, UserUpdate
+from common.db import ChangeLog, ChangedTable, Base
+from common.schemas.entities_connections import EntitiesConnectionInfo
+from common.schemas.entities_types_connections import EntitiesTypesConnectionUpdate, \
+    EntitiesTypesConnectionInfo
+from common.schemas.hidden_courses import HiddenCourseInfo
+from common.schemas.users import UserInfo, UserUpdate
 
 
 async def find_elements_data(
@@ -64,7 +65,7 @@ def convert_to_info_model(
         element_data: dict,
         table: ChangedTable
 ) -> UserInfo \
-     | CoursesEntitiesTypesConnectionInfo \
+     | EntitiesTypesConnectionInfo \
      | EntitiesConnectionInfo \
      | HiddenCourseInfo:
     match table:
@@ -73,7 +74,7 @@ def convert_to_info_model(
         case ChangedTable.HIDDEN_COURSES:
             return HiddenCourseInfo(**element_data)
         case ChangedTable.ENTITIES_TYPES_CONNECTIONS:
-            return CoursesEntitiesTypesConnectionInfo(**element_data)
+            return EntitiesTypesConnectionInfo(**element_data)
         case ChangedTable.ENTITIES_CONNECTIONS:
             return EntitiesConnectionInfo(**element_data)
         case _:

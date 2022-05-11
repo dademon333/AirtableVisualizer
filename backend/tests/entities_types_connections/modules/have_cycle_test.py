@@ -1,6 +1,6 @@
 import pytest
 
-from db import EntitiesTypesConnection, EntityType
+from common.db import EntitiesTypesConnection, EntityType
 from entities_types_connections.modules import have_cycle
 
 
