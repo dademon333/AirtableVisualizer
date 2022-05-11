@@ -37,7 +37,7 @@ services:
 
     nginx:
         build:
-            context: ./backend/docker_files
+            context: ./docker_files
             dockerfile: nginx.dockerfile
         ports:
             - "80:80"
