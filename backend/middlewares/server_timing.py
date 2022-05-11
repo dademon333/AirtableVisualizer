@@ -31,6 +31,7 @@ app.add_middleware(ServerTimingMiddleware, calls_to_track={
         fastapi.responses.ORJSONResponse.render,
     ),
     'sql_requests': (greenlet_spawn,),
+    'redis_requests': (Redis.execute_command,),
     'total': (response_validation_middleware,)
 })
 

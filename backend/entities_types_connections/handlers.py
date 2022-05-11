@@ -1,8 +1,10 @@
+import asyncio
+
 import sqlalchemy.exc
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from common import crud
+from common import crud, cache
 from common.responses import OkResponse, UnauthorizedResponse, AdminStatusRequiredResponse
 from common.security.auth import UserStatusChecker, get_user_id
 from common.db import UserStatus, get_db, ChangedTable, EntitiesTypesConnection
@@ -71,6 +73,7 @@ async def create_connection(
         table=ChangedTable.ENTITIES_TYPES_CONNECTIONS,
         element_id=connection.id
     )
+    asyncio.create_task(cache.update_cache())
     return EntitiesTypesConnectionInfo.from_orm(connection)
 
 
@@ -112,6 +115,7 @@ async def update_column_name(
         old_instance=old_instance,
         new_instance=connection
     )
+    asyncio.create_task(cache.update_cache())
     return OkResponse()
 
 
@@ -156,4 +160,5 @@ async def delete_connection(
         )
 
     await crud.entities_types_connections.delete(db, connection_id)
+    asyncio.create_task(cache.update_cache())
     return OkResponse()

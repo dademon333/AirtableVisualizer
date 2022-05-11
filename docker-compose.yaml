@@ -25,6 +25,24 @@ services:
             - nginx
             - redis
 
+    background_workers:
+        build:
+            context: ./backend
+            dockerfile: background_workers.dockerfile
+        environment:
+            POSTGRESQL_USER: $POSTGRESQL_USER
+            POSTGRESQL_PASSWORD: $POSTGRESQL_PASSWORD
+            POSTGRESQL_HOST: $POSTGRESQL_HOST
+            POSTGRESQL_DATABASE: $POSTGRESQL_DATABASE
+
+            REDIS_HOST: $REDIS_HOST
+            DEBUG: $BACKGROUND_WORKERS_DEBUG
+            PYTHONUNBUFFERED: 1
+            SQLALCHEMY_WARN_20: 1
+        depends_on:
+            - redis
+            - postgres
+
     postgres:
         image: postgres:14-alpine
         command: -c listen_addresses='$POSTGRESQL_LISTEN_ADDRESSES'

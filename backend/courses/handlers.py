@@ -1,9 +1,13 @@
+import asyncio
+
 import sqlalchemy.exc
+from aioredis import Redis
 from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.responses import ORJSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from common import crud
+from common import crud, cache
+from common.redis import get_redis_cursor
 from common.responses import OkResponse, EditorStatusRequiredResponse, UnauthorizedResponse
 from common.security.auth import UserStatusChecker, get_user_id, get_user_status, can_access
 from common.db import get_db, UserStatus, EntityType, ChangedTable
@@ -39,13 +43,17 @@ async def list_courses(
 )
 async def get_all_courses_info_(
         user_status: UserStatus = Depends(get_user_status),
-        db: AsyncSession = Depends(get_db)
+        db: AsyncSession = Depends(get_db),
+        redis_cursor: Redis = Depends(get_redis_cursor)
 ):
     """Возвращает информацию о всех доступных для пользователя курсах."""
     if can_access(user_status, min_status=UserStatus.EDITOR):
-        result = await get_all_courses_info(db)
+        exclude_hidden = False
     else:
-        result = await get_all_courses_info(db, exclude_hidden=True)
+        exclude_hidden = True
+
+    if (result := await cache.get_all_courses(redis_cursor, exclude_hidden)) is None:
+        result = await get_all_courses_info(db, exclude_hidden=exclude_hidden)
 
     return ORJSONResponse(result.dict())
 
@@ -62,7 +70,8 @@ async def get_all_courses_info_(
 async def get_course_info_(
         course_id: int,
         user_status: UserStatus = Depends(get_user_status),
-        db: AsyncSession = Depends(get_db)
+        db: AsyncSession = Depends(get_db),
+        redis_cursor: Redis = Depends(get_redis_cursor)
 ):
     """Возвращает информацию о курсе."""
     course = await crud.entities.get_by_id(db, course_id)
@@ -81,7 +90,9 @@ async def get_course_info_(
             detail=NotACourseErrorResponse().detail
         )
 
-    result = await get_course_info(db, course_id)
+    if (result := await cache.get_course(course_id, redis_cursor)) is None:
+        result = await get_course_info(db, course_id)
+
     return ORJSONResponse(result.dict())
 
 
@@ -128,6 +139,7 @@ async def hide_course(
             table=ChangedTable.HIDDEN_COURSES,
             element_id=hidden_course.id
         )
+        asyncio.create_task(cache.update_cache())
 
     return OkResponse()
 
@@ -170,4 +182,5 @@ async def unhide_course(
             table=ChangedTable.HIDDEN_COURSES,
             element_instance=hidden_course
         )
+        asyncio.create_task(cache.update_cache())
     return OkResponse()

@@ -1,8 +1,10 @@
+import asyncio
+
 import sqlalchemy.exc
 from fastapi import APIRouter, Depends, status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from common import crud
+from common import crud, cache
 from common.responses import UnauthorizedResponse, EditorStatusRequiredResponse, \
     OkResponse, AdminStatusRequiredResponse
 from common.security.auth import UserStatusChecker, get_user_status
@@ -121,4 +123,5 @@ async def revert_change(
         )
 
     await crud.change_log.delete(db, change_data.id)
+    asyncio.create_task(cache.update_cache())
     return OkResponse()

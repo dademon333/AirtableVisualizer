@@ -1,4 +1,4 @@
-from .base import get_db, metadata, Base
+from .base import session_factory, get_db, metadata, Base
 
 from .entities import Entity, EntityType, EntitySize
 from .entities_connections import EntitiesConnection
