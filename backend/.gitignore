@@ -1,6 +1,6 @@
-**/__pycache__
-**.log
-
+__pycache__
 .idea
 .env
 ssl
+
+**.log
