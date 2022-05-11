@@ -27,6 +27,7 @@ def upgrade():
         sa.Column('size', sa.Enum('small', 'medium', 'large', name='entity_size'), server_default='medium', nullable=False),
         sa.Column('description', sa.Text(), nullable=True),
         sa.Column('study_time', sa.Integer(), nullable=True),
+        sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
         sa.PrimaryKeyConstraint('id', name=op.f('pk_entities')),
         sa.UniqueConstraint('name', 'type', name=op.f('uq_entities_name'))
     )

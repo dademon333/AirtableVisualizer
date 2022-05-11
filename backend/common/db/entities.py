@@ -1,6 +1,7 @@
 import enum
 
-from sqlalchemy import Column, Integer, String, Text, Enum, UniqueConstraint
+from sqlalchemy import Column, Integer, String, Text, \
+    Enum, UniqueConstraint, DateTime, func
 
 from .base import Base, get_enum_values
 
@@ -44,6 +45,7 @@ class Entity(Base):
     )
     description = Column(Text)
     study_time = Column(Integer)
+    created_at = Column(DateTime, nullable=False, server_default=func.now())
 
     __table_args__ = (
         UniqueConstraint('name', 'type'),
