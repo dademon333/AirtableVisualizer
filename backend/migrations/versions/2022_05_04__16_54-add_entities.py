@@ -31,6 +31,7 @@ def upgrade():
         sa.PrimaryKeyConstraint('id', name=op.f('pk_entities')),
         sa.UniqueConstraint('name', 'type', name=op.f('uq_entities_name'))
     )
+    op.create_index(op.f('ix_entities_type'), 'entities', ['type'], unique=False)
 
     op.create_table(
         'entities_types_connections',
@@ -74,6 +75,7 @@ def downgrade():
     op.drop_table('hidden_courses')
     op.drop_index(op.f('ix_entities_connections_types_connection_id'), table_name='entities_connections')
     op.drop_index(op.f('ix_entities_connections_child_id'), table_name='entities_connections')
+    op.drop_index(op.f('ix_entities_type'), table_name='entities')
     op.drop_table('entities_connections')
     op.drop_table('entities_types_connections')
     op.drop_table('entities')

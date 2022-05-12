@@ -36,7 +36,8 @@ class Entity(Base):
     name = Column(String, nullable=False)
     type = Column(
         Enum(EntityType, name='entity_type', values_callable=get_enum_values),
-        nullable=False
+        nullable=False,
+        index=True
     )
     size = Column(
         Enum(EntitySize, name='entity_size', values_callable=get_enum_values),

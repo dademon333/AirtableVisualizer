@@ -89,9 +89,7 @@ async def create_connection(
         editor_id: int = Depends(get_user_id),
         db: AsyncSession = Depends(get_db)
 ):
-    """Создает связь между типами сущностей.
-    Требует статус admin.
-    """
+    """Создает связь между типами сущностей. Требует статус admin."""
     connections = await crud.entities_types_connections.get_all(db)
     connections.append(EntitiesTypesConnection(parent_type=create_form.parent_type, child_type=create_form.child_type))
     if have_cycle(connections):
@@ -176,9 +174,7 @@ async def delete_connection(
         db: AsyncSession = Depends(get_db),
         redis_cursor: Redis = Depends(get_redis_cursor)
 ):
-    """Удаляет связь между типами сущностей.
-    Требует статус admin.
-    """
+    """Удаляет связь между типами сущностей. Требует статус admin."""
     connection = await crud.entities_types_connections.get_by_id(db, connection_id)
     if connection is None:
         raise HTTPException(
