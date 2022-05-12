@@ -12,7 +12,7 @@ class Color(Enum):
 def _dfs(
         target: EntityType,
         descendants: dict[EntityType, list[EntityType]],
-        colors: dict[EntityType, Color],
+        colors: dict[EntityType, Color]
 ) -> bool:
     if colors[target] == Color.BLACK:
         return False
@@ -24,6 +24,7 @@ def _dfs(
         result = _dfs(child, descendants, colors)
         if result is True:
             return True
+
     colors[target] = Color.BLACK
     return False
 

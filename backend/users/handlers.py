@@ -192,6 +192,7 @@ async def delete_user(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=UserNotFoundResponse().detail
         )
+
     await crud.users.delete(db, user_id)
     await crud.change_log.log_delete_operation(
         db,

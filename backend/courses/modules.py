@@ -142,7 +142,7 @@ async def fill_main_branch(
             entities[next_type].extend(
                 await crud.entities.get_by_ids(
                     db,
-                    [x.child_id for x in new_connections]
+                    list(set(x.child_id for x in new_connections))
                 )
             )
 
@@ -191,7 +191,7 @@ async def fill_branch_in_reverse_mode(
             entities[next_type].extend(
                 await crud.entities.get_by_ids(
                     db,
-                    [x.parent_id for x in new_connections]
+                    list(set(x.parent_id for x in new_connections))
                 )
             )
 
@@ -240,7 +240,7 @@ async def fill_branch_in_default_mode(
             entities[next_type].extend(
                 await crud.entities.get_by_ids(
                     db,
-                    [x.child_id for x in new_connections]
+                    list(set(x.child_id for x in new_connections))
                 )
             )
 

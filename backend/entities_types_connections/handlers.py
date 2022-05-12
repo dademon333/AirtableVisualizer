@@ -1,18 +1,21 @@
 import asyncio
 
 import sqlalchemy.exc
+from aioredis import Redis
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import ORJSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from common import crud, cache
-from common.responses import OkResponse, UnauthorizedResponse, AdminStatusRequiredResponse
+from common.redis import get_redis_cursor
+from common.responses import OkResponse, UnauthorizedResponse, AdminStatusRequiredResponse, EditorStatusRequiredResponse
 from common.security.auth import UserStatusChecker, get_user_id
 from common.db import UserStatus, get_db, ChangedTable, EntitiesTypesConnection
 from entities_types_connections.modules import have_cycle
 from entities_types_connections.schemas import ConnectionNotFoundResponse, \
     ConnectionCreateErrorResponse, ConnectionCreatesCycleErrorResponse
 from common.schemas.entities_types_connections import EntitiesTypesConnectionUpdate, \
-    EntitiesTypesConnectionCreate, EntitiesTypesConnectionInfo
+    EntitiesTypesConnectionCreate, EntitiesTypesConnectionInfo, EntitiesTypesConnectionInfoExtended
 
 types_connections_router = APIRouter()
 
@@ -33,6 +36,44 @@ async def list_connections(
     return [EntitiesTypesConnectionInfo.from_orm(x) for x in connections]
 
 
+@types_connections_router.get(
+    '/info/{connection_id}',
+    response_model=EntitiesTypesConnectionInfoExtended,
+    response_class=ORJSONResponse,
+    responses={
+        401: {'model': UnauthorizedResponse},
+        403: {'model': EditorStatusRequiredResponse},
+        404: {'model': ConnectionNotFoundResponse}
+    },
+    dependencies=[Depends(UserStatusChecker(min_status=UserStatus.EDITOR))]
+)
+async def get_connection_info(
+        connection_id: int,
+        db: AsyncSession = Depends(get_db),
+        redis_cursor: Redis = Depends(get_redis_cursor)
+):
+    """Возвращает информацию о связи между типами сущностей
+    вместе со списком связей самих сущностей. Требует статус editor.
+    """
+    cached = await cache.get_entities_types_connection(
+        connection_id, redis_cursor
+    )
+    if cached is not None:
+        return ORJSONResponse(cached.dict())
+
+    connection = await crud.entities_types_connections.get_by_id(db, connection_id)
+    if connection is None:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=ConnectionNotFoundResponse().detail
+        )
+    return ORJSONResponse(
+        EntitiesTypesConnectionInfoExtended
+        .from_orm(connection)
+        .dict()
+    )
+
+
 @types_connections_router.post(
     '/create',
     response_model=EntitiesTypesConnectionInfo,
@@ -45,7 +86,7 @@ async def list_connections(
 )
 async def create_connection(
         create_form: EntitiesTypesConnectionCreate,
-        user_id: int = Depends(get_user_id),
+        editor_id: int = Depends(get_user_id),
         db: AsyncSession = Depends(get_db)
 ):
     """Создает связь между типами сущностей.
@@ -69,7 +110,7 @@ async def create_connection(
 
     await crud.change_log.log_create_operation(
         db=db,
-        editor_id=user_id,
+        editor_id=editor_id,
         table=ChangedTable.ENTITIES_TYPES_CONNECTIONS,
         element_id=connection.id
     )
@@ -90,7 +131,7 @@ async def create_connection(
 async def update_column_name(
         connection_id: int,
         update_form: EntitiesTypesConnectionUpdate,
-        user_id: int = Depends(get_user_id),
+        editor_id: int = Depends(get_user_id),
         db: AsyncSession = Depends(get_db)
 ):
     """Обновляет название колонки связей в таблице.
@@ -109,7 +150,7 @@ async def update_column_name(
 
     await crud.change_log.log_update_operation(
         db=db,
-        editor_id=user_id,
+        editor_id=editor_id,
         table=ChangedTable.ENTITIES_TYPES_CONNECTIONS,
         update_form=update_form,
         old_instance=old_instance,
@@ -131,8 +172,9 @@ async def update_column_name(
 )
 async def delete_connection(
         connection_id: int,
-        user_id: int = Depends(get_user_id),
-        db: AsyncSession = Depends(get_db)
+        editor_id: int = Depends(get_user_id),
+        db: AsyncSession = Depends(get_db),
+        redis_cursor: Redis = Depends(get_redis_cursor)
 ):
     """Удаляет связь между типами сущностей.
     Требует статус admin.
@@ -146,19 +188,20 @@ async def delete_connection(
 
     delete_log = await crud.change_log.log_delete_operation(
         db,
-        editor_id=user_id,
+        editor_id=editor_id,
         table=ChangedTable.ENTITIES_TYPES_CONNECTIONS,
         element_instance=connection
     )
     for entities_connection in connection.entities_connections:
         await crud.change_log.log_delete_operation(
             db,
-            editor_id=user_id,
+            editor_id=editor_id,
             table=ChangedTable.ENTITIES_CONNECTIONS,
             element_instance=entities_connection,
             parent_change_id=delete_log.id
         )
 
     await crud.entities_types_connections.delete(db, connection_id)
+    await cache.remove_entities_types_connections(connection_id, redis_cursor)
     asyncio.create_task(cache.update_cache())
     return OkResponse()

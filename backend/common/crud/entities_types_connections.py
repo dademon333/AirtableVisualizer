@@ -3,7 +3,7 @@ from sqlalchemy import select, bindparam, cast, Enum
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from common.crud.base import CRUDBase
-from common.db import EntitiesTypesConnection
+from common.db import EntitiesTypesConnection, EntityType
 from common.schemas.entities_types_connections import EntitiesTypesConnectionCreate, \
     EntitiesTypesConnectionUpdate
 
@@ -15,6 +15,21 @@ class CRUDEntitiesTypesConnections(
             EntitiesTypesConnectionUpdate
         ]
 ):
+    @staticmethod
+    async def get_by_types(
+            db: AsyncSession,
+            parent_type: EntityType,
+            child_type: EntityType
+    ) -> EntitiesTypesConnection | None:
+        result = await db.scalars(
+            select(EntitiesTypesConnection)
+            .where(
+                (EntitiesTypesConnection.parent_type == parent_type)
+                & (EntitiesTypesConnection.child_type == child_type)
+            )
+        )
+        return result.first()
+
     async def create(
             self,
             db: AsyncSession,
@@ -23,14 +38,14 @@ class CRUDEntitiesTypesConnections(
         """Creates types connection if not exists mirror."""
         await db.connection(execution_options={'isolation_level': 'REPEATABLE READ'})
 
-        is_exists = await db.execute(
+        is_exists = await db.scalars(
             select(EntitiesTypesConnection)
             .where(
                 (EntitiesTypesConnection.parent_type == create_instance.child_type)
                 & (EntitiesTypesConnection.child_type == create_instance.parent_type)
             )
         )
-        is_exists = is_exists.unique().first()
+        is_exists = is_exists.first()
         if is_exists:
             raise sqlalchemy.exc.IntegrityError(None, None, None)
 
@@ -54,14 +69,14 @@ class CRUDEntitiesTypesConnections(
             Enum(name='entity_type')
         )
 
-        is_exists = await db.execute(
+        is_exists = await db.scalars(
             select(EntitiesTypesConnection)
             .where(
                 (EntitiesTypesConnection.parent_type == child_type)
                 & (EntitiesTypesConnection.child_type == parent_type)
             )
         )
-        is_exists = is_exists.unique().first()
+        is_exists = is_exists.first()
         if is_exists:
             raise sqlalchemy.exc.IntegrityError(None, None, None)
 
