@@ -8,8 +8,8 @@ class UserSelfUpdateForm(BaseModel):
 
 
 class UserNotFoundResponse(BaseModel):
-    detail: str = 'user not found'
+    detail: str = 'User not found'
 
 
 class UserEmailAlreadyExistsResponse(BaseModel):
-    detail: str = 'email already exists'
+    detail: str = 'Email already exists'

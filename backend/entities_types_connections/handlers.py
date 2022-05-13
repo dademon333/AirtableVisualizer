@@ -13,7 +13,7 @@ from common.security.auth import UserStatusChecker, get_user_id
 from common.db import UserStatus, get_db, ChangedTable, EntitiesTypesConnection
 from entities_types_connections.modules import have_cycle
 from entities_types_connections.schemas import ConnectionNotFoundResponse, \
-    ConnectionCreateErrorResponse, ConnectionCreatesCycleErrorResponse
+    ConnectionAlreadyExistsResponse, ConnectionCreatesCycleErrorResponse
 from common.schemas.entities_types_connections import EntitiesTypesConnectionUpdate, \
     EntitiesTypesConnectionCreate, EntitiesTypesConnectionInfo, EntitiesTypesConnectionInfoExtended
 
@@ -78,9 +78,10 @@ async def get_connection_info(
     '/create',
     response_model=EntitiesTypesConnectionInfo,
     responses={
-        400: {'model': ConnectionCreateErrorResponse | ConnectionCreatesCycleErrorResponse},
+        400: {'model': ConnectionCreatesCycleErrorResponse},
         401: {'model': UnauthorizedResponse},
-        403: {'model': AdminStatusRequiredResponse}
+        403: {'model': AdminStatusRequiredResponse},
+        409: {'model': ConnectionAlreadyExistsResponse}
     },
     dependencies=[Depends(UserStatusChecker(min_status=UserStatus.ADMIN))]
 )
@@ -102,8 +103,8 @@ async def create_connection(
         connection = await crud.entities_types_connections.create(db, create_form)
     except sqlalchemy.exc.IntegrityError:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail=ConnectionCreateErrorResponse().detail
+            status_code=status.HTTP_409_CONFLICT,
+            detail=ConnectionAlreadyExistsResponse().detail
         )
 
     await crud.change_log.log_create_operation(

@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 
 from common.db import ChangeType, ChangedTable
 from common.schemas.db_elements_updates import DbElementUpdateInfo
+from common.schemas.entities import EntityInfo
 from common.schemas.entities_connections import EntitiesConnectionInfo
 from common.schemas.entities_types_connections import EntitiesTypesConnectionInfo
 from common.schemas.hidden_courses import HiddenCourseInfo
@@ -18,9 +19,10 @@ class ChangeLogRecord(BaseModel):
     created_at: datetime
     element_data: \
         UserInfo \
-        | EntitiesTypesConnectionInfo \
-        | EntitiesConnectionInfo \
         | HiddenCourseInfo \
+        | EntityInfo \
+        | EntitiesConnectionInfo \
+        | EntitiesTypesConnectionInfo \
         = Field(
             ...,
             description='Последняя найденная в бд информация об элементе'

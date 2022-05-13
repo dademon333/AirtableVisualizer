@@ -44,11 +44,14 @@ services:
             - postgres
 
     postgres:
-        image: postgres:14-alpine
+        build:
+            context: ./docker_files
+            dockerfile: postgres.dockerfile
         command: -c listen_addresses='$POSTGRESQL_LISTEN_ADDRESSES'
         ports:
             - "5432:5432"
         environment:
+            POSTGRES_DB: $POSTGRESQL_DATABASE
             POSTGRES_PASSWORD: $POSTGRESQL_PASSWORD
         volumes:
             - postgres:/var/lib/postgres/data

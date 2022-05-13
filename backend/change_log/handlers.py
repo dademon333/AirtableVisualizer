@@ -75,10 +75,10 @@ async def list_changes(
     '/revert/change_id',
     response_model=OkResponse,
     responses={
-        400: {'model': CantRevertChangeResponse},
         401: {'model': UnauthorizedResponse},
         403: {'model': EditorStatusRequiredResponse | AdminStatusRequiredResponse},
-        404: {'model': ChangeLogNotFoundResponse}
+        404: {'model': ChangeLogNotFoundResponse},
+        409: {'model': CantRevertChangeResponse}
     },
     dependencies=[Depends(UserStatusChecker(min_status=UserStatus.EDITOR))]
 )
@@ -118,7 +118,7 @@ async def revert_change(
                     await revert_delete_change(db, dependent)
     except sqlalchemy.exc.IntegrityError:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_409_CONFLICT,
             detail=CantRevertChangeResponse().detail
         )
 

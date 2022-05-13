@@ -5,7 +5,7 @@ class ConnectionNotFoundResponse(BaseModel):
     detail: str = 'Connection not found'
 
 
-class ConnectionCreateErrorResponse(BaseModel):
+class ConnectionAlreadyExistsResponse(BaseModel):
     detail: str = 'Connection already exists'
 
 

@@ -51,14 +51,32 @@ async def get_user_info(
     return UserInfo.from_orm(user)
 
 
+@users_router.get(
+    '/list',
+    response_model=list[UserInfoExtended],
+    responses={
+        401: {'model': UnauthorizedResponse},
+        403: {'model': AdminStatusRequiredResponse}
+    },
+    dependencies=[Depends(UserStatusChecker(min_status=UserStatus.ADMIN))]
+)
+async def list_users(
+        limit: int = Query(250, le=1000),
+        offset: int = 0,
+        db: AsyncSession = Depends(get_db)
+):
+    """Возвращает информацию о всех пользователях. Требует статус admin."""
+    users = await crud.users.get_many(db, limit, offset)
+    return [UserInfoExtended.from_orm(x) for x in users]
+
 
 @users_router.post(
     '/create',
     response_model=UserInfo,
     responses={
-        400: {'model': UserEmailAlreadyExistsResponse},
         401: {'model': UnauthorizedResponse},
-        403: {'model': AdminStatusRequiredResponse}
+        403: {'model': AdminStatusRequiredResponse},
+        409: {'model': UserEmailAlreadyExistsResponse}
     },
     dependencies=[Depends(UserStatusChecker(min_status=UserStatus.ADMIN))]
 )
@@ -72,7 +90,7 @@ async def create_user(
         user = await crud.users.create(db, create_form)
     except sqlalchemy.exc.IntegrityError:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_409_CONFLICT,
             detail=UserEmailAlreadyExistsResponse().detail
         )
 
@@ -89,8 +107,8 @@ async def create_user(
     '/update/me',
     response_model=OkResponse,
     responses={
-        400: {'model': UserEmailAlreadyExistsResponse},
-        401: {'model': UnauthorizedResponse}
+        401: {'model': UnauthorizedResponse},
+        409: {'model': UserEmailAlreadyExistsResponse}
     },
     dependencies=[Depends(check_auth)]
 )
@@ -109,7 +127,7 @@ async def update_self(
         await crud.users.update(db, user_id, update_form)
     except sqlalchemy.exc.IntegrityError:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_409_CONFLICT,
             detail=UserEmailAlreadyExistsResponse().detail
         )
 
@@ -130,7 +148,8 @@ async def update_self(
     responses={
         401: {'model': UnauthorizedResponse},
         403: {'model': AdminStatusRequiredResponse},
-        404: {'model': UserNotFoundResponse}
+        404: {'model': UserNotFoundResponse},
+        409: {'model': UserEmailAlreadyExistsResponse}
     },
     dependencies=[Depends(UserStatusChecker(min_status=UserStatus.ADMIN))]
 )
@@ -155,7 +174,7 @@ async def update_user(
         await crud.users.update(db, user_id, update_form)
     except sqlalchemy.exc.IntegrityError:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_409_CONFLICT,
             detail=UserEmailAlreadyExistsResponse().detail
         )
 
@@ -201,22 +220,3 @@ async def delete_user(
         element_instance=user
     )
     return OkResponse()
-
-
-@users_router.get(
-    '/list',
-    response_model=list[UserInfoExtended],
-    responses={
-        401: {'model': UnauthorizedResponse},
-        403: {'model': AdminStatusRequiredResponse},
-    },
-    dependencies=[Depends(UserStatusChecker(min_status=UserStatus.ADMIN))]
-)
-async def list_users(
-        limit: int = Query(100, le=1000),
-        offset: int = 0,
-        db: AsyncSession = Depends(get_db)
-):
-    """Возвращает информацию о всех пользователях. Требует статус admin."""
-    users = await crud.users.get_many(db, limit, offset)
-    return [UserInfoExtended.from_orm(x) for x in users]

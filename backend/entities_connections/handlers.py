@@ -20,27 +20,27 @@ entities_connections_router = APIRouter()
     '/connect',
     response_model=OkResponse,
     responses={
-        400: {'model': ConnectionAlreadyExists},
         401: {'model': UnauthorizedResponse},
         403: {'model': EditorStatusRequiredResponse},
-        404: {'model': EntityNotFoundResponse | TypesConnectionNotFoundResponse}
+        404: {'model': EntityNotFoundResponse | TypesConnectionNotFoundResponse},
+        409: {'model': ConnectionAlreadyExists}
     },
     dependencies=[Depends(UserStatusChecker(min_status=UserStatus.EDITOR))]
 )
 async def connect_entities(
-        form: EntitiesConnectionForm,
+        connect_form: EntitiesConnectionForm,
         db: AsyncSession = Depends(get_db),
         editor_id: int = Depends(get_user_id)
 ):
     """Создает связь между сущностями. Требует статус editor."""
-    parent_entity = await crud.entities.get_by_id(db, form.parent_id)
-    child_entity = await crud.entities.get_by_id(db, form.child_id)
+    parent_entity = await crud.entities.get_by_id(db, connect_form.parent_id)
+    child_entity = await crud.entities.get_by_id(db, connect_form.child_id)
 
     if parent_entity is None or child_entity is None:
         if parent_entity is None:
-            not_found_id = form.parent_id
+            not_found_id = connect_form.parent_id
         else:
-            not_found_id = form.child_id
+            not_found_id = connect_form.child_id
 
         return JSONResponse(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -60,14 +60,14 @@ async def connect_entities(
         new_connection = await crud.entities_connections.create(
             db,
             EntitiesConnectionCreate(
-                parent_id=form.parent_id,
-                child_id=form.child_id,
+                parent_id=connect_form.parent_id,
+                child_id=connect_form.child_id,
                 types_connection_id=types_connection.id
             )
         )
     except sqlalchemy.exc.IntegrityError:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
+            status_code=status.HTTP_409_CONFLICT,
             detail=ConnectionAlreadyExists().detail
         )
     else:
@@ -93,13 +93,13 @@ async def connect_entities(
     dependencies=[Depends(UserStatusChecker(min_status=UserStatus.EDITOR))]
 )
 async def disconnect_entities(
-        form: EntitiesConnectionForm,
+        connect_form: EntitiesConnectionForm,
         editor_id: int = Depends(get_user_id),
         db: AsyncSession = Depends(get_db)
 ):
     """Удаляет связь между сущностями. Требует статус editor."""
     connection = await crud.entities_connections.get_by_entities(
-        db, form.parent_id, form.child_id
+        db, connect_form.parent_id, connect_form.child_id
     )
     if connection is None:
         raise HTTPException(

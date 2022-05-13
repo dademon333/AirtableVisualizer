@@ -28,10 +28,10 @@ def upgrade():
         sa.Column('description', sa.Text(), nullable=True),
         sa.Column('study_time', sa.Integer(), nullable=True),
         sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),
-        sa.PrimaryKeyConstraint('id', name=op.f('pk_entities')),
-        sa.UniqueConstraint('name', 'type', name=op.f('uq_entities_name'))
+        sa.PrimaryKeyConstraint('id', name=op.f('pk_entities'))
     )
     op.create_index(op.f('ix_entities_type'), 'entities', ['type'], unique=False)
+    op.create_index('ix_entities_name', 'entities', ['name'], unique=False, postgresql_ops={'name': 'gin_trgm_ops'}, postgresql_using='gin')
 
     op.create_table(
         'entities_types_connections',

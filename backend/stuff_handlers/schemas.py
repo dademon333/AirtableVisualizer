@@ -13,4 +13,4 @@ class HostnameResponse(BaseModel):
 
 
 class LoginErrorResponse(BaseModel):
-    detail: str = 'invalid email or password'
+    detail: str = 'Invalid email or password'

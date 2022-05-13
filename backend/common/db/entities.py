@@ -1,7 +1,7 @@
 import enum
 
 from sqlalchemy import Column, Integer, String, Text, \
-    Enum, UniqueConstraint, DateTime, func
+    Enum, DateTime, func, Index
 
 from .base import Base, get_enum_values
 
@@ -49,5 +49,10 @@ class Entity(Base):
     created_at = Column(DateTime, nullable=False, server_default=func.now())
 
     __table_args__ = (
-        UniqueConstraint('name', 'type'),
+        Index(
+            'ix_entities_name',
+            name,
+            postgresql_ops={'name': 'gin_trgm_ops'},
+            postgresql_using='gin'
+        ),
     )

@@ -2,6 +2,7 @@ from fastapi import APIRouter
 
 from change_log.handlers import change_log_router
 from courses.handlers import courses_router
+from entities.handlers import entities_router
 from entities_connections.handlers import entities_connections_router
 from stuff_handlers.handlers import stuff_router
 from entities_types_connections.handlers import types_connections_router
@@ -20,6 +21,12 @@ root_router.include_router(
     courses_router,
     prefix='/courses',
     tags=['Courses']
+)
+
+root_router.include_router(
+    entities_router,
+    prefix='/entities',
+    tags=['Entities']
 )
 
 root_router.include_router(
