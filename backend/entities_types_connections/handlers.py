@@ -92,6 +92,14 @@ async def create_connection(
 ):
     """Создает связь между типами сущностей. Требует статус admin."""
     connections = await crud.entities_types_connections.get_all(db)
+    for connection in connections:
+        if connection.parent_type == create_form.child_type \
+                and connection.child_type == create_form.parent_type:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=ConnectionAlreadyExistsResponse().detail
+            )
+
     connections.append(EntitiesTypesConnection(parent_type=create_form.parent_type, child_type=create_form.child_type))
     if have_cycle(connections):
         raise HTTPException(

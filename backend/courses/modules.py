@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from common import crud
 from common.db import EntityType, EntitiesTypesConnection, EntitiesConnection, Entity
-from common.schemas.entities import CourseInfo, EntityInfo, CoursesSetInfo
+from common.schemas.entities import CourseInfo, EntityInfo, CoursesSetInfo, EntityInfoReduced
 from common.schemas.entities_connections import EntitiesConnectionInfoReduced
 from common.schemas.entities_types_connections import EntitiesTypesConnectionInfoExtended
 
@@ -97,10 +97,46 @@ def get_dependent_branches(
     return [get_dependent_branch_types(x, types_connections) for x in branches_heads]
 
 
+async def fill_self_connected_entities(
+        db: AsyncSession,
+        adjacent_connections: list[EntitiesTypesConnection],
+        entities: dict[EntityType, set[Entity]],
+        entities_connections: dict[EntitiesTypesConnection, list[EntitiesConnection]]
+) -> None:
+    self_connection = [
+        x
+        for x in adjacent_connections
+        if x.parent_type == x.child_type
+    ]
+    if self_connection == []:
+        return
+    connection = self_connection[0]
+    entity_type = connection.child_type
+
+    while True:
+        parent_entities = [x.id for x in entities[entity_type]]
+        new_connections = [
+            x
+            for x in connection.entities_connections
+            if x.parent_id in parent_entities
+        ]
+        new_connections = set(new_connections) - set(entities_connections.get(connection, []))
+        if new_connections == set():
+            return
+
+        entities_connections[connection].extend(list(new_connections))
+        entities[entity_type].update(
+            await crud.entities.get_by_ids(
+                db,
+                list(set(x.child_id for x in new_connections))
+            )
+        )
+
+
 async def fill_main_branch(
         db: AsyncSession,
         types_connections: list[EntitiesTypesConnection],
-        entities: dict[EntityType, list[Entity]],
+        entities: dict[EntityType, set[Entity]],
         entities_connections: dict[EntitiesTypesConnection, list[EntitiesConnection]],
         all_branches_types: list[EntityType]
 ) -> None:
@@ -121,13 +157,14 @@ async def fill_main_branch(
             break
 
         next_type = next_type[0]
-        entities[next_type] = []
+        entities[next_type] = set()
         adjacent_connections = [
             x
             for x in types_connections
             if x.child_type == next_type
             and x.parent_type not in all_branches_types
         ]
+
         for connection in adjacent_connections:
             parent_entities = [x.id for x in entities[connection.parent_type]]
             new_connections = [
@@ -139,19 +176,26 @@ async def fill_main_branch(
                 continue
 
             entities_connections[connection] = new_connections
-            entities[next_type].extend(
+            entities[next_type].update(
                 await crud.entities.get_by_ids(
                     db,
                     list(set(x.child_id for x in new_connections))
                 )
             )
 
+        await fill_self_connected_entities(
+            db,
+            adjacent_connections,
+            entities,
+            entities_connections
+        )
+
 
 async def fill_branch_in_reverse_mode(
         db: AsyncSession,
         branch_nodes: list[EntityType],
         types_connections: list[EntitiesTypesConnection],
-        entities: dict[EntityType, list[Entity]],
+        entities: dict[EntityType, set[Entity]],
         entities_connections: dict[EntitiesTypesConnection, list[EntitiesConnection]]
 ) -> None:
     while True:
@@ -171,7 +215,7 @@ async def fill_branch_in_reverse_mode(
             break
 
         next_type = next_type[0]
-        entities[next_type] = []
+        entities[next_type] = set()
         adjacent_connections = [
             x
             for x in types_connections
@@ -188,19 +232,26 @@ async def fill_branch_in_reverse_mode(
                 continue
 
             entities_connections[connection] = new_connections
-            entities[next_type].extend(
+            entities[next_type].update(
                 await crud.entities.get_by_ids(
                     db,
                     list(set(x.parent_id for x in new_connections))
                 )
             )
 
+        await fill_self_connected_entities(
+            db,
+            adjacent_connections,
+            entities,
+            entities_connections
+        )
+
 
 async def fill_branch_in_default_mode(
         db: AsyncSession,
         branch_nodes: list[EntityType],
         types_connections: list[EntitiesTypesConnection],
-        entities: dict[EntityType, list[Entity]],
+        entities: dict[EntityType, set[Entity]],
         entities_connections: dict[EntitiesTypesConnection, list[EntitiesConnection]]
 ) -> None:
     while True:
@@ -220,7 +271,7 @@ async def fill_branch_in_default_mode(
             break
 
         next_type = next_type[0]
-        entities[next_type] = []
+        entities[next_type] = set()
         adjacent_connections = [
             x
             for x in types_connections
@@ -237,19 +288,26 @@ async def fill_branch_in_default_mode(
                 continue
 
             entities_connections[connection] = new_connections
-            entities[next_type].extend(
+            entities[next_type].update(
                 await crud.entities.get_by_ids(
                     db,
                     list(set(x.child_id for x in new_connections))
                 )
             )
 
+        await fill_self_connected_entities(
+            db,
+            adjacent_connections,
+            entities,
+            entities_connections
+        )
+
 
 async def fill_branch(
         db: AsyncSession,
         branch_nodes: list[EntityType],
         types_connections: list[EntitiesTypesConnection],
-        entities: dict[EntityType, list[Entity]],
+        entities: dict[EntityType, set[Entity]],
         entities_connections: dict[EntitiesTypesConnection, list[EntitiesConnection]]
 ) -> None:
     await fill_branch_in_reverse_mode(
@@ -270,11 +328,12 @@ async def fill_branch(
 
 def prepare_result(
         entities_connections: dict[EntitiesTypesConnection, list[EntitiesConnection]],
-        entities: dict[EntityType, list[Entity]]
+        entities: dict[EntityType, set[Entity]]
 ) -> CoursesSetInfo:
-    entities = sum(entities.values(), [])  # Zip 2D list to 1D
-    entities = list(set(entities))
-    entities = [EntityInfo.from_orm(x) for x in entities]
+    all_entities = set()
+    for batch in entities.values():
+        all_entities.update(batch)
+    all_entities = [EntityInfo.from_orm(x) for x in all_entities]
 
     connections = [
         EntitiesTypesConnectionInfoExtended(
@@ -291,7 +350,7 @@ def prepare_result(
 
     return CoursesSetInfo(
         connections=connections,
-        entities=entities
+        entities={str(x.id): EntityInfoReduced.from_orm(x) for x in all_entities}
     )
 
 
@@ -333,7 +392,7 @@ async def get_course_info(
         course_id: int
 ) -> CourseInfo:
     course = await crud.entities.get_by_id(db, course_id)
-    course_connections = await get_courses_info(db, [course_id])
+    course_info = await get_courses_info(db, [course_id])
     return CourseInfo(
         name=course.name,
         type=course.type,
@@ -341,8 +400,8 @@ async def get_course_info(
         description=course.description,
         study_time=course.study_time,
         id=course.id,
-        connections=course_connections.connections,
-        entities=course_connections.entities
+        connections=course_info.connections,
+        entities=course_info.entities
     )
 
 

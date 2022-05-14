@@ -30,12 +30,17 @@ class EntityInfo(EntityBase):
         orm_mode = True
 
 
+class EntityInfoReduced(EntityBase):
+    class Config:
+        orm_mode = True
+
+
 class CourseInfo(EntityBase):
     id: int
     connections: list[EntitiesTypesConnectionInfoExtended]
-    entities: list[EntityInfo]
+    entities: dict[str, EntityInfoReduced]
 
 
 class CoursesSetInfo(BaseModel):
     connections: list[EntitiesTypesConnectionInfoExtended]
-    entities: list[EntityInfo]
+    entities: dict[str, EntityInfoReduced]
