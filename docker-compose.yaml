@@ -1,6 +1,7 @@
 volumes:
     postgres:
     redis:
+    frontend:
 
 services:
     app:
@@ -17,7 +18,7 @@ services:
             SQLALCHEMY_WARN_20: 1
 
         volumes:
-            - ./frontend/build:/usr/src/frontend/build:ro
+            - frontend:/usr/src/frontend/build:ro
         deploy:
             replicas: $APP_REPLICAS
         depends_on:
@@ -42,6 +43,7 @@ services:
         depends_on:
             - redis
             - postgres
+            - frontend
 
     postgres:
         build:
@@ -64,9 +66,17 @@ services:
             - "80:80"
         volumes:
             - /var/log/nginx:/var/log/nginx
-            - ./frontend/build:/usr/src/app/frontend/build:ro
+            - frontend:/usr/src/app/frontend/build:ro
+        depends_on:
+            - frontend
 
     redis:
         image: redis:7-alpine
         volumes:
             - redis:/data
+
+    frontend:
+        build:
+            context: ./frontend
+        volumes:
+            - frontend:/usr/src/app/frontend/build
