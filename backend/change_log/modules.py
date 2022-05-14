@@ -112,6 +112,14 @@ async def revert_create_change(db: AsyncSession, change_data: ChangeLog) -> None
 
 
 async def revert_update_change(db: AsyncSession, change_data: ChangeLog) -> None:
+    element_data = await _search_elements_with_crud(
+        db,
+        change_data.table,
+        {change_data.element_id}
+    )
+    if element_data == []:
+        raise sqlalchemy.exc.IntegrityError(None, None, None)
+
     arg = {change_data.update_instance.column: change_data.update_instance.old_value}
     match change_data.table:
         case ChangedTable.USERS:
