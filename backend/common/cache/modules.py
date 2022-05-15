@@ -5,19 +5,19 @@ from .keys_formatters import get_course_key, get_all_courses_key, get_entities_t
 from .. import crud
 from ..db import EntityType, session_factory
 from ..redis import get_redis_cursor
-from ..schemas.entities import CoursesSetInfo, CourseInfo
+from ..schemas.entities import CoursesSetInfo, CourseInfoExtended
 from ..schemas.entities_types_connections import EntitiesTypesConnectionInfoExtended
 
 
 async def get_course(
         course_id: int,
         redis_cursor: Redis
-) -> CourseInfo | None:
+) -> CourseInfoExtended | None:
     course_data = await redis_cursor.get(get_course_key(course_id))
 
     if course_data is None:
         return None
-    return CourseInfo.parse_raw(course_data)
+    return CourseInfoExtended.parse_raw(course_data)
 
 
 async def get_all_courses(

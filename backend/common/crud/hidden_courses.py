@@ -36,5 +36,13 @@ class CRUDHiddenCourses(CRUDBase[HiddenCourse, HiddenCourseCreate, HiddenCourseU
             .where(HiddenCourse.course_id == course_id)
         )
 
+    async def is_hidden(
+            self,
+            db: AsyncSession,
+            course_id: int
+    ) -> bool:
+        instance = await self.get_by_course_id(db, course_id)
+        return instance is not None
+
 
 hidden_courses = CRUDHiddenCourses(HiddenCourse)

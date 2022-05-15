@@ -37,6 +37,10 @@ class EntityInfoReduced(EntityBase):
 
 class CourseInfo(EntityBase):
     id: int
+    is_hidden: bool
+
+
+class CourseInfoExtended(CourseInfo):
     connections: list[EntitiesTypesConnectionInfoExtended]
     entities: dict[str, EntityInfoReduced]
 

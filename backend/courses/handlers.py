@@ -11,8 +11,9 @@ from common.redis import get_redis_cursor
 from common.responses import OkResponse, EditorStatusRequiredResponse, UnauthorizedResponse
 from common.security.auth import UserStatusChecker, get_user_id, get_user_status, can_access
 from common.db import get_db, UserStatus, EntityType, ChangedTable
-from common.schemas.entities import EntityInfo, CourseInfo, CoursesSetInfo
+from common.schemas.entities import EntityInfo, CourseInfoExtended, CoursesSetInfo, CourseInfo
 from common.schemas.hidden_courses import HiddenCourseCreate
+from common.sqlalchemy_modules import convert_instance_to_dict
 from .modules import get_course_info, get_all_courses_info
 from .schemas import CourseNotFoundResponse, NotACourseErrorResponse
 
@@ -21,7 +22,7 @@ courses_router = APIRouter()
 
 @courses_router.get(
     '/list',
-    response_model=list[EntityInfo]
+    response_model=list[CourseInfo]
 )
 async def list_courses(
         user_status: UserStatus | None = Depends(get_user_status),
@@ -29,10 +30,17 @@ async def list_courses(
 ):
     """Возвращает список всех доступных для пользователя курсов."""
     courses = await crud.entities.get_by_type(db, EntityType.COURSE, limit=10000)
-    courses = [EntityInfo.from_orm(x) for x in courses]
+    hidden_courses = await crud.hidden_courses.get_all(db)
     if not can_access(user_status, min_status=UserStatus.EDITOR):
-        hidden_courses = await crud.hidden_courses.get_all(db)
         courses = [x for x in courses if x.id not in hidden_courses]
+
+    courses = [
+        CourseInfo(
+            **convert_instance_to_dict(x),
+            is_hidden=x.id in hidden_courses
+        )
+        for x in courses
+    ]
     return courses
 
 
@@ -60,7 +68,7 @@ async def get_all_courses_info_(
 
 @courses_router.get(
     '/info/{course_id}',
-    response_model=CourseInfo,
+    response_model=CourseInfoExtended,
     response_class=ORJSONResponse,
     responses={
         400: {'model': NotACourseErrorResponse},

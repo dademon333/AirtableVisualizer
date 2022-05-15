@@ -2,7 +2,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from common import crud
 from common.db import EntityType, EntitiesTypesConnection, EntitiesConnection, Entity
-from common.schemas.entities import CourseInfo, EntityInfo, CoursesSetInfo, EntityInfoReduced
+from common.schemas.entities import CourseInfoExtended, EntityInfo, CoursesSetInfo, EntityInfoReduced
 from common.schemas.entities_connections import EntitiesConnectionInfoReduced
 from common.schemas.entities_types_connections import EntitiesTypesConnectionInfoExtended
 
@@ -390,16 +390,19 @@ async def get_courses_info(
 async def get_course_info(
         db: AsyncSession,
         course_id: int
-) -> CourseInfo:
+) -> CourseInfoExtended:
     course = await crud.entities.get_by_id(db, course_id)
     course_info = await get_courses_info(db, [course_id])
-    return CourseInfo(
+    is_hidden = await crud.hidden_courses.is_hidden(db, course_id)
+
+    return CourseInfoExtended(
         name=course.name,
         type=course.type,
         size=course.size,
         description=course.description,
         study_time=course.study_time,
         id=course.id,
+        is_hidden=is_hidden,
         connections=course_info.connections,
         entities=course_info.entities
     )
