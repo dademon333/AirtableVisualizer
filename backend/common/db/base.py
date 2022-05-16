@@ -17,7 +17,7 @@ naming_convention = {
 }
 
 engine = create_async_engine(
-    Tokens.POSTGRESQL_URL,
+    Tokens.SQLALCHEMY_POSTGRESQL_URL,
     future=True,
     echo=Config.DEBUG,
     json_serializer=lambda obj: json.dumps(obj, default=json_serializer, ensure_ascii=False),

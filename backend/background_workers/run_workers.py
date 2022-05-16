@@ -3,6 +3,7 @@ import signal
 import threading
 
 from .cache_updater import CacheUpdater
+from .database_backuper import DatabaseBackuper
 
 
 async def run_workers():
@@ -11,6 +12,8 @@ async def run_workers():
         args=(CacheUpdater.init(),),
         daemon=True
     ).start()
+    threading.Thread(target=DatabaseBackuper.init, daemon=True).start()
+
     signal.signal(signal.SIGTERM, lambda: ...)
     signal.pause()
 

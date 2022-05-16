@@ -1,6 +1,7 @@
 volumes:
     redis:
     frontend:
+    postgres:
 
 services:
     app:
@@ -8,14 +9,15 @@ services:
         environment:
             POSTGRESQL_USER: $POSTGRESQL_USER
             POSTGRESQL_PASSWORD: $POSTGRESQL_PASSWORD
-            POSTGRESQL_HOST: $POSTGRESQL_HOST
             POSTGRESQL_DATABASE: $POSTGRESQL_DATABASE
 
             REDIS_HOST: $REDIS_HOST
+            DOCKER_POSTGRESQL_HOST: $DOCKER_POSTGRESQL_HOST
+            DEFAULT_POSTGRESQL_HOST: $DEFAULT_POSTGRESQL_HOST
+
             DEBUG: $DEBUG
             PYTHONUNBUFFERED: 1
             SQLALCHEMY_WARN_20: 1
-
         volumes:
             - frontend:/usr/src/frontend/build:ro
         deploy:
@@ -32,13 +34,17 @@ services:
         environment:
             POSTGRESQL_USER: $POSTGRESQL_USER
             POSTGRESQL_PASSWORD: $POSTGRESQL_PASSWORD
-            POSTGRESQL_HOST: $POSTGRESQL_HOST
             POSTGRESQL_DATABASE: $POSTGRESQL_DATABASE
 
             REDIS_HOST: $REDIS_HOST
+            DOCKER_POSTGRESQL_HOST: $DOCKER_POSTGRESQL_HOST
+            DEFAULT_POSTGRESQL_HOST: $DEFAULT_POSTGRESQL_HOST
+
             DEBUG: $BACKGROUND_WORKERS_DEBUG
             PYTHONUNBUFFERED: 1
             SQLALCHEMY_WARN_20: 1
+        volumes:
+            - ~/db_backups:/var/lib/postgres_backups
         depends_on:
             - redis
             - postgres
@@ -53,8 +59,10 @@ services:
         environment:
             POSTGRES_DB: $POSTGRESQL_DATABASE
             POSTGRES_PASSWORD: $POSTGRESQL_PASSWORD
+            PGDATA: /var/lib/postgresql/data  # to not lose data on image updates
+            # https://stackoverflow.com/a/62301253
         volumes:
-            - /var/lib/postgres/data:/var/lib/postgres/data
+            - postgres:/var/lib/postgresql/data
 
     nginx:
         build:
