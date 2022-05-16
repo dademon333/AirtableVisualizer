@@ -78,6 +78,7 @@ services:
 
     redis:
         image: redis:7-alpine
+        command: --loglevel warning
         volumes:
             - redis:/data
 
