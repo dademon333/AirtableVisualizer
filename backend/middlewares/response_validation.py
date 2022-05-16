@@ -14,12 +14,14 @@ def parse_raw(model: Type[BaseModel], content: str | bytes):
 
     Created to measure execution time of this method inside response_validation_middleware.
     Measured with ServerTimingMiddleware, result passes to the header 'server-timing' in all server responses.
+
     """
     return model.parse_raw(content)
 
 
 class AsyncGenerator:
-    """Returns async version of generator based on passed sequence"""
+    """Returns async version of generator based on passed sequence."""
+
     def __init__(self, items: Sequence[Any]):
         self.items = items
         self.iterator = items.__iter__()
@@ -45,7 +47,8 @@ async def response_validation_middleware(request: Request, call_next):
     At 160 kb size speedup reaches 10 times (~30 ms).
 
     Additionally: by measuring execution time of this function, ServerTimingMiddleware calculates
-    total server response time and passes it to the 'server-timing' header
+    total server response time and passes it to the 'server-timing' header.
+
     """
     response: StreamingResponse = await call_next(request)
     response_body = [x async for x in response.body_iterator]  # Ответ представлен в виде async-генератора

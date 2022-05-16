@@ -36,8 +36,10 @@ async def list_changes(
         db: AsyncSession = Depends(get_db),
 ):
     """Возвращает историю изменений бд.
+
     Для редакторов не показывает изменения в таблицах users и entities_types_connections.
     Требует статус editor.
+
     """
     changes = await crud.change_log.get_many(
         db,
@@ -88,8 +90,10 @@ async def revert_change(
         db: AsyncSession = Depends(get_db)
 ):
     """Откатывает изменения бд по их идентификаторам.
+
     Откат изменений в таблицах users и entities_types_connections требует статус admin.
     Требует статус editor.
+
     """
     change_data = await crud.change_log.get_by_id(db, change_id)
 

@@ -29,8 +29,10 @@ stuff_router = APIRouter()
 )
 async def get_hostname():
     """Возвращает hostname сервера(контейнера), в котором запущен код.
+
     Можно использовать для проверки работы вертикального масштабирования,
     хотя в основном используется для тестов во время разработки.
+
     """
     return HostnameResponse(hostname=socket.gethostname())
 
@@ -46,8 +48,10 @@ async def login(
         redis_cursor: Redis = Depends(get_redis_cursor)
 ):
     """Адрес этого endpoint'а дает исчерпывающую информацию о его предназначении.
+
     Если все окей, устанавливает cookie 'session_id' и возвращает информацию о пользователе.
     Срок жизни сессии - 30 дней.
+
     """
     user = await crud.users.get_by_email(db, form_data.email)
 
@@ -76,7 +80,9 @@ async def logout(
         session_id: str = Cookie(default=None, include_in_schema=False)
 ):
     """Адрес этого endpoint'а дает исчерпывающую информацию о его предназначении.
+
     Удаляет cookie 'session_id' и информацию о сессии на сервере.
+
     """
     response = JSONResponse(OkResponse().dict())
     response.delete_cookie(key=ProjectCookies.SESSION_ID.value)

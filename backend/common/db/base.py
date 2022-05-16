@@ -48,6 +48,7 @@ def get_enum_values(enum):
         ...
 
     https://stackoverflow.com/a/55160320
+
     """
     return [x.value for x in enum]
 

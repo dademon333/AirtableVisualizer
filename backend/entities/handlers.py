@@ -101,8 +101,12 @@ async def update_entity(
         editor_id: int = Depends(get_user_id),
         db: AsyncSession = Depends(get_db)
 ):
-    """Обновляет данные о сущности. Все поля в теле запроса являются необязательными,
-    передавать нужно только необходимые дня обновления. Требует статус editor.
+    """Обновляет данные о сущности.
+
+    Все поля в теле запроса являются необязательными,
+    передавать нужно только необходимые дня обновления.
+    Требует статус editor.
+
     """
     entity = await crud.entities.get_by_id(db, entity_id)
     if entity is None:

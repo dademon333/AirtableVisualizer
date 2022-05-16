@@ -50,9 +50,11 @@ def get_dependent_branches_heads(
         types_connections: list[EntitiesTypesConnection]
 ) -> list[EntityType]:
     """Returns heads of dependent branches.
+
     Depends branch - branch of tree which have own head (not course entity type)
     and loads on the basis of main branch (where head is course).
     Head - entity type without parents.
+
     """
     heads = list({x.parent_type for x in types_connections})
     for connection in types_connections:

@@ -16,7 +16,7 @@ async def find_elements_data(
         db: AsyncSession,
         changes: list[ChangeLog]
 ) -> dict[ChangedTable, dict[int, dict]]:
-    """Searches data of changed elements among their native tables and archived elements"""
+    """Searches data of changed elements among their native tables and archived elements."""
     result: dict[ChangedTable, dict[int, dict]] = {}
     to_search: dict[ChangedTable, set[int]] = {}
 

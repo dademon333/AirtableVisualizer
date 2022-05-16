@@ -65,24 +65,27 @@ async def check_auth(
     )
     async def test():
         ...
+
     """
     if user_id is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED)
 
 
 class UserStatusChecker:
-    def __init__(self, min_status: UserStatus):
-        """Ensures that status of user, who calls endpoint, is more or equal to min_status.
-        If not, returns 403 Forbidden.
+    """Ensures that status of user, who calls endpoint, is more or equal to min_status.
+    If not, returns 403 Forbidden.
 
-        Usage example:
-        @router.get(
-            '/test_endpoint',
-            dependencies=[Depends(UserStatusChecker(min_status=UserStatus.ADMIN))]
-        )
-        async def test():
-            ...
-        """
+    Usage example:
+    @router.get(
+        '/test_endpoint',
+        dependencies=[Depends(UserStatusChecker(min_status=UserStatus.ADMIN))]
+    )
+    async def test():
+        ...
+
+    """
+
+    def __init__(self, min_status: UserStatus):
         self.min_status = min_status
 
     def __call__(self, user_status: UserStatus | None = Depends(get_user_status)):

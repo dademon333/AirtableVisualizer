@@ -11,7 +11,8 @@ from tokens import Tokens
 
 
 class DatabaseBackuper:
-    """Automatically creates db backups every day in 00:00:10 and removes old"""
+    """Automatically creates db backups every day in 00:00:10 and removes old."""
+
     @classmethod
     def init(cls):
         while True:

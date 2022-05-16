@@ -46,6 +46,7 @@ class EntitiesTypesConnectionInfo(EntitiesTypesConnectionFullBase):
 
 class EntitiesTypesConnectionInfoExtended(EntitiesTypesConnectionTypesBase):
     """Special version for courses info."""
+
     id: int
     entities_connections: list[EntitiesConnectionInfoReduced]
 

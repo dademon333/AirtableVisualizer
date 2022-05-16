@@ -6,7 +6,7 @@ from common.db import Base
 
 
 def convert_instance_to_dict(element_instance: Base):
-    """Converts sqlalchemy's instance to dict"""
+    """Converts sqlalchemy's instance to dict."""
     result = dict(element_instance.__dict__)
     del result['_sa_instance_state']
     # list() to avoid RuntimeError: dictionary changed size during iteration

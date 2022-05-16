@@ -10,6 +10,7 @@ async def html_page_middleware(request: Request, call_next):
     """Returns project html page on GET requests with 'accept': 'text/html' header.
 
     GET requests to api with 'accept': 'application/json' (or other) skips forward.
+
     """
     if request.method == 'GET' \
             and 'text/html' in request.headers.get('accept', '')\

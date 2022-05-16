@@ -28,9 +28,11 @@ async def list_connections(
         db: AsyncSession = Depends(get_db)
 ):
     """Возвращает информацию о связях между типами сущностей.
+
     На основе этой информации необходимо строить колонки связей в таблицах.
     Если в названии колонки указан null, её отображать не надо.
     Также можно использовать эту информацию при построении графа.
+
     """
     connections = await crud.entities_types_connections.get_many(db, limit=1000)
     return [EntitiesTypesConnectionInfo.from_orm(x) for x in connections]
@@ -142,8 +144,10 @@ async def update_column_name(
         db: AsyncSession = Depends(get_db)
 ):
     """Обновляет название колонки связей в таблице.
+
     Если указать null, колонка скроется.
     Требует статус admin.
+
     """
     connection = await crud.entities_types_connections.get_by_id(db, connection_id)
     if connection is None:

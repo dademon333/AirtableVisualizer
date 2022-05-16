@@ -12,11 +12,16 @@ UpdateSchemaType = TypeVar('UpdateSchemaType', bound=BaseModel)
 
 
 class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
-    def __init__(self, model: Type[ModelType]):
-        """Base for sql CRUD classes with default Create, Read, Update and Delete methods.
+    """Base for sql CRUD classes with default Create, Read, Update and Delete methods.
 
-        :param model: SQLAlchemy model class
-        """
+    Generic params:
+    * ModelType: SQLAlchemy model class, which extends Base
+    * CreateSchemaType: pydantic model with fields to create SQL item
+    * UpdateSchemaType: pydantic model with fields to update SQL item
+
+    """
+
+    def __init__(self, model: Type[ModelType]):
         self.model = model
 
     # noinspection PyShadowingBuiltins

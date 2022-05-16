@@ -3,12 +3,13 @@ from enum import Enum
 
 
 class ProjectCookies(Enum):
-    """Cookies names, which are used in project"""
+    """Cookie names, which are used in project."""
+
     SESSION_ID = 'session_id'
 
 
 def get_delete_cookie_header(cookie_name: ProjectCookies) -> str:
-    """Returns 'set-cookie' header with empty value
+    """Returns 'set-cookie' header with empty value.
 
     FastAPI's HTTPException does not have api to delete cookies,
     but it have headers arg. So, you can delete some cookies using
@@ -17,6 +18,7 @@ def get_delete_cookie_header(cookie_name: ProjectCookies) -> str:
         status_code=status.HTTP_401_UNAUTHORIZED,
         headers={'set-cookie': get_delete_cookie_header(ProjectCookies.SESSION_ID)}
     )
+
     """
     cookie: http.cookies.BaseCookie = http.cookies.SimpleCookie()
     key = cookie_name.value
