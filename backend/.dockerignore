@@ -1,2 +1,7 @@
-.pytest_cache
+.idea
 __pycache__
+pytest_cache
+
+.gitignore
+Dockerfile
+background_workers.dockerfile
