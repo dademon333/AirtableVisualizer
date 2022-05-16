@@ -8,8 +8,8 @@ class DbElementUpdate(Base):
 
     id = Column(Integer, primary_key=True)
     column = Column(String, nullable=False)
-    old_value = Column(Text, nullable=False)
-    new_value = Column(Text, nullable=False)
+    old_value = Column(Text)
+    new_value = Column(Text)
 
     change_id = Column(
         Integer,

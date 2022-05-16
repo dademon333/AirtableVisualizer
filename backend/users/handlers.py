@@ -13,7 +13,26 @@ users_router = APIRouter()
 
 
 @users_router.get(
-    '/info/me',
+    '/list',
+    response_model=list[UserInfoExtended],
+    responses={
+        401: {'model': UnauthorizedResponse},
+        403: {'model': AdminStatusRequiredResponse}
+    },
+    dependencies=[Depends(UserStatusChecker(min_status=UserStatus.ADMIN))]
+)
+async def list_users(
+        limit: int = Query(250, le=1000),
+        offset: int = 0,
+        db: AsyncSession = Depends(get_db)
+):
+    """Возвращает информацию о всех пользователях. Требует статус admin."""
+    users = await crud.users.get_many(db, limit, offset)
+    return [UserInfoExtended.from_orm(x) for x in users]
+
+
+@users_router.get(
+    '/me',
     response_model=UserInfo,
     responses={401: {'model': UnauthorizedResponse}},
     dependencies=[Depends(check_auth)]
@@ -28,7 +47,7 @@ async def get_self_info(
 
 
 @users_router.get(
-    '/info/{user_id}',
+    '/{user_id}',
     response_model=UserInfo,
     responses={
         401: {'model': UnauthorizedResponse},
@@ -51,27 +70,8 @@ async def get_user_info(
     return UserInfo.from_orm(user)
 
 
-@users_router.get(
-    '/list',
-    response_model=list[UserInfoExtended],
-    responses={
-        401: {'model': UnauthorizedResponse},
-        403: {'model': AdminStatusRequiredResponse}
-    },
-    dependencies=[Depends(UserStatusChecker(min_status=UserStatus.ADMIN))]
-)
-async def list_users(
-        limit: int = Query(250, le=1000),
-        offset: int = 0,
-        db: AsyncSession = Depends(get_db)
-):
-    """Возвращает информацию о всех пользователях. Требует статус admin."""
-    users = await crud.users.get_many(db, limit, offset)
-    return [UserInfoExtended.from_orm(x) for x in users]
-
-
 @users_router.post(
-    '/create',
+    '',
     response_model=UserInfo,
     responses={
         401: {'model': UnauthorizedResponse},
@@ -104,7 +104,7 @@ async def create_user(
 
 
 @users_router.put(
-    '/update/me',
+    '/me',
     response_model=OkResponse,
     responses={
         401: {'model': UnauthorizedResponse},
@@ -145,7 +145,7 @@ async def update_self(
 
 
 @users_router.put(
-    '/update/{user_id}',
+    '/{user_id}',
     response_model=OkResponse,
     responses={
         401: {'model': UnauthorizedResponse},
@@ -195,7 +195,7 @@ async def update_user(
 
 
 @users_router.delete(
-    '/delete/{user_id}',
+    '/{user_id}',
     response_model=OkResponse,
     responses={
         401: {'model': UnauthorizedResponse},

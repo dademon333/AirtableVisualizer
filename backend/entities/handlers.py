@@ -60,7 +60,7 @@ async def search_entity(
 
 
 @entities_router.post(
-    '/create',
+    '',
     response_model=EntityInfo,
     responses={
         401: {'model': UnauthorizedResponse},
@@ -86,7 +86,7 @@ async def create_entity(
 
 
 @entities_router.put(
-    '/update/{entity_id}',
+    '/{entity_id}',
     response_model=OkResponse,
     responses={
         401: {'model': UnauthorizedResponse},
@@ -131,7 +131,7 @@ async def update_entity(
 
 
 @entities_router.delete(
-    '/delete/{entity_id}',
+    '/{entity_id}',
     response_model=OkResponse,
     responses={
         401: {'model': UnauthorizedResponse},

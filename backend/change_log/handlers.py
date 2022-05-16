@@ -74,7 +74,7 @@ async def list_changes(
 
 
 @change_log_router.delete(
-    '/revert/change_id',
+    '/{change_id}',
     response_model=OkResponse,
     responses={
         401: {'model': UnauthorizedResponse},

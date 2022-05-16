@@ -57,13 +57,13 @@ async def response_validation_middleware(request: Request, call_next):
     router: APIRouter = request.scope['router']
     for route in router.routes:
         match, _ = route.matches(request.scope)
-        if match == Match.FULL \
-                and hasattr(route, 'response_class') \
-                and route.response_class is ORJSONResponse \
-                and response.status_code == 200 \
-                and hasattr(route, 'response_model') \
-                and issubclass(route.response_model.__class__, ModelMetaclass):
-            parse_raw(route.response_model, response_body[0])
+        if match == Match.FULL:
+            if hasattr(route, 'response_class') \
+                    and route.response_class is ORJSONResponse \
+                    and response.status_code == 200 \
+                    and hasattr(route, 'response_model') \
+                    and issubclass(route.response_model.__class__, ModelMetaclass):
+                parse_raw(route.response_model, response_body[0])
             break
 
     return response

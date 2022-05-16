@@ -39,7 +39,7 @@ async def list_connections(
 
 
 @types_connections_router.get(
-    '/info/{connection_id}',
+    '/{connection_id}',
     response_model=EntitiesTypesConnectionInfoExtended,
     response_class=ORJSONResponse,
     responses={
@@ -77,7 +77,7 @@ async def get_connection_info(
 
 
 @types_connections_router.post(
-    '/create',
+    '',
     response_model=EntitiesTypesConnectionInfo,
     responses={
         400: {'model': ConnectionCreatesCycleErrorResponse},
@@ -128,7 +128,7 @@ async def create_connection(
 
 
 @types_connections_router.put(
-    '/update_name/{connection_id}',
+    '/{connection_id}',
     response_model=OkResponse,
     responses={
         401: {'model': UnauthorizedResponse},
@@ -172,7 +172,7 @@ async def update_column_name(
 
 
 @types_connections_router.delete(
-    '/delete/{connection_id}',
+    '/{connection_id}',
     response_model=OkResponse,
     responses={
         401: {'model': UnauthorizedResponse},

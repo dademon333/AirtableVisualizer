@@ -48,8 +48,8 @@ def upgrade():
         'db_elements_updates',
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('column', sa.String(), nullable=False),
-        sa.Column('old_value', sa.Text(), nullable=False),
-        sa.Column('new_value', sa.Text(), nullable=False),
+        sa.Column('old_value', sa.Text(), nullable=True),
+        sa.Column('new_value', sa.Text(), nullable=True),
         sa.Column('change_id', sa.Integer(), nullable=False),
         sa.ForeignKeyConstraint(['change_id'], ['change_log.id'], name=op.f('fk_db_elements_updates_change_id_change_log'), onupdate='CASCADE', ondelete='CASCADE'),
         sa.PrimaryKeyConstraint('id', name=op.f('pk_db_elements_updates'))

@@ -11,7 +11,7 @@ from common.redis import get_redis_cursor
 from common.responses import OkResponse, EditorStatusRequiredResponse, UnauthorizedResponse
 from common.security.auth import UserStatusChecker, get_user_id, get_user_status, can_access
 from common.db import get_db, UserStatus, EntityType, ChangedTable
-from common.schemas.entities import EntityInfo, CourseInfoExtended, CoursesSetInfo, CourseInfo
+from common.schemas.entities import CourseInfoExtended, CoursesSetInfo, CourseInfo
 from common.schemas.hidden_courses import HiddenCourseCreate
 from common.sqlalchemy_modules import convert_instance_to_dict
 from .modules import get_course_info, get_all_courses_info
@@ -45,7 +45,7 @@ async def list_courses(
 
 
 @courses_router.get(
-    '/info/all',
+    '/all',
     response_model=CoursesSetInfo,
     response_class=ORJSONResponse
 )
@@ -54,7 +54,7 @@ async def get_all_courses_info_(
         db: AsyncSession = Depends(get_db),
         redis_cursor: Redis = Depends(get_redis_cursor)
 ):
-    """Возвращает информацию о всех доступных для пользователя курсах."""
+    """Возвращает полную информацию о всех доступных для пользователя курсах."""
     if can_access(user_status, min_status=UserStatus.EDITOR):
         exclude_hidden = False
     else:
@@ -67,7 +67,7 @@ async def get_all_courses_info_(
 
 
 @courses_router.get(
-    '/info/{course_id}',
+    '/{course_id}',
     response_model=CourseInfoExtended,
     response_class=ORJSONResponse,
     responses={

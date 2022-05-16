@@ -17,7 +17,7 @@ entities_connections_router = APIRouter()
 
 
 @entities_connections_router.post(
-    '/connect',
+    '',
     response_model=OkResponse,
     responses={
         401: {'model': UnauthorizedResponse},
@@ -83,7 +83,7 @@ async def connect_entities(
 
 
 @entities_connections_router.delete(
-    '/disconnect',
+    '',
     response_model=OkResponse,
     responses={
         401: {'model': UnauthorizedResponse},
