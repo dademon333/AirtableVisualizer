@@ -1,4 +1,4 @@
-workers = 2
+workers = 2  # https://pythonspeed.com/articles/gunicorn-in-docker/
 worker_class = 'uvicorn.workers.UvicornWorker'
 worker_tmp_dir = '/dev/shm'
 
