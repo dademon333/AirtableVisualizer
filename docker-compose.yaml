@@ -24,7 +24,6 @@ services:
             replicas: $APP_REPLICAS
         depends_on:
             - postgres
-            - nginx
             - redis
             - frontend
 
@@ -75,6 +74,7 @@ services:
             - frontend:/usr/src/app/frontend/build:ro
         depends_on:
             - frontend
+            - app
 
     redis:
         image: redis:7-alpine
