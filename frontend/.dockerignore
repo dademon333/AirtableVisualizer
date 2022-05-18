@@ -2,6 +2,8 @@
 build
 node_modules
 
+.env
 .gitignore
-README.md
+**.dockerfile
+**.md
 Dockerfile
