@@ -69,7 +69,7 @@ async def login(
     )
 
 
-@stuff_router.post(
+@stuff_router.delete(
     '/logout',
     response_model=OkResponse,
     responses={401: {'model': UnauthorizedResponse}},
