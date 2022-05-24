@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import { getCourseListAsync } from './libs/services/courses.service';
 import Graph from './graph';
 import { getEntitiesAndConnectionsAsync } from './libs/services/entities-connections.service';
+import IEntitiesAndConnectionsResponse from './libs/interfaces/response/entities-connections-response.interface';
 
 function App() {
-  const [courses, setCourses] = useState([]);
+  const [entitiesConnections, setEntitiesConnections] = useState<IEntitiesAndConnectionsResponse | null>(null);
   
   useEffect(() => {
     const getCourses = async () => {
+      const result = await getEntitiesAndConnectionsAsync();
+      console.log(result);
+      setEntitiesConnections(result);
     };
 
     getCourses();
@@ -16,7 +19,7 @@ function App() {
 
   return (
     <div className="App">
-      <Graph />
+      {entitiesConnections && <Graph {...entitiesConnections}/> }
     </div>
   );
 }

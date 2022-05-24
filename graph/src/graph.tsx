@@ -1,11 +1,13 @@
 import * as d3 from 'd3'
 import { useEffect } from 'react';
+import IEntitiesAndConnectionsResponse from './libs/interfaces/response/entities-connections-response.interface';
 
 function getRandomArbitrary(min: number, max: number) {
     return Math.random() * (max - min) + min;
 }
 
 interface INode {
+    id: string;
     name: string;
     x: number;
     y: number;
@@ -21,66 +23,39 @@ interface IGraph {
     links: ILink[];
 }
 
-const getGraph = (width: number, height: number): IGraph =>  {
-    const names = [
-        { name: "Alice" },
-        { name: "Bob" },
-        { name: "Chen" },
-        { name: "Dawg" },
-        { name: "Ethan" },
-        { name: "George" },
-        { name: "Frank" },
-        { name: "Hanes" }
-    ];
-
-    const nodes = names.map(name => {
+const getGraph = (width: number, height: number, data: IEntitiesAndConnectionsResponse): IGraph =>  {
+    const nodes = Object.entries(data.entities).map(entity => {
         const x = getRandomArbitrary(5, width - 5);
         const y = getRandomArbitrary(5, height - 5);
         const node: INode = {
-            name: name.name, x, y
+            name: entity[1].name, x, y, id: entity[0]
         };
 
         return node;
     });
+    const links: ILink[] = [];
+    data.connections.map(connection => {
+        connection.entities_connections.map(entityConnection => {
+            const source = nodes.find(node => node.id == entityConnection.parent_id.toString());
+            const target = nodes.find(node => node.id == entityConnection.child_id.toString());
+            if (!source || !target) {return;}
+            const link: ILink = {
+                source, target
+            };
 
-    const links: ILink[] = [
-        {
-            source: nodes[0],
-            target: nodes[1]
-        },
-        {
-            source: nodes[2],
-            target: nodes[1]
-        },
-        {
-            source: nodes[3],
-            target: nodes[2]
-        },
-        {
-            source: nodes[7],
-            target: nodes[6]
-        },
-        {
-            source: nodes[7],
-            target: nodes[5]
-        },
-        {
-            source: nodes[3],
-            target: nodes[4]
-        }
-    ]
+            links.push(link);
+        })
+    });
 
-    return { nodes,links };
+    return { nodes, links };
 }
 
-
-
-const generateGraph = () => {
+const generateGraph = (data: IEntitiesAndConnectionsResponse) => {
     
     const svg = d3.select("svg");
     const width = Number(svg.attr("width"));
     const height = Number(svg.attr("height"));
-    const graph = getGraph(width, height);
+    const graph = getGraph(width, height, data);
     var link = svg
     .append("g")
     .attr("class", "links")
@@ -114,14 +89,14 @@ const generateGraph = () => {
 
 
 
-export default function Graph(): JSX.Element {
+export default function Graph(data: IEntitiesAndConnectionsResponse): JSX.Element {
 
     useEffect(() => {
-        generateGraph();
+        generateGraph(data);
     }, []);
 
 
-    return <svg  width="960" height="600"></svg>;
+    return <svg width="5000" height="5000"></svg>;
 }
 
 export {};
