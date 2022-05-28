@@ -4,44 +4,38 @@ import { getEntityColor } from "../services/entity.serivce";
 
 class NodeModel {
 
-    public selection: d3.Selection<SVGCircleElement, INode, SVGGElement, unknown>;
-    public enter: d3.Selection<d3.EnterElement, INode, SVGGElement, unknown>;
+    //public selection: d3.Selection<SVGCircleElement, INode, SVGGElement, unknown>;
+    public node: d3.Selection<SVGGElement, INode, SVGGElement, unknown>;
 
     constructor(svgElementName: string, nodes: INode[]) {
         const svg = d3.select(svgElementName);
-        this.enter = svg.append("g")
+        this.node = svg.append("g")
         .attr("class", "nodes")
-        .selectAll("circle")
+        .selectAll("g")
         .data(nodes)
-        .enter();
+        .enter()
+        .append("g");
 
-        this.selection = this.enter
-        .append("circle")
-        .attr("r", (d) => 10 + d.connectedNodesCount / 5)
-        .attr("fill", d => getEntityColor(d.type))
-        .style("stroke-width", d => 0);
+        this.appendCircle();
 
-        this.enter
-        .append("text")
-        .attr("dx", 12)
-        .attr("dy", "1em")
-        .text(function(d) { return "asdadjksaasdasd;sdasd" });
+        this.appendText();
     }
 
     private appendCircle() {
-        this.selection = this.enter
+        this.node
         .append("circle")
-        .attr("r", (d) => 10 + d.connectedNodesCount / 5)
+        .attr("r", (d) => 15 + d.connectedNodesCount / 5)
         .attr("fill", d => getEntityColor(d.type))
         .style("stroke-width", d => 0);
     }
 
     private appendText() {
-        this.enter
+        this.node
         .append("text")
+        .attr("font-size", d => d.connectedNodesCount / 25 + 10)
         .attr("dx", 12)
         .attr("dy", "1em")
-        .text(function(d) { return "asdadjksaasdasd;sdasd" });
+        .text(d => d.text);
     }
 }
 

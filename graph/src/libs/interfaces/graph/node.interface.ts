@@ -7,6 +7,7 @@ interface INode {
     y: number;
     connectedNodesCount: number;
     type: EntityType;
+    text: string;
 }
 
 export default INode;

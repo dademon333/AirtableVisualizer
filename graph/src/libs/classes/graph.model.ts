@@ -39,15 +39,15 @@ class GraphModel {
               .attr("x2", d => d.target.x)
               .attr("y2", d => d.target.y);
         
-            this._nodeModel.selection
-              .attr("cx", d => d.x)
-              .attr("cy", d => d.y);
+            this._nodeModel.node
+            .attr('transform', d => `translate(${d.x},${d.y})`);
           }
 
         d3.forceSimulation(this.nodes)
-        .force('link', d3.forceLink().distance(100).links(this.links))
+        .force('link', d3.forceLink().distance(400).links(this.links))
         .force("charge", d3.forceManyBody().strength(-200))
         .force("center", d3.forceCenter(this._width / 2, this._height / 2))
+        
         .on("tick", ticked.bind(this));
     }
 
@@ -61,7 +61,8 @@ class GraphModel {
                 y,
                 id: entity[0],
                 connectedNodesCount: 5,
-                type: entity[1].type
+                type: entity[1].type,
+                text: entity[1].name
             };
 
             return node;
@@ -69,10 +70,10 @@ class GraphModel {
     }
 
     private initializeGraphLink(data: IEntitiesAndConnectionsResponse): void {
-        data.connections.map(connection => {
-            connection.entities_connections.map(entityConnection => {
-                const source = this.nodes.find(node => node.id == entityConnection.parent_id.toString());
-                const target = this.nodes.find(node => node.id == entityConnection.child_id.toString());
+        for (const connection of data.connections) {
+            for (const entityConnection of connection.entities_connections) {
+                const source = this.nodes.find(node => node.id === entityConnection.parent_id.toString());
+                const target = this.nodes.find(node => node.id === entityConnection.child_id.toString());
                 if (!source || !target) {return;}
                 source.connectedNodesCount++;
 
@@ -81,8 +82,8 @@ class GraphModel {
                 };
 
                 this.links.push(link);
-            });
-        });
+            }
+        }
     }
 }
 

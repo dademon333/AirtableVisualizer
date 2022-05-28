@@ -17,8 +17,8 @@ class LinkModel {
         .data(links)
         .enter()
         .append("line")
-        .attr("stroke-width", d => 0.5)
-        .attr("marker-start", "url(#end)");
+        .attr("stroke-width", d => 0.25)
+        .attr("marker-end", d => 15 + d.target.connectedNodesCount / 5);
     }
 
     private addArrow(): void {
