@@ -3,13 +3,14 @@ import './App.css';
 import Graph from './graph';
 import { getEntitiesAndConnectionsAsync } from './libs/services/entities-connections.service';
 import IEntitiesAndConnectionsResponse from './libs/interfaces/response/entities-connections-response.interface';
+import data from './data.json';
 
 function App() {
   const [entitiesConnections, setEntitiesConnections] = useState<IEntitiesAndConnectionsResponse | null>(null);
   
   useEffect(() => {
     const getCourses = async () => {
-      const result = await getEntitiesAndConnectionsAsync();
+      const result = data as any;//await getEntitiesAndConnectionsAsync();
       console.log(result);
       setEntitiesConnections(result);
     };

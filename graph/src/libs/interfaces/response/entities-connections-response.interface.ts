@@ -1,5 +1,5 @@
-import { EntitySize } from "../core/entity-size.enum";
-import { EntityType } from "../core/entity-type.enum";
+import EntitySize from "../../enums/entity-size.enum";
+import EntityType from "../../enums/entity-type.enum";
 
 interface IEntitiesAndConnectionsResponse {
     connections: IConnection[],

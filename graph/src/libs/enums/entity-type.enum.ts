@@ -1,4 +1,4 @@
-export enum EntityType {
+enum EntityType {
     Course = 'course',
     Theme = 'theme',
     Knowledge = 'knowledge',
@@ -12,3 +12,5 @@ export enum EntityType {
     Profession = 'profession',
     SuosCompetence = 'Suos_competence'
 };
+
+export default EntityType;
