@@ -9,8 +9,11 @@ export default function Graph(data: IEntitiesAndConnectionsResponse): JSX.Elemen
         graph.addSimulation();
     }, []);
 
+    const width = window.innerWidth - 1;
+    const height = window.innerHeight - 4;
 
-    return <svg width="5000" height="5000"></svg>;
+
+    return <svg height={height} width={width}></svg>;
 }
 
 export {};
