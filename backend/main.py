@@ -13,13 +13,6 @@ from root_router import root_router
 app = FastAPI()
 app.include_router(root_router)
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origin_regex=r'https?://localhost:[0-9]{1,5}',
-    allow_methods=['*'],
-    allow_headers=['*'],
-)
 
 app.add_middleware(
     BaseHTTPMiddleware,
@@ -44,3 +37,11 @@ app.add_middleware(ServerTimingMiddleware, calls_to_track={
     'redis_requests': (Redis.execute_command,),
     'total': (response_validation_middleware,)
 })
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origin_regex=r'https?://localhost:[0-9]{1,5}',
+    allow_methods=['*'],
+    allow_headers=['*'],
+)
