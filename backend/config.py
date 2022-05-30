@@ -7,3 +7,5 @@ class Config:
 
     FRONT_ROOT = '/usr/src/frontend/build'
     BACKUPS_FOLDER = '/var/lib/postgres_backups'
+
+    CORS_ALLOWED_ORIGINS_REGEX = r'https?://localhost:[0-9]{1,5}'
