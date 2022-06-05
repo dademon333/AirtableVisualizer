@@ -12,12 +12,8 @@ export default function Graph(): JSX.Element {
     const [graphModel, setGraphModel] = useState<GraphModel | null>(null);
 
     useEffect(() => {
-        console.log({data, graphModel});
-        //if (graphModel) {
-        //    return;
-        //}
+        //console.log({data, graphModel});
 
-        console.log('here');
         const graph = new GraphModel("svg", data);
         graph.addSimulation();
         setGraphModel(graph);

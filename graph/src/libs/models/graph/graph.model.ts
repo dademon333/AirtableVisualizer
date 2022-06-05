@@ -47,12 +47,13 @@ class GraphModel {
           }
 
         const collideFormula = (radius: number) => radius > 5 ? (radius) / 25 + 15 : 25;
+        const formula = (radius: number) =>  15 + radius / 5 + 5;
 
         d3.forceSimulation(this.nodes)
-        .force('link', d3.forceLink(this.links).distance(d => getRandomArbitrary(200, 1000)))
+        .force('link', d3.forceLink(this.links).distance(d => getRandomArbitrary(200, 2000)))
         .force("charge", d3.forceManyBody().strength(-50))
         .force("center", d3.forceCenter(this._width / 2, this._height / 2))
-        .force("collide", d3.forceCollide(d => collideFormula(d.radius)))
+        .force("collide", d3.forceCollide(d => formula(d.radius)))
         .on("tick", ticked.bind(this));
     }
 
@@ -68,7 +69,7 @@ class GraphModel {
                 connectedNodes: [],
                 type: entity[1].type,
                 text: entity[1].name,
-                radius: 5
+                radius: 15
             };
 
             return node;
