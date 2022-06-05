@@ -46,11 +46,13 @@ class GraphModel {
             .attr('transform', d => `translate(${d.x},${d.y})`);
           }
 
+        const collideFormula = (radius: number) => radius > 5 ? (radius) / 25 + 15 : 25;
+
         d3.forceSimulation(this.nodes)
         .force('link', d3.forceLink(this.links).distance(d => getRandomArbitrary(200, 1000)))
         .force("charge", d3.forceManyBody().strength(-50))
         .force("center", d3.forceCenter(this._width / 2, this._height / 2))
-        .force("collide", d3.forceCollide(d => d.radius > 10 ? (d.radius + 5) / 25 + 15 : 15))
+        .force("collide", d3.forceCollide(d => collideFormula(d.radius)))
         .on("tick", ticked.bind(this));
     }
 

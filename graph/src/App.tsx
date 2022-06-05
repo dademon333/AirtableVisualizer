@@ -1,35 +1,33 @@
 import { useEffect, useState } from 'react';
 import './App.css';
 import Graph from './libs/components/graph/graph';
-import { getEntitiesAndConnectionsAsync } from './libs/services/entities-connections.service';
-import IEntitiesAndConnectionsResponse from './libs/interfaces/response/entities-connections-response.interface';
-import data from './data.json';
 import Filters from './libs/components/filters/filters';
-import { Provider } from 'react-redux';
-import store from './libs/redux/store';
+import {useDispatch } from 'react-redux';
+import { setConnectionsAndEntities } from './libs/redux/slices/entity-connection.slice';
+import { getEntitiesAndConnectionsAsync } from './libs/services/entities-connections.service';
 
 function App() {
-  const [entitiesConnections, setEntitiesConnections] = useState<IEntitiesAndConnectionsResponse | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const dispatch = useDispatch();
+
   
   useEffect(() => {
     const getCourses = async () => {
-      const result = data as any;//await getEntitiesAndConnectionsAsync();
-      console.log(result);
-      setEntitiesConnections(result);
+      const result = await getEntitiesAndConnectionsAsync();
+      //console.log(result);
+      dispatch(setConnectionsAndEntities(result));
       setIsLoaded(true);
+      
     };
 
     getCourses();
   }, []);
 
   return (
-    <Provider store={store}>
       <div className="App">
         {isLoaded && <Filters />}
-        {entitiesConnections && <Graph {...entitiesConnections}/> }
+        <Graph />
       </div>
-    </Provider>
   );
 }
 
