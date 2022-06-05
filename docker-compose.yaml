@@ -19,13 +19,14 @@ services:
             PYTHONUNBUFFERED: 1
             SQLALCHEMY_WARN_20: 1
         volumes:
-            - frontend:/usr/src/frontend/build:ro
+            - frontend:/usr/src/frontend:ro
         deploy:
             replicas: $APP_REPLICAS
         depends_on:
             - postgres
             - redis
-            - frontend
+            - graph_front
+            - table_front
 
     background_workers:
         build:
@@ -69,11 +70,12 @@ services:
             - "80:80"
         volumes:
             - /var/log/nginx:/var/log/nginx
-            - frontend:/usr/src/app/frontend/build:ro
+            - frontend:/usr/src/app/frontend:ro
             - ./docker_files/nginx.conf:/etc/nginx/nginx.conf:ro
         depends_on:
-            - frontend
             - app
+            - graph_front
+            - table_front
 
     redis:
         image: redis:7-alpine
@@ -81,8 +83,14 @@ services:
         volumes:
             - redis:/data
 
-    frontend:
+    graph_front:
         build:
-            context: ./frontend
+            context: ./frontend/graph
         volumes:
-            - frontend:/usr/src/app/frontend/build
+            - frontend:/usr/src/app/frontend
+
+    table_front:
+        build:
+            context: ./frontend/table
+        volumes:
+            - frontend:/usr/src/app/frontend
