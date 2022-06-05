@@ -1,0 +1,275 @@
+table th, table td {
+    border-right: 0.05rem solid #DADADA;
+}
+
+table thead th:first-child, table tbody td:first-child {
+    border-right: none;
+}
+
+.table_container {
+    position: relative;
+    top: 90px;
+    background: #F4F4F4;
+}
+
+.table_container table {
+    margin: 0;
+}
+
+.table_container thead {
+    height: 45px;
+    background: #E9E9E9;
+}
+
+.table_container thead th:nth-child(2),
+.table_container tbody tr td:nth-child(2) {
+    border-right: none;
+    position: relative;
+}
+
+.table_container tbody tr td:nth-child(2) .id {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    transition: 0.1s;
+}
+
+.table_container tbody {
+    background: #F4F4F4;
+}
+
+.first-column-element {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 30px;
+    font-size: 15px;
+}
+
+.courseTable .first-column-element.courseName {
+    width: 185px;
+}
+
+.themeTable .first-column-element.themeName,
+.knowledgeTable .first-column-element.knowledgeName {
+    width: 600px;
+}
+
+.secondary-column-elements {
+    position: relative;
+    display: flex;
+    overflow: scroll;
+    scrollbar-width: none;
+    transition: 0.2s;
+}
+
+.secondary-column-elements::-webkit-scrollbar {
+    display: none;
+}
+
+.courseTable .secondary-column-elements.themes {
+    width: 980px;
+}
+
+.themeTable .secondary-column-elements.knowledges,
+.quantumsTable .secondary-column-elements.knowledges {
+    width: 750px;
+}
+
+
+
+.secondary-column-elements .secondary-column-element {
+    background: #DADADA;
+    border-radius: 5px;
+    margin-right: 5px;
+    line-height: 30px;
+    font-size: 14px;
+    padding: 0 6px;
+}
+
+.add {
+    position: relative;
+    display: block;
+    width: 65px;
+    height: 30px;
+    align-self: center;
+    cursor: pointer;
+}
+
+.add::before, .add::after {
+    content: "";
+    position: absolute;
+    width: 0.1rem;
+    height: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 50%;
+    background-color: black;
+    transition: 0.2s;
+}
+
+.add::after {
+    transform: translateY(-50%) rotate(90deg);
+}
+
+.add:hover::after, .add:hover::before {
+    height: 25px;
+}
+
+/* CHECKBOX */
+
+.table_container tbody td {
+    position: relative;
+}
+
+.table_container tbody td input[type="checkbox"] {
+    display: none !important;
+}
+
+.table_container tbody td input[type="checkbox"] + label {
+    display: block;
+    position: relative;
+}
+
+.table_container tbody td input[type="checkbox"] + label::after {
+    position: absolute;
+    width: 20px;
+    transform: translateY(40%);
+    left: 25px;
+    z-index: 10;
+}
+
+.table_container.themeTable tbody td input[type="checkbox"] + label::after {
+    left: 18px;
+}
+
+.table_container tbody tr:hover td:nth-child(2) .id {
+    opacity: 0;
+    transform: scale(0.2);
+}
+
+.table_container tbody tr:hover td input[type="checkbox"] + label::after {
+    content: "";
+    background-image: url('/public/icons/Rectangle.svg');
+    width: 15px;
+    height: 15px;
+    cursor: pointer;
+}
+
+.table_container tbody td input[type="checkbox"]:checked + label::after,
+.table_container tbody tr:hover td input[type="checkbox"]:checked + label::after {
+    content: "";
+    background-image: url('/public/icons/FillRectangle.svg');
+    width: 15px;
+    height: 15px;
+}
+
+.table_container tbody td input[type="checkbox"]:checked + label::before,
+.table_container tbody tr:hover td input[type="checkbox"]:checked + label::before {
+    content: "";
+    background-color: #F4F4F4;
+    width: 35px;
+    height: 20px;
+    position: absolute;
+    transform: translateY(15%);
+    left: 15px;
+    z-index: 10;
+}
+
+.table_container.themeTable tbody td input[type="checkbox"]:checked + label::before,
+.table_container.themeTable tbody tr:hover td input[type="checkbox"]:checked + label::before {
+    left: 8px;
+}
+
+/* TOOLBAR */
+
+.toolbar {
+    display: flex;
+    align-items: center;
+    background: #F4F4F4;
+    height: 70px;
+    padding: 16px 25px;
+}
+
+/* SEARCH */
+
+.toolbar .search {
+    display: flex;
+    align-items: center;
+    padding: 10px 4px;
+    width: 90px;
+    height: 40px;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.2s;
+}
+
+.toolbar .search:hover, .toolbar .search:hover input {
+    background: #EBEBEB;
+}
+
+.toolbar .search input {
+    width: 100%;
+    background-color: #F4F4F4;
+    border: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: 0.2s;
+}
+
+.toolbar .search:focus-within {
+    width: 200px;
+}
+
+.toolbar .search input:focus {
+    outline: none;
+}
+
+/* SORTING */
+
+.toolbar .sorting {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 13px;
+    height: 40px;
+    padding: 4px;
+    padding-right: 12px;
+    margin-left: 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    transition: 0.2s;
+}
+
+.toolbar .sorting:hover, .toolbar .sorting.open {
+    background: #EBEBEB;
+}
+
+.toolbar .sorting .options {
+    position: absolute;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    bottom: -55px;
+    width: 200px;
+    padding: 15px;
+    height: 50px;
+    background: #E3E3E3;
+    border-radius: 5px;
+    z-index: 10;
+}
+
+.toolbar .sorting .options div {
+    padding: 5px;
+    border-radius: 5px;
+    transition: 0.2s;
+    font-weight: 600;
+    font-size: 12px;
+}
+
+.toolbar .sorting .options div:hover {
+    background: #EBEBEB;
+}

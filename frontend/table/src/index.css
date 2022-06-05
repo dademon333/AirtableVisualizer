@@ -1,0 +1,43 @@
+@font-face {
+  font-family: 'Montserrat';
+  src: url('font/Montserrat-VariableFont_wght.ttf');
+}
+
+body {
+  margin: 0;
+  background: #E5E5E5;
+  font-family: 'Montserrat';
+  font-size: 17px;
+}
+
+.error {
+  padding: 20px 40px;
+}
+
+.core {
+  position: absolute;
+  display: flex;
+  left: 50%;
+  top: 30px;
+  transform: translateX(-50%);
+  font-size: 23px;
+  line-height: 23px;
+  font-weight: 600;
+}
+
+.core p {
+  margin: 0;
+}
+
+.core .arrow {
+  margin-left: 10px;
+}
+
+.account {
+  width: 35px;
+  height: 35px;
+  position: absolute;
+  right: 30px;
+  top: 15px;
+  cursor: pointer;
+}
