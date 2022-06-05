@@ -1,4 +1,4 @@
-import { EntitiesConnectionsEndpoint } from "../endpoints";
+import { EntitiesConnectionsEndpoint } from "../constants/endpoints";
 import IEntitiesAndConnectionsResponse from "../interfaces/response/entities-connections-response.interface";
 import { getCachedAsync } from "./request.service";
 

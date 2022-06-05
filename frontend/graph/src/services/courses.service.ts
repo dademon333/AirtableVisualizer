@@ -1,4 +1,4 @@
-import { CourseListEndpoint } from "../endpoints";
+import { CourseListEndpoint } from "../constants/endpoints";
 import ICourseResponse from "../interfaces/response/course-response.interface";
 import { getCachedAsync } from "./request.service";
 
