@@ -5,9 +5,10 @@ interface INode {
     name: string;
     x: number;
     y: number;
-    connectedNodesCount: number;
+    connectedNodes: INode[];
     type: EntityType;
     text: string;
+    radius: number;
 }
 
 export default INode;

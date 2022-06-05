@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import GraphModel from './libs/classes/graph.model';
-import IEntitiesAndConnectionsResponse from './libs/interfaces/response/entities-connections-response.interface';
+import GraphModel from '../../models/graph/graph.model';
+import IEntitiesAndConnectionsResponse from '../../interfaces/response/entities-connections-response.interface';
 
 export default function Graph(data: IEntitiesAndConnectionsResponse): JSX.Element {
 

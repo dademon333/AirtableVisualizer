@@ -1,0 +1,14 @@
+.filters {
+    width: var(--filters-width);
+    height: 100vh;
+    background: var(--filters-bg-color);
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    opacity: 0.95;
+    font-family: 'Montserrat', sans-serif;
+    padding: 45px;
+    margin: 0;
+    box-sizing: border-box;
+}

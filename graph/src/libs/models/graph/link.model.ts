@@ -1,6 +1,6 @@
 import * as d3 from 'd3'
-import ILink from "../interfaces/graph/nodes-link.interface";
-import { getEntityColor } from "../services/entity.serivce";
+import ILink from '../../interfaces/graph/nodes-link.interface';
+import { getEntityColor } from '../../services/entity.serivce';
 
 class LinkModel {
 
@@ -20,7 +20,7 @@ class LinkModel {
         .append("line")
         .attr("stroke-width", d => 0.5)
         .attr("stroke", d => getEntityColor(d.source.type))
-        .attr("marker-end", d => 15 + d.target.connectedNodesCount / 5);
+        .attr("marker-end", d => 15 + d.target.radius / 5);
     }
 
     private addArrow(): void {

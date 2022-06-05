@@ -1,9 +1,9 @@
 import * as d3 from 'd3'
-import INode from "../interfaces/graph/node.interface";
-import ILink from "../interfaces/graph/nodes-link.interface";
-import IEntitiesAndConnectionsResponse from "../interfaces/response/entities-connections-response.interface";
-import LinkModel from "./link.model";
-import NodeModel from "./node.model";
+import INode from '../../interfaces/graph/node.interface';
+import ILink from '../../interfaces/graph/nodes-link.interface';
+import IEntitiesAndConnectionsResponse from "../../interfaces/response/entities-connections-response.interface";
+import LinkModel from './link.model';
+import NodeModel from './node.model';
 
 
 class GraphModel {
@@ -50,7 +50,7 @@ class GraphModel {
         .force('link', d3.forceLink(this.links).distance(d => getRandomArbitrary(200, 1000)))
         .force("charge", d3.forceManyBody().strength(-50))
         .force("center", d3.forceCenter(this._width / 2, this._height / 2))
-        .force("collide", d3.forceCollide(d => d.connectedNodesCount > 10 ? d.connectedNodesCount / 25 + 15 : 15))
+        .force("collide", d3.forceCollide(d => d.radius > 10 ? (d.radius + 5) / 25 + 15 : 15))
         .on("tick", ticked.bind(this));
     }
 
@@ -63,9 +63,10 @@ class GraphModel {
                 x,
                 y,
                 id: entity[0],
-                connectedNodesCount: 5,
+                connectedNodes: [],
                 type: entity[1].type,
-                text: entity[1].name
+                text: entity[1].name,
+                radius: 5
             };
 
             return node;
@@ -78,7 +79,9 @@ class GraphModel {
                 const source = this.nodes.find(node => node.id === entityConnection.parent_id.toString());
                 const target = this.nodes.find(node => node.id === entityConnection.child_id.toString());
                 if (!source || !target) {return;}
-                source.connectedNodesCount++;
+                source.radius++;
+                source.connectedNodes.push(target);
+                target.connectedNodes.push(source);
 
                 const link: ILink = {
                     source, target
