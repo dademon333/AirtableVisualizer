@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Grid, Table, TableHeaderRow, TableSelection } from '@devexpress/dx-react-grid-bootstrap4';
-import { SelectionState, IntegratedSelection, IntegratedFiltering, SortingState, IntegratedSorting } from '@devexpress/dx-react-grid';
+import { SelectionState, IntegratedSelection } from '@devexpress/dx-react-grid';
 import { getChilds, getItems, wrapName, addLabels } from '../../services/services';
 import withData from "../withData";
 import './tables.css';
