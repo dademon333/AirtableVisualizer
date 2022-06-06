@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import GraphModel from '../../models/graph/graph.model';
-import IEntitiesAndConnectionsResponse from '../../interfaces/response/entities-connections-response.interface';
 import { useSelector } from 'react-redux';
+import IEntitiesAndConnectionsResponse from '../../interfaces/response/entities-connections-response.interface';
+import GraphModel from '../../models/graph/graph.model';
 
 export default function Graph(): JSX.Element {
 
@@ -12,7 +12,6 @@ export default function Graph(): JSX.Element {
     const [graphModel, setGraphModel] = useState<GraphModel | null>(null);
 
     useEffect(() => {
-        //console.log({data, graphModel});
 
         const graph = new GraphModel("svg", data);
         graph.addSimulation();
