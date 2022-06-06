@@ -10,7 +10,7 @@ class TasksTable extends Component {
         query: "",
         columns: [
             { name: 'id', title: ' ' },
-            { name: 'task', title: 'Тема' },
+            { name: 'task', title: 'Задание' },
             { name: 'add', title: <span className="add" /> }
         ],
         selection: [],

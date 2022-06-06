@@ -1,12 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
+import TableLinks from "./TableLinks";
 import './navigation.css';
 
-const Navigation = ({activeLink, Table}) => {
-    return (
+const Navigation = ({ activeLink, Table }) => {
+    const [isOpen, setOpen] = useState(false);
+
+	return (
 		<>
-			<img className="hamburger" src="icons/hamburger.svg" alt="hamburger" />
+			<div className="finder-tables">
+				<img className={`hamburger ${isOpen ? 'open' : 'closed'}`} src="icons/hamburger.svg" alt="hamburger" onClick={() => setOpen(!isOpen)} />
+				{ isOpen ? <TableLinks setOpen={setOpen} /> : null }
+			</div>
 			<Nav variant="tabs">
 				<Nav.Item>
 					<Link className={`nav-link ${activeLink === 'course' ? 'active' : 'disable'}`} to="/">Курс</Link>
