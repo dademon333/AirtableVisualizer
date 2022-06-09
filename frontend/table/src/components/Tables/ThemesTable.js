@@ -1,26 +1,66 @@
-import React, { Component } from "react";
-import { Grid, Table, TableHeaderRow, TableSelection } from '@devexpress/dx-react-grid-bootstrap4';
-import { SelectionState, IntegratedSelection } from '@devexpress/dx-react-grid';
-import { getChilds, getItems, wrapName, addLabels } from '../../services/services';
+import React, { Component, useState } from "react";
+import { Grid, Table, TableHeaderRow, TableColumnVisibility } from '@devexpress/dx-react-grid-bootstrap4';
+import { getChilds, getItems, wrapName, getParents, getSearchingElement } from '../../services/services';
 import withData from "../withData";
 import './tables.css';
 
+const AddMenu = ({ removeFromHiddenColumns }) => {
+    const [isOpenAddMenu, setOpenAddMenu] = useState(false);
+    const [query, setQuery] = useState("");
+    const [clickedIds, setClickedId] = useState(['knowledges']);
+    const initMenuNames = [
+        { name: 'Знание', column: 'knowledges'},
+        { name: 'Курс', column: 'course' }
+    ];
+    const menuNames = getSearchingElement(initMenuNames, query);
+
+    return (
+        <div className="add_container">
+            <span className={isOpenAddMenu ? "add opened" : "add"} onClick={ () => setOpenAddMenu(!isOpenAddMenu) } />
+            { isOpenAddMenu ?
+                <div className="addMenu">
+                    <div className="add_search">
+                        <img src="icons/search_table.svg" alt="search" />
+                        <input placeholder="Поиск" onChange={event => setQuery(event.target.value)} />
+                    </div>
+                    { menuNames.map((menuName, idx) => {
+                        return (
+                            <div className={clickedIds.includes(menuName.column) ? "addMenu_item checkMark" : "addMenu_item"} key={idx} onClick={() => {
+                                setClickedId([...clickedIds, menuName.column]);
+                                removeFromHiddenColumns(menuName.column);
+                                setOpenAddMenu(false);
+                            }}>{menuName.name}</div>
+                        );
+                    }) }
+                </div>
+            : null}
+        </div>
+    );
+}
+
 class ThemesTable extends Component {
+    removeFromHiddenColumns = (column) => {
+        const hiddenColumns = this.state.hiddenColumnNames;
+        this.setState({ hiddenColumnNames: hiddenColumns.filter(e => e !== column) });
+    }
+
     state = {
         query: "",
         columns: [
             { name: 'id', title: ' ' },
             { name: 'theme', title: 'Тема' },
             { name: 'knowledges', title: 'Знание' },
-            { name: 'add', title: <span className="add" /> }
+            { name: 'course', title: 'Курс' },
+            { name: 'add', title: <AddMenu removeFromHiddenColumns={this.removeFromHiddenColumns} /> }
         ],
-        selection: [],
         tableColumnExtensions: [
             { columnName: 'id', width: '50px' },
-            { columnName: 'theme', width: '185px' },
-            { columnName: 'knowledges', width: '750px' },
+            { columnName: 'theme', width: '300px' },
+            { columnName: 'knowledges', width: '700px' },
+            { columnName: 'course', width: '300px' },
             { columnName: 'add', width: '65px' }
-        ]
+        ],
+        hiddenColumnNames: ['course']
     }
 
     setRows = () => {
@@ -40,19 +80,22 @@ class ThemesTable extends Component {
             .map((entity, idx) => {
                 const index = Number(entity[0]);
                 const row = {};
+                const parents = {};
                 const childs = getChilds(data.connections[2], index);
-                const themes = getItems(data.entities, childs, 'knowledgeName');
+                const knowledges = getItems(data.entities, childs, 'knowledgeName');
+                parents.course = getParents(data.connections[0], index);
+                const courseParent = getItems(data.entities, parents.course, 'course');
+                row.course = <div className="courses secondary-column-elements">{courseParent}</div>;
                 row.id = <div className="id">{idx + 1}</div>;
                 row.theme = wrapName(entity[1].name, 'themeName');
-                row.knowledges = <div className="knowledges secondary-column-elements">{themes}</div>;
+                row.knowledges = <div className="knowledges secondary-column-elements">{knowledges}</div>;
                 return row;
-        });
-        addLabels();
+            });
         return rows;
     }
 
     render() {
-        const {columns, selection, tableColumnExtensions} = this.state;
+        const {columns, tableColumnExtensions, hiddenColumnNames} = this.state;
         const rows = this.setRows();
         return (
             <div className='table_container themeTable'>
@@ -69,14 +112,9 @@ class ThemesTable extends Component {
                     rows={rows}
                     columns={columns}
                 >
-                    <SelectionState 
-                        selection={selection}
-                        onSelectionChange={selected => this.setState({ selection: selected })}
-                    />
-                    <IntegratedSelection />
                     <Table columnExtensions={tableColumnExtensions} />
                     <TableHeaderRow />
-                    <TableSelection selectionColumnWidth={0} />
+                    <TableColumnVisibility hiddenColumnNames={hiddenColumnNames} />
                 </Grid>
             </div>
         );

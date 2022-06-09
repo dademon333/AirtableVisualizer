@@ -1,9 +1,23 @@
-import React, { Component } from "react";
-import { Grid, Table, TableHeaderRow, TableSelection } from '@devexpress/dx-react-grid-bootstrap4';
-import { SelectionState, IntegratedSelection } from '@devexpress/dx-react-grid';
-import { wrapName, addLabels } from '../../services/services';
+import React, { Component, useState } from "react";
+import { Grid, Table, TableHeaderRow } from '@devexpress/dx-react-grid-bootstrap4';
+import { wrapName, getParents, getItems, getChilds } from '../../services/services';
 import withData from "../withData";
 import './tables.css';
+
+const AddMenu = () => {
+    const [isOpenAddMenu, setOpenAddMenu] = useState(false);
+
+    return (
+        <div className="add_container">
+            <span className={isOpenAddMenu ? "add opened" : "add"} onClick={ () => setOpenAddMenu(!isOpenAddMenu) } />
+            { isOpenAddMenu ?
+                <div className="addMenu" style={{"fontSize": "14px", "padding": "10px"}}>
+                    Здесь пока ничего нет
+                </div>
+            : null}
+        </div>
+    );
+}
 
 class TasksTable extends Component {
     state = {
@@ -11,12 +25,15 @@ class TasksTable extends Component {
         columns: [
             { name: 'id', title: ' ' },
             { name: 'task', title: 'Задание' },
-            { name: 'add', title: <span className="add" /> }
+            { name: 'target', title: 'Цель'},
+            { name: 'activity', title: 'Активность' },
+            { name: 'add', title: <AddMenu removeFromHiddenColumns={this.removeFromHiddenColumns} /> }
         ],
-        selection: [],
         tableColumnExtensions: [
             { columnName: 'id', width: '50px' },
             { columnName: 'task', width: '600px' },
+            { columnName: 'target', width: '200px' },
+            { columnName: 'activity', width: '200px' },
             { columnName: 'add', width: '65px' }
         ]
     }
@@ -35,18 +52,24 @@ class TasksTable extends Component {
                     return null;
                 }
             })
-            .map((entity, index) => {
+            .map((entity, idx) => {
+                const index = Number(entity[0]);
                 const row = {};
-                row.id = <div className="id">{index + 1}</div>;
+                const targetParent = getParents(data.connections[5], index);
+                const target = getItems(data.entities, targetParent, 'target');
+                const childActivity = getChilds(data.connections[4], targetParent[0]);
+                const activity = getItems(data.entities, childActivity, 'activity');
+                row.id = <div className="id">{idx + 1}</div>;
                 row.task = wrapName(entity[1].name, 'taskName');
+                row.target = <div className="targets secondary-column-elements">{target}</div>
+                row.activity = <div className="activities secondary-column-elements">{activity}</div>
                 return row;
         });
-        addLabels();
         return rows;
     }
 
     render() {
-        const {columns, selection, tableColumnExtensions} = this.state;
+        const {columns, tableColumnExtensions} = this.state;
         const rows = this.setRows();
         return (
             <div className='table_container taskTable'>
@@ -63,14 +86,8 @@ class TasksTable extends Component {
                     rows={rows}
                     columns={columns}
                 >
-                    <SelectionState 
-                        selection={selection}
-                        onSelectionChange={selected => this.setState({ selection: selected })}
-                    />
-                    <IntegratedSelection />
                     <Table columnExtensions={tableColumnExtensions} />
                     <TableHeaderRow />
-                    <TableSelection selectionColumnWidth={0} />
                 </Grid>
             </div>
         );

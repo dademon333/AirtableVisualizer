@@ -10,9 +10,9 @@ const withData = (View, getData) => {
         }
         
         componentDidMount() {
-            fetch('http://37.77.106.103/api/types_connections/list')
+            /* fetch('http://37.77.106.103/api/types_connections/list')
                 .then(res => res.json())
-                .then(res => console.log(res));
+                .then(res => console.log(res)); */
             getCourses()
                 .then(data => {
                     this.setState({

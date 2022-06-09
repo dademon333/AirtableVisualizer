@@ -60,6 +60,10 @@
     transition: 0.2s;
 }
 
+.hamburger:hover {
+    background-color: #DBDBDB;
+}
+
 .hamburger.open {
     background: #F9F9F9;
 }
@@ -93,7 +97,8 @@
     z-index: 10;
 }
 
-.table-links .table-link {
+.table-links .table-link,
+.addMenu .addMenu_item {
     display: flex;
     position: relative;
     color: black;
@@ -105,13 +110,15 @@
     border-radius: 5px;
     padding-left: 40px;
     transition: 0.1s;
+    cursor: pointer;
 }
 
-.table-links .table-link:hover {
+.table-links .table-link:hover,
+.addMenu .addMenu_item:hover {
     background: #EBEBEB;
 }
 
-.table-links .table-link.checkMark::before {
+.checkMark::before {
     content: "";
     position: absolute;
     left: 12px;
@@ -120,14 +127,16 @@
     background-image: url('/public/icons/check_mark.svg');
 }
 
-.table-links .search_tables {
+.table-links .search_tables,
+.addMenu .add_search {
     display: flex;
     border-bottom: 2px solid #F4F4F4;
     margin-bottom: 5px;
     transition: 0.2s;
 }
 
-.table-links input {
+.table-links input,
+.addMenu input {
     background: #E3E3E3;
     border: none;
     margin-left: 8px;
@@ -137,6 +146,7 @@
     font-size: 16px;
 }
 
-.table-links input:focus {
+.table-links input:focus,
+.addMenu input {
     outline: none;
 }

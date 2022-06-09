@@ -1,7 +1,7 @@
-import React, { Component } from "react";
-import { Grid, Table, TableHeaderRow, TableSelection } from '@devexpress/dx-react-grid-bootstrap4';
-import { SelectionState, IntegratedSelection, SortingState, IntegratedSorting } from '@devexpress/dx-react-grid';
-import { getChilds, getItems, wrapName, addLabels } from '../../services/services';
+import React, { Component, useState } from "react";
+import { Grid, Table, TableHeaderRow } from '@devexpress/dx-react-grid-bootstrap4';
+import { SortingState, IntegratedSorting } from '@devexpress/dx-react-grid';
+import { getChilds, getItems, wrapName, getSearchingElement } from '../../services/services';
 import withData from '../withData';
 import './tables.css';
 
@@ -13,6 +13,32 @@ const comparePriority = (a, b) => {
     }
 };
 
+const AddMenu = () => {
+    const [isOpenAddMenu, setOpenAddMenu] = useState(false);
+    const [query, setQuery] = useState("");
+    const initMenuNames = [{ name: 'Тема'}];
+    const menuNames = getSearchingElement(initMenuNames, query);
+
+    return (
+        <div className="add_container">
+            <span className={isOpenAddMenu ? "add opened" : "add"} onClick={ () => setOpenAddMenu(!isOpenAddMenu) } />
+            { isOpenAddMenu ?
+                <div className="addMenu">
+                    <div className="add_search">
+                        <img src="icons/search_table.svg" alt="search" />
+                        <input placeholder="Поиск" onChange={event => setQuery(event.target.value)} />
+                    </div>
+                    { menuNames.map((menuName, idx) => {
+                        return (
+                            <div className="addMenu_item checkMark" key={idx} onClick={() => setOpenAddMenu(false)}>{menuName.name}</div>
+                        );
+                    }) }
+                </div>
+            : null}
+        </div>
+    );
+}
+
 class CoursesTable extends Component {
     state = {
         query: "",
@@ -20,9 +46,8 @@ class CoursesTable extends Component {
             { name: 'id', title: ' ' },
             { name: 'name', title: 'Название' },
             { name: 'themes', title: 'Тема' },
-            { name: 'add', title: <span className="add" /> }
+            { name: 'add', title: <AddMenu /> }
         ],
-        selection: [],
         tableColumnExtensions: [
             { columnName: 'id', width: '50px' },
             { columnName: 'name', width: '185px' },
@@ -63,12 +88,11 @@ class CoursesTable extends Component {
                 row.themes = <div className="themes secondary-column-elements">{themes}</div>;
                 return row;
         });
-        addLabels();
         return rows;
     }
 
     render() {
-        const {columns, selection, tableColumnExtensions, integratedSortingColumnExtensions, sortingStateColumnExtensions, isSortingOptionsOpen} = this.state;
+        const {columns, tableColumnExtensions, integratedSortingColumnExtensions, sortingStateColumnExtensions, isSortingOptionsOpen} = this.state;
         const rows = this.setRows();
         return (
             <div className='table_container courseTable'>
@@ -97,16 +121,10 @@ class CoursesTable extends Component {
                     rows={rows}
                     columns={columns}
                 >
-                    <SelectionState 
-                        selection={selection}
-                        onSelectionChange={selected => this.setState({ selection: selected })}
-                    />
                     <SortingState columnExtensions={sortingStateColumnExtensions} />
                     <IntegratedSorting columnExtensions={integratedSortingColumnExtensions} />
-                    <IntegratedSelection />
                     <Table columnExtensions={tableColumnExtensions} />
                     <TableHeaderRow showSortingControls />
-                    <TableSelection selectionColumnWidth={0} />
                 </Grid>
             </div>
         );
