@@ -1,7 +1,8 @@
 import React, { Component, useState } from "react";
 import { Grid, Table, TableHeaderRow, TableColumnVisibility } from '@devexpress/dx-react-grid-bootstrap4';
-import { getChilds, getItems, wrapName, getParents, getSearchingElement } from '../../services/services';
+import { getChilds, getItems, wrapName, getParents, getSearchingElement, comparePriority } from '../../services/services';
 import withData from "../withData";
+import Toolbar from "../Toolbar/Toolbar";
 import './tables.css';
 
 const AddMenu = ({ removeFromHiddenColumns }) => {
@@ -68,14 +69,21 @@ class KnowledgesTable extends Component {
             { columnName: 'quantum', width: '400px' },
             { columnName: 'add', width: '65px' }
         ],
-        hiddenColumnNames: ['target', 'quantum']
+        hiddenColumnNames: ['target', 'quantum'],
+        isSortingOptionsOpen: false,
+        sortingOption: 'default'
     }
     
     setRows = () => {
         const {data} = this.props;
-        const {query} = this.state;
-        const rows = Object.entries(data.entities)
-            .filter(entity => entity[1] !== undefined && entity[1].type === 'knowledge')
+        const {query, sortingOption} = this.state;
+        const initData = Object.entries(data.entities)
+            .filter(entity => entity[1] !== undefined && entity[1].type === 'knowledge');
+        const sortedData = 
+            sortingOption === 'default' ? initData :
+            sortingOption === 'asc' ? initData.sort((entity1, entity2) => comparePriority(entity1[1].name, entity2[1].name)) :
+            sortingOption === 'desc' ? initData.sort((entity1, entity2) => comparePriority(entity2[1].name, entity1[1].name)) : null;
+        const rows = sortedData
             .filter(entity => {
                 if (query === "") {
                     return entity; 
@@ -105,20 +113,30 @@ class KnowledgesTable extends Component {
         return rows;
     }
 
+    onSearchChange = (value) => {
+        this.setState({ query: value });
+    }
+
+    onSortingClick = (value) => {
+        this.setState({ isSortingOptionsOpen: value });
+    }
+
+    onSortingOptionClick = (value) => {
+        this.setState({ sortingOption: value });
+    }
+
     render() {
-        const {columns, tableColumnExtensions, hiddenColumnNames} = this.state;
+        const {columns, tableColumnExtensions, hiddenColumnNames, isSortingOptionsOpen, sortingOption} = this.state;
         const rows = this.setRows();
         return (
             <div className='table_container knowledgeTable'>
-                <div className="toolbar">
-                    <div className="search">
-                        <img src="icons/search.svg" alt="search" />
-                        <input 
-                            placeholder="Поиск" 
-                            onChange={event => this.setState({ query: event.target.value })}
-                        />
-                    </div>
-                </div> 
+                <Toolbar
+                    isSortingOptionsOpen={isSortingOptionsOpen}
+                    onSearchChange={this.onSearchChange}
+                    onSortingClick={this.onSortingClick}
+                    onSortingOptionClick={this.onSortingOptionClick}
+                    sortingOption={sortingOption}
+                />
                 <Grid
                     rows={rows}
                     columns={columns}

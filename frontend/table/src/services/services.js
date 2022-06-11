@@ -47,6 +47,14 @@ export const getSearchingElement = (initData, query) => {
     });
 }
 
+export const comparePriority = (a, b) => {
+    if (a.trim().toLowerCase() > b.trim().toLowerCase()) {
+        return 1;
+    } else {
+        return -1;
+    }
+};
+
 export const addLabels = () => {
     const checkboxes = document.querySelectorAll('.table_container tbody td:first-child input[type="checkbox"]');
     const tds = document.querySelectorAll('.table_container tbody td:first-child');

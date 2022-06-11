@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { getCourses } from '../services/services';
 import Spinner from '../components/Spinner/Spinner';
 
-const withData = (View, getData) => {
+const withData = (View) => {
     return class extends Component {
         state = {
             data: null,
@@ -18,7 +18,6 @@ const withData = (View, getData) => {
                     this.setState({
                         data
                     });
-                    console.log(data);
                 }, error =>  this.setState({ error: true }))
                 .catch(error => this.setState({ error: true }));
         }
