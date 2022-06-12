@@ -42,7 +42,7 @@ async def get_entities_types_connection(
 
 async def update_cache() -> None:
     db = session_factory()
-    redis_cursor = get_redis_cursor()
+    redis_cursor = await anext(get_redis_cursor())
 
     all_courses = await get_all_courses_info(db, exclude_hidden=False)
     await redis_cursor.set(

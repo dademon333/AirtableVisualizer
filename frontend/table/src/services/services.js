@@ -20,16 +20,40 @@ export const getChilds = (connections, parent_id) => {
     return childs;
 }
 
+export const getParents = (connections, child_id) => {
+    const parents = connections.entities_connections
+        .filter(connection => connection.child_id === child_id)
+        .map(connection => connection.parent_id);
+    return parents;
+}
+
 export const getItems = (data, childs, className) => {
     const items = [];
-    childs.map((child, index) => {
+    childs.forEach((child, index) => {
         items.push(<div className={className + " secondary-column-element"} key={index}>{ data[child].name }</div>);
-        return items;
     });
     return items;
 }
 
-export const wrapName = (name, className) => <div className={className + " first-column-element"}>{ name }</div>;
+export const wrapName = (name, className) => <div className={className + " first-column-element"} title={ name }>{ name }</div>;
+
+export const getSearchingElement = (initData, query) => {
+    return initData.filter(item => {
+        if (query === "") {
+            return item;
+        } else if (item.name.toLowerCase().trim().includes(query.toLowerCase().trim())) {
+            return item;
+        } else return null;
+    });
+}
+
+export const comparePriority = (a, b) => {
+    if (a.trim().toLowerCase() > b.trim().toLowerCase()) {
+        return 1;
+    } else {
+        return -1;
+    }
+};
 
 export const addLabels = () => {
     const checkboxes = document.querySelectorAll('.table_container tbody td:first-child input[type="checkbox"]');
@@ -49,7 +73,7 @@ export const addLabels = () => {
     })
 }
 
-export const getCheckedValues = (className) => {
+/* export const getCheckedValues = (className) => {
     const values = [];
     const checkboxes = document.getElementsByTagName('input');
     const namesCourses = document.getElementsByClassName(className);
@@ -59,4 +83,4 @@ export const getCheckedValues = (className) => {
         }
     }
     return values;
-}
+} */

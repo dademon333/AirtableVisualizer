@@ -1,31 +1,56 @@
-import React, { Component } from "react";
-import { Grid, Table, TableHeaderRow, TableSelection, SearchPanel, Toolbar } from '@devexpress/dx-react-grid-bootstrap4';
-import { SelectionState, IntegratedSelection, SearchState, IntegratedFiltering, SortingState, IntegratedSorting } from '@devexpress/dx-react-grid';
-import { getChilds, getItems, wrapName, addLabels } from '../../services/services';
+import React, { Component, useState } from "react";
+import { Grid, Table, TableHeaderRow } from '@devexpress/dx-react-grid-bootstrap4';
+import { wrapName, getParents, getItems, getChilds, comparePriority } from '../../services/services';
 import withData from "../withData";
+import Toolbar from "../Toolbar/Toolbar";
 import './tables.css';
+
+const AddMenu = () => {
+    const [isOpenAddMenu, setOpenAddMenu] = useState(false);
+
+    return (
+        <div className="add_container">
+            <span className={isOpenAddMenu ? "add opened" : "add"} onClick={ () => setOpenAddMenu(!isOpenAddMenu) } />
+            { isOpenAddMenu ?
+                <div className="addMenu" style={{"fontSize": "14px", "padding": "10px"}}>
+                    Здесь пока ничего нет
+                </div>
+            : null}
+        </div>
+    );
+}
 
 class TasksTable extends Component {
     state = {
         query: "",
         columns: [
             { name: 'id', title: ' ' },
-            { name: 'task', title: 'Тема' },
-            { name: 'add', title: <span className="add" /> }
+            { name: 'task', title: 'Задание' },
+            { name: 'target', title: 'Цель'},
+            { name: 'activity', title: 'Активность' },
+            { name: 'add', title: <AddMenu removeFromHiddenColumns={this.removeFromHiddenColumns} /> }
         ],
-        selection: [],
         tableColumnExtensions: [
             { columnName: 'id', width: '50px' },
             { columnName: 'task', width: '600px' },
+            { columnName: 'target', width: '200px' },
+            { columnName: 'activity', width: '200px' },
             { columnName: 'add', width: '65px' }
-        ]
+        ],
+        isSortingOptionsOpen: false,
+        sortingOption: 'default'
     }
 
     setRows = () => {
         const {data} = this.props;
-        const {query} = this.state;
-        const rows = Object.entries(data.entities)
-            .filter(entity => entity[1] !== undefined && entity[1].type === 'task')
+        const {query, sortingOption} = this.state;
+        const initData = Object.entries(data.entities)
+            .filter(entity => entity[1] !== undefined && entity[1].type === 'task');
+        const sortedData = 
+            sortingOption === 'default' ? initData :
+            sortingOption === 'asc' ? initData.sort((entity1, entity2) => comparePriority(entity1[1].name, entity2[1].name)) :
+            sortingOption === 'desc' ? initData.sort((entity1, entity2) => comparePriority(entity2[1].name, entity1[1].name)) : null;
+        const rows = sortedData
             .filter(entity => {
                 if (query === "") {
                     return entity; 
@@ -35,42 +60,52 @@ class TasksTable extends Component {
                     return null;
                 }
             })
-            .map((entity, index) => {
+            .map((entity, idx) => {
+                const index = Number(entity[0]);
                 const row = {};
-                row.id = <div className="id">{index + 1}</div>;
+                const targetParent = getParents(data.connections[5], index);
+                const target = getItems(data.entities, targetParent, 'target');
+                const childActivity = getChilds(data.connections[4], targetParent[0]);
+                const activity = getItems(data.entities, childActivity, 'activity');
+                row.id = <div className="id">{idx + 1}</div>;
                 row.task = wrapName(entity[1].name, 'taskName');
+                row.target = <div className="targets secondary-column-elements">{target}</div>
+                row.activity = <div className="activities secondary-column-elements">{activity}</div>
                 return row;
         });
-        addLabels();
         return rows;
     }
 
+    onSearchChange = (value) => {
+        this.setState({ query: value });
+    }
+
+    onSortingClick = (value) => {
+        this.setState({ isSortingOptionsOpen: value });
+    }
+
+    onSortingOptionClick = (value) => {
+        this.setState({ sortingOption: value });
+    }
+
     render() {
-        const {columns, selection, tableColumnExtensions} = this.state;
+        const {columns, tableColumnExtensions, isSortingOptionsOpen, sortingOption} = this.state;
         const rows = this.setRows();
         return (
             <div className='table_container taskTable'>
-                <div className="toolbar">
-                    <div className="search">
-                        <img src="icons/search.svg" alt="search" />
-                        <input 
-                            placeholder="Поиск" 
-                            onChange={event => this.setState({ query: event.target.value })}
-                        />
-                    </div>
-                </div> 
+                <Toolbar 
+                    isSortingOptionsOpen={isSortingOptionsOpen}
+                    onSearchChange={this.onSearchChange}
+                    onSortingClick={this.onSortingClick}
+                    onSortingOptionClick={this.onSortingOptionClick}
+                    sortingOption={sortingOption}  
+                /> 
                 <Grid
                     rows={rows}
                     columns={columns}
                 >
-                    <SelectionState 
-                        selection={selection}
-                        onSelectionChange={selected => this.setState({ selection: selected })}
-                    />
-                    <IntegratedSelection />
                     <Table columnExtensions={tableColumnExtensions} />
                     <TableHeaderRow />
-                    <TableSelection selectionColumnWidth={0} />
                 </Grid>
             </div>
         );
