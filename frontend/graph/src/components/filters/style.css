@@ -11,4 +11,7 @@
     padding: 45px;
     margin: 0;
     box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    row-gap: 50px;
 }

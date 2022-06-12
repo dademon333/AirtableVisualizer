@@ -5,6 +5,6 @@ import filterSlice from './slices/filter.slice'
 export default configureStore({
   reducer: {
     entitiesConnections: entityConnectionSlice,
-    filters: filterSlice 
+    filters: filterSlice,
   },
 })
