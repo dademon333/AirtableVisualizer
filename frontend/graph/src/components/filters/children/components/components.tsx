@@ -38,10 +38,10 @@ export default function Components() {
     const setValues = (els: Array<SelectModel<string>>) => {
         const newValues = els.filter(el => el.SelectedItem !== null).map(el => el.SelectedItem?.id!);
         dispatch(setComponentEntities(newValues));
-        const visibleNodes = setTypeModel.SelectedItem?.value === SetType.Union || controls.length == 1 
-        ? getVisibleNodesForUnionSetType(newValues)
-        : getVisibleEntitiesForIntersectionSetType(newValues);
-        dispatch(setVisibleEntites(visibleNodes));
+        // const visibleNodes = setTypeModel.SelectedItem?.value === SetType.Union || controls.length == 1 
+        // ? getVisibleNodesForUnionSetType(newValues)
+        // : getVisibleEntitiesForIntersectionSetType(newValues);
+        // dispatch(setVisibleEntites(visibleNodes));
     };
 
     const onPlusClick = () => {
@@ -111,28 +111,28 @@ const setTypeItems: ISelect<SetType>[] = [
     {id: '2', name: 'Пересечение', value: SetType.Intersection },
 ];
 
-const getVisibleNodesForUnionSetType = (entitesToShow: string[]): INode[] => {
+// const getVisibleNodesForUnionSetType = (entitesToShow: string[]): INode[] => {
 
-    if (entitesToShow.length === 0) {
-        return [];
-    }
+//     if (entitesToShow.length === 0) {
+//         return [];
+//     }
 
-    const allNodes = store.getState().graph.nodes;
-    return allNodes.filter(el => {
-        const res = entitesToShow.includes(el.id) || el.connectedNodes.some(node => entitesToShow.includes(node.id));
-        return res;
-    });
-}
+//     const allNodes = store.getState().entitiesConnections.connections;
+//     return allNodes.filter(el => {
+//         const res = entitesToShow.includes(el.id) || el.connectedNodes.some(node => entitesToShow.includes(node.id));
+//         return res;
+//     });
+// }
 
-const getVisibleEntitiesForIntersectionSetType = (entitesToShow: string[]): INode[] => {
-    if (entitesToShow.length === 0) {
-        return [];
-    }
+// const getVisibleEntitiesForIntersectionSetType = (entitesToShow: string[]): INode[] => {
+//     if (entitesToShow.length === 0) {
+//         return [];
+//     }
 
-    const allNodes = store.getState().graph.nodes;
+//     const allNodes = store.getState().graph.nodes;
 
-    return allNodes.filter(el => {
-        const res = entitesToShow.includes(el.id) || el.connectedNodes.filter(node => entitesToShow.includes(node.id)).length >= entitesToShow.length;;
-        return res;
-    });
-}
+//     return allNodes.filter(el => {
+//         const res = entitesToShow.includes(el.id) || el.connectedNodes.filter(node => entitesToShow.includes(node.id)).length >= entitesToShow.length;;
+//         return res;
+//     });
+// }

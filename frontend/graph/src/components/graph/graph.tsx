@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import IEntitiesAndConnectionsResponse from '../../interfaces/response/entities-connections-response.interface';
 import GraphModel from '../../models/graph/graph.model';
-import { setLinks, setNodes } from '../../redux/slices/graph.slice';
 
 export default function Graph(): JSX.Element {
 
@@ -10,16 +9,9 @@ export default function Graph(): JSX.Element {
         return state.entitiesConnections;
     });
 
-    const dispatch = useDispatch();
-
-    const [graphModel, setGraphModel] = useState<GraphModel | null>(null);
-
     useEffect(() => {
         const graph = new GraphModel("svg", data);
         graph.addSimulation();
-        setGraphModel(graph);
-        dispatch(setNodes(graph.nodes));
-        dispatch(setLinks(graph.links));
     }, [data]);
 
     const width = window.innerWidth - 1;

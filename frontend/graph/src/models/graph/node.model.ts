@@ -8,12 +8,10 @@ import { setVisibleEntites } from "../../redux/slices/filter.slice";
 
 class NodeModel {
 
-    //public container: d3.Selection<SVGGElement, INode, SVGGElement, unknown>;
     public node: d3.Selection<SVGGElement, INode, SVGGElement, unknown>;
     public circle: d3.Selection<SVGCircleElement, INode, SVGGElement, unknown>;
     public text: d3.Selection<SVGTextElement, INode, SVGGElement, unknown>;
 
-    private _shouldRedraw: boolean = true;
 
     constructor(svgElementName: string, nodes: INode[]) {
         const svg = d3.select<SVGElement, any>(svgElementName);
@@ -32,12 +30,6 @@ class NodeModel {
         .attr('opacity', 0);
 
         store.subscribe(() => {
-            if (!this._shouldRedraw) {
-                this._shouldRedraw = true;
-                return;
-            }
-
-            this._shouldRedraw = false;
             const state = store.getState();
             state.filters.components.setType === SetType.Union || state.filters.components.entities.length == 1 
             ? this.handleUnionSetType(state)
@@ -84,22 +76,15 @@ class NodeModel {
 
         if (entitesToShow.length === 0) {
             this.node.attr('opacity', 0);
-            //store.dispatch(setVisibleEntites([]));
             return;
         }
-
-        const visibleEntites: IVisibleEntity[] = [];
-
+        
         this.node.filter(el => !entitesToShow.includes(el.id)).attr('opacity', 0);
         this.node.filter(el => {
             const res = entitesToShow.includes(el.id) || el.connectedNodes.some(node => entitesToShow.includes(node.id));
-            if (res) {
-                visibleEntites.push({id: el.id, name: el.name});
-            }
             return res;
         }).attr('opacity', 1);
 
-        //store.dispatch(setVisibleEntites(visibleEntites));
 
         return;
     }
@@ -109,23 +94,15 @@ class NodeModel {
 
         if (entitesToShow.length === 0) {
             this.node.attr('opacity', 0);
-            //store.dispatch(setVisibleEntites([]));
             return;
         }
 
-        const visibleEntites: IVisibleEntity[] = [];
-
         this.node.attr('opacity', 0);
         this.node.filter(el => {
-            const res = entitesToShow.includes(el.id) || el.connectedNodes.filter(node => entitesToShow.includes(node.id)).length >= entitesToShow.length;;
-            if (res) {
-                visibleEntites.push({id: el.id, name: el.name});
-            }
+            const res = entitesToShow.includes(el.id) || el.connectedNodes.filter(node => entitesToShow.includes(node.id)).length >= entitesToShow.length;
 
             return res;
         }).attr('opacity', 1);
-
-        //store.dispatch(setVisibleEntites(visibleEntites));
 
         return;
     }
