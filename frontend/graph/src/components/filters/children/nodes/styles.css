@@ -35,9 +35,53 @@
     padding-left: 40px;
 }
 
+
 .nodes-list {
     height: 220px;
     list-style: none;
-    overflow-y: scroll;
     background-color: white;
+    padding-left: 30px;
+    padding-right: 30px;
+    padding-top: 20px;
 }
+
+.nodes-list-item {
+    margin: 0px 0;
+    cursor: pointer;
+    transition: 0.25s all;
+    padding: 5px;
+}
+
+.nodes-list-item:hover {
+    background-color: #F5F5F5;
+}
+
+.nodes-list-wrapper {
+    background-color: white;
+    padding-right: 15px;
+    overflow-y: scroll;
+}
+
+.nodes-list-wrapper::-webkit-scrollbar {
+    width: 10px;
+    background-color: transparent;
+    margin-top: 25px;   
+    padding-top: 25px;
+}
+
+.nodes-list-wrapper::-webkit-scrollbar-track{
+    border: 4px solid rgba(0, 0, 0, 0);
+    background-clip: content-box;  
+    border-radius: 9999px;
+    background-color: #B9B9B9;
+    padding-top: 25px;
+
+}
+
+.nodes-list-wrapper::-webkit-scrollbar-thumb {
+    border-radius: 50%;
+    width: 13px;
+    height: 5px;
+    background-color: #B9B9B9;
+}
+

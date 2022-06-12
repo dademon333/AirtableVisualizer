@@ -5,13 +5,13 @@ import { IFilterState, IVisibleEntity } from '../../redux/slices/filter.slice';
 import store from '../../redux/store';
 import { getEntityColor } from '../../services/entity.serivce';
 import { setVisibleEntites } from "../../redux/slices/filter.slice";
+import { Unsubscribe } from '@reduxjs/toolkit';
 
 class NodeModel {
 
     public node: d3.Selection<SVGGElement, INode, SVGGElement, unknown>;
     public circle: d3.Selection<SVGCircleElement, INode, SVGGElement, unknown>;
     public text: d3.Selection<SVGTextElement, INode, SVGGElement, unknown>;
-
 
     constructor(svgElementName: string, nodes: INode[]) {
         const svg = d3.select<SVGElement, any>(svgElementName);
@@ -27,8 +27,10 @@ class NodeModel {
         .data(nodes)
         .enter()
         .append("g")
+        .attr("class", "node")
+        .attr("id", d => d.id)
+        .attr("name", d => d.name)
         .attr('opacity', 0);
-
         store.subscribe(() => {
             const state = store.getState();
             state.filters.components.setType === SetType.Union || state.filters.components.entities.length == 1 
@@ -78,15 +80,17 @@ class NodeModel {
             this.node.attr('opacity', 0);
             return;
         }
+
+        const visibleNodes: IVisibleEntity[] = [];
         
         this.node.filter(el => !entitesToShow.includes(el.id)).attr('opacity', 0);
         this.node.filter(el => {
             const res = entitesToShow.includes(el.id) || el.connectedNodes.some(node => entitesToShow.includes(node.id));
+            if (res) {
+                visibleNodes.push({id: el.id, name: el.name});
+            }
             return res;
         }).attr('opacity', 1);
-
-
-        return;
     }
 
     private handleIntersectionSetType(state: {filters: IFilterState}) {
