@@ -1,5 +1,7 @@
 import React, { Component, useState } from "react";
+import { PagingState, IntegratedPaging } from '@devexpress/dx-react-grid';
 import { Grid, Table, TableHeaderRow, TableColumnVisibility } from '@devexpress/dx-react-grid-bootstrap4';
+import { PagingPanel } from '@devexpress/dx-react-grid-material-ui';
 import { getChilds, getItems, wrapName, getParents, getSearchingElement, comparePriority } from '../../services/services';
 import withData from "../withData";
 import Toolbar from "../Toolbar/Toolbar";
@@ -63,7 +65,8 @@ class ThemesTable extends Component {
         ],
         hiddenColumnNames: ['course'],
         isSortingOptionsOpen: false,
-        sortingOption: 'default'
+        sortingOption: 'default',
+        pageSizes: [5, 10, 15, 0]
     }
 
     setRows = () => {
@@ -115,8 +118,9 @@ class ThemesTable extends Component {
     }
 
     render() {
-        const {columns, tableColumnExtensions, hiddenColumnNames, isSortingOptionsOpen, sortingOption} = this.state;
+        const {columns, tableColumnExtensions, hiddenColumnNames, isSortingOptionsOpen, sortingOption, pageSizes} = this.state;
         const rows = this.setRows();
+        const messages = {showAll: 'Все', rowsPerPage: 'Строк на странице:', info: '{from}-{to} из {count}'};
         return (
             <div className='table_container themeTable'>
                 <Toolbar 
@@ -130,7 +134,10 @@ class ThemesTable extends Component {
                     rows={rows}
                     columns={columns}
                 >
+                    <PagingState defaultCurrentPage={0} defaultPageSize={10} />
+                    <IntegratedPaging />
                     <Table columnExtensions={tableColumnExtensions} />
+                    <PagingPanel pageSizes={pageSizes} messages={messages} />
                     <TableHeaderRow />
                     <TableColumnVisibility hiddenColumnNames={hiddenColumnNames} />
                 </Grid>
