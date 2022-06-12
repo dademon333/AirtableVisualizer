@@ -105,7 +105,7 @@ class GraphModel {
 
         const zoom = d3.zoom<SVGElement, any>()
         .extent([[0, 0], [this._width, this._height]])
-        .scaleExtent([1 , 10])
+        .scaleExtent([0.1 , 10])
         .on("zoom", zoomed);
 
         zoom(this._svg);

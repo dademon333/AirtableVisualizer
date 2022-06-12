@@ -5,6 +5,7 @@ import Filters from '../filters/filters';
 import { useDispatch } from 'react-redux';
 import { getEntitiesAndConnectionsAsync } from '../../services/entities-connections.service';
 import { setConnectionsAndEntities } from '../../redux/slices/entity-connection.slice';
+import data from '../../mocks/data.json';
 
 function App() {
   const [isLoaded, setIsLoaded] = useState(false);
@@ -12,7 +13,7 @@ function App() {
 
   useEffect(() => {
     const getCourses = async () => {
-      const result = await getEntitiesAndConnectionsAsync();
+      const result = data as any;
       dispatch(setConnectionsAndEntities(result));
       setIsLoaded(true);
     };

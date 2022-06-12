@@ -4,17 +4,31 @@ import SetType from '../../enums/set-type.enum';
 
 export interface IFilterState {
   components: {
+    /** Тип сущности */
     type?: EntityType,
-    entities: Array<EntityType>,
-    setType: SetType
+
+    /** id сущностей */
+    entities: Array<string>,
+
+    /** Тип множества */
+    setType: SetType,
+
+    /** id всех сущностей, которые видны */
+    visibleEntities: Array<IVisibleEntity>
   }
+}
+
+export interface IVisibleEntity {
+  name: string,
+  id: string
 }
 
 const initialState: IFilterState = {
   components: {
     type: undefined,
     entities: [],
-    setType: SetType.Union
+    setType: SetType.Union,
+    visibleEntities: []
   }
 };
 
@@ -25,18 +39,27 @@ export const filterSlice = createSlice({
     setComponentType: (state, action: PayloadAction<EntityType>) => {
       state.components.type = action.payload;
     },
-    addComponentEntity: (state, action: PayloadAction<EntityType>) => {
+    addComponentEntity: (state, action: PayloadAction<string>) => {
         state.components.entities = [...state.components.entities, action.payload];
     },
-    removeComponentEntity: (state, action: PayloadAction<EntityType>) => {
+    removeComponentEntity: (state, action: PayloadAction<string>) => {
       state.components.entities = state.components.entities.filter(entity => entity !== action.payload);
     },
     setComponentSetType: (state, action: PayloadAction<SetType>) => {
         state.components.setType = action.payload;
-    }
+    },
+    setComponentEntities: (state, action: PayloadAction<string[]>) => {
+      state.components.entities = action.payload;
+    },
+    setSetType: (state, action: PayloadAction<SetType>) => {
+       state.components.setType = action.payload;
+    },
+    setVisibleEntites: (state, action: PayloadAction<IVisibleEntity[]>) => {
+      state.components.visibleEntities = action.payload;
+   },
   },
 });
 
-export const { setComponentType, addComponentEntity, removeComponentEntity, setComponentSetType } = filterSlice.actions;
+export const { setComponentType, addComponentEntity, removeComponentEntity, setComponentSetType, setComponentEntities, setSetType, setVisibleEntites } = filterSlice.actions;
 
 export default filterSlice.reducer;
