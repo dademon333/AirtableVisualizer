@@ -2,6 +2,7 @@ import * as d3 from 'd3'
 import INode from '../../interfaces/graph/node.interface';
 import ILink from '../../interfaces/graph/nodes-link.interface';
 import IEntitiesAndConnectionsResponse from "../../interfaces/response/entities-connections-response.interface";
+import { onTransformToElement } from '../../services/event.service';
 import LinkModel from './link.model';
 import NodeModel from './node.model';
 
@@ -16,6 +17,7 @@ class GraphModel {
     private _svgElementName: string;
     private _nodeModel: NodeModel;
     private _linkModel: LinkModel;
+    private _zoom?: d3.ZoomBehavior<SVGElement, any>;
 
     constructor(svgElementName: string, data: IEntitiesAndConnectionsResponse) {
         this._svgElementName = svgElementName;
@@ -46,7 +48,7 @@ class GraphModel {
             .attr('transform', d => `translate(${d.x},${d.y})`);
           }
 
-        const collideFormula = (radius: number) => radius > 5 ? (radius) / 25 + 15 : 25;
+        //const collideFormula = (radius: number) => radius > 5 ? (radius) / 25 + 15 : 25;
         const formula = (radius: number) =>  15 + radius / 5 + 5;
 
         d3.forceSimulation(this.nodes)
@@ -98,15 +100,23 @@ class GraphModel {
     private addZooming(): void {
 
         const zoomed = ({transform}: any) => {
-            
-            d3.selectAll("svg .nodes").attr("transform", transform);
-            this._linkModel.selection.attr("transform", transform);
+            d3.select("svg .nodes").attr("transform", transform);
+            d3.select("svg .links").attr("transform", transform);
         }
 
         const zoom = d3.zoom<SVGElement, any>()
         .extent([[0, 0], [this._width, this._height]])
         .scaleExtent([0.1 , 10])
         .on("zoom", zoomed);
+
+        
+        this._zoom = zoom;
+        onTransformToElement().subscribe(id => {
+            const node = document.getElementById(id);
+            const transform = node?.getAttribute('transform');
+            const [x,y] = transform!.substring(10, transform!.length - 1).split(',').map(el => parseFloat(el));
+            zoom.translateTo(this._svg, x, y);
+        });
 
         zoom(this._svg);
     }

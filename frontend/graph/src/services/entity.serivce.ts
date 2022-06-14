@@ -1,4 +1,6 @@
 import EntityType from "../enums/entity-type.enum";
+import ISelect from "../interfaces/control/select.interface";
+import store from "../redux/store";
 
 /** 
  * Получить цвет для сущности
@@ -32,4 +34,14 @@ export function getEntityColor(entityType: EntityType): string {
         case EntityType.Theme:
             return "#700353";
     }
+}
+
+
+export function entitiesToSelectItems(type?: EntityType): ISelect<EntityType>[] {
+    let entities = Object.entries(store.getState().entitiesConnections.entities);
+    if (type) {
+        entities = entities.filter(el => el[1].type === type);
+    }
+
+    return entities.map(el =>  {return {id: el[0],name: el[1].name}});
 }

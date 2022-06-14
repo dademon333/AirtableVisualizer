@@ -24,6 +24,14 @@ export default class SelectModel<T> {
 
     public set Items(items: Array<ISelect<T>>) {
         this._items = items;
+        if (!this._selectedItem) {
+            return;
+        }
+
+        const item = items.find(el => el.id === this._selectedItem!.id);
+        if (!item) {
+            this._selectedItem = null;
+        }
     }
 
     public get OnDelete(): Observable<void> {

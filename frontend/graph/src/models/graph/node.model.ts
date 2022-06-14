@@ -4,8 +4,7 @@ import INode from '../../interfaces/graph/node.interface';
 import { IFilterState, IVisibleEntity } from '../../redux/slices/filter.slice';
 import store from '../../redux/store';
 import { getEntityColor } from '../../services/entity.serivce';
-import { setVisibleEntites } from "../../redux/slices/filter.slice";
-import { Unsubscribe } from '@reduxjs/toolkit';
+import { setVisibleNodes, visibleNodesChanged } from '../../services/event.service';
 
 class NodeModel {
 
@@ -33,9 +32,11 @@ class NodeModel {
         .attr('opacity', 0);
         store.subscribe(() => {
             const state = store.getState();
-            state.filters.components.setType === SetType.Union || state.filters.components.entities.length == 1 
+            state.filters.components.setType === SetType.Union || state.filters.components.entities.length === 1 
             ? this.handleUnionSetType(state)
             : this.handleIntersectionSetType(state);
+
+            visibleNodesChanged();
         });
 
         this.circle = this.appendCircle();
@@ -67,7 +68,7 @@ class NodeModel {
     private appendText(): d3.Selection<SVGTextElement, INode, SVGGElement, unknown> {
         return this.node
         .append("text")
-        .attr("font-size", d => d.radius / 25 + 20)
+        .attr("font-size", d => d.radius / 25 + 30)
         .attr("dx", 20)
         .attr("dy", "0.5em")
         .text(d => d.text);
@@ -81,16 +82,18 @@ class NodeModel {
             return;
         }
 
-        const visibleNodes: IVisibleEntity[] = [];
+        const visibleNodes: INode[] = [];
         
         this.node.filter(el => !entitesToShow.includes(el.id)).attr('opacity', 0);
         this.node.filter(el => {
             const res = entitesToShow.includes(el.id) || el.connectedNodes.some(node => entitesToShow.includes(node.id));
             if (res) {
-                visibleNodes.push({id: el.id, name: el.name});
+                visibleNodes.push(el);
             }
             return res;
         }).attr('opacity', 1);
+
+        setVisibleNodes(visibleNodes);
     }
 
     private handleIntersectionSetType(state: {filters: IFilterState}) {
@@ -101,14 +104,16 @@ class NodeModel {
             return;
         }
 
+        const visibleNodes: INode[] = [];
+
         this.node.attr('opacity', 0);
         this.node.filter(el => {
             const res = entitesToShow.includes(el.id) || el.connectedNodes.filter(node => entitesToShow.includes(node.id)).length >= entitesToShow.length;
-
+            if (res) {visibleNodes.push(el);}
             return res;
         }).attr('opacity', 1);
 
-        return;
+        setVisibleNodes(visibleNodes);
     }
 }
 

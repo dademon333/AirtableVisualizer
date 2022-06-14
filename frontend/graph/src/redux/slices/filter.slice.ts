@@ -20,7 +20,8 @@ export interface IFilterState {
 
 export interface IVisibleEntity {
   name: string,
-  id: string
+  id: string,
+  connectedEntities?: IVisibleEntity[];
 }
 
 const initialState: IFilterState = {

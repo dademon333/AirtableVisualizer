@@ -1,16 +1,14 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import EntityType from '../../../../enums/entity-type.enum';
 import ISelect from '../../../../interfaces/control/select.interface';
 import SelectModel from '../../../../models/select/select.model';
-import { setComponentType, addComponentEntity, setComponentEntities, removeComponentEntity, setSetType, IVisibleEntity, setVisibleEntites } from '../../../../redux/slices/filter.slice';
+import { setComponentType, setComponentEntities, setSetType } from '../../../../redux/slices/filter.slice';
 import Select from '../../../select/select';
 import './styles.css';
 import { ReactComponent as Plus } from '../../../../assets/plus.svg';
-import store from '../../../../redux/store';
 import { useEffect, useState } from 'react';
-import { first, map } from 'rxjs';
 import SetType from '../../../../enums/set-type.enum';
-import INode from '../../../../interfaces/graph/node.interface';
+import { entitiesToSelectItems } from '../../../../services/entity.serivce';
 
 export default function Components() {
 
@@ -35,56 +33,30 @@ export default function Components() {
 
     const dispatch = useDispatch();
 
-    const setValues = (els: Array<SelectModel<string>>) => {
-        const newValues = els.filter(el => el.SelectedItem !== null).map(el => el.SelectedItem?.id!);
+    const updateEntitiesToShow = () => {
+        const newValues = controls.filter(el => el.SelectedItem !== null).map(el => el.SelectedItem?.id!);
         dispatch(setComponentEntities(newValues));
-        // const visibleNodes = setTypeModel.SelectedItem?.value === SetType.Union || controls.length == 1 
-        // ? getVisibleNodesForUnionSetType(newValues)
-        // : getVisibleEntitiesForIntersectionSetType(newValues);
-        // dispatch(setVisibleEntites(visibleNodes));
     };
+    
+    useEffect(() => {
+        updateEntitiesToShow();
+    }, [controls]);
+
 
     const onPlusClick = () => {
-
-        const entities = Object.entries(store.getState().entitiesConnections.entities)
-        .filter(el => el[1].type === componentTypeModel.SelectedItem?.value)
-        .map(el => {
-            const res: ISelect<EntityType> = {
-                id: el[0],
-                name: el[1].name
-            };
-
-            return res;
-        });
-
+        const entities = entitiesToSelectItems(componentTypeModel.SelectedItem?.value);
         const newModel = new SelectModel<string>(entities, { isDeletable: true });
-        setControls(prev => [...prev, newModel]);
-        
+        setControls([...controls, newModel]);
     };
 
-    return (<div className="components">
+    return (
+    <div className="components">
         <h2 className='components-title'>КОМПОНЕНТЫ</h2>
         <Select model={componentTypeModel}/>
         {componentTypeModel.SelectedItem && <Plus className='plus' onClick={() => onPlusClick()}/>}
-        {controls.map((model, i) => {
-            model.OnDelete.pipe(
-                first(),
-                map(() => {
-                    setControls(prev => {
-                        setValues(prev.filter(el => el.id !== model.id));
-                        return prev.filter(el => el.id !== model.id);
-                    });
-                    
-                })
-            ).subscribe();
-
-            model.OnItemChange.pipe(
-                map(_ => {
-                    setValues(controls);
-                })
-            ).subscribe();
-
-            
+        {controls.map(model => {
+            model.OnDelete.subscribe(() => setControls(controls.filter(el => el.id !== model.id)));
+            model.OnItemChange.subscribe(() => updateEntitiesToShow());
             return  <Select key={model.id} model={model}/>;
         })}
         {controls.length > 1 && <Select model={setTypeModel}/>}
