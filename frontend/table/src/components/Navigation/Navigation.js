@@ -19,22 +19,22 @@ const Navigation = ({ activeLink, Table }) => {
 			</div>
 			<Nav variant="tabs">
 				<Nav.Item>
-					<Link className={`nav-link ${activeLink === 'course' ? 'active' : 'disable'}`} to="/">Курс</Link>
+					<Link className={`nav-link ${activeLink === 'course' ? 'active' : 'disable'}`} to="/table/">Курс</Link>
 				</Nav.Item>
 				<Nav.Item>
-					<Link className={`nav-link ${activeLink === 'theme' ? 'active' : 'disable'}`} to="/theme">Тема</Link>
+					<Link className={`nav-link ${activeLink === 'theme' ? 'active' : 'disable'}`} to="/table/theme">Тема</Link>
 				</Nav.Item>
 				<Nav.Item>
-					<Link className={`nav-link ${activeLink === 'knowledge' ? 'active' : 'disable'}`} to="/knowledge">Знание</Link>
+					<Link className={`nav-link ${activeLink === 'knowledge' ? 'active' : 'disable'}`} to="/table/knowledge">Знание</Link>
 				</Nav.Item>
 				<Nav.Item>
-					<Link className={`nav-link ${activeLink === 'quantum' ? 'active' : 'disable'}`} to="/quantum">Кванты знаний</Link>
+					<Link className={`nav-link ${activeLink === 'quantum' ? 'active' : 'disable'}`} to="/table/quantum">Кванты знаний</Link>
 				</Nav.Item>
 				<Nav.Item>
-					<Link className={`nav-link ${activeLink === 'task' ? 'active' : 'disable'}`} to="/task">Задание</Link>
+					<Link className={`nav-link ${activeLink === 'task' ? 'active' : 'disable'}`} to="/table/task">Задание</Link>
 				</Nav.Item>
 				<Nav.Item>
-					<Link className={`nav-link ${activeLink === 'users' ? 'active' : 'disable'}`} to="/users">Пользователи</Link>
+					<Link className={`nav-link ${activeLink === 'users' ? 'active' : 'disable'}`} to="/table/users">Пользователи</Link>
 				</Nav.Item>
 			</Nav>
 			{Table}
