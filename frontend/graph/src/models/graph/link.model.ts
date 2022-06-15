@@ -109,7 +109,7 @@ class LinkModel {
             //    return true;
             //}
 
-            if (visibleNodes.every(visibleNode => visibleNode.connectedNodes.some(cn => cn.id === el.target.id))) {
+            if (visibleNodes.every(visibleNode => visibleNode.children.some(cn => cn.id === el.target.id))) {
                 return true;
             }
 

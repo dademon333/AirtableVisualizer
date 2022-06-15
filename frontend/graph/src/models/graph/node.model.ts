@@ -89,7 +89,7 @@ class NodeModel {
             const res = entitesToShow.includes(el.id);
             if (res) {
                 visibleNodes.push(el);
-                visibleNodes.push(...el.connectedNodes);
+                visibleNodes.push(...el.children);
             }
             return res;
         });
@@ -124,8 +124,8 @@ class NodeModel {
 
         const visibleNodesWithConnected: INode[] = [...visibleNodes];
         visibleNodes.forEach(node => {
-            node.connectedNodes.forEach(connectedNode => {
-                if (visibleNodes.every(visibleNode => visibleNode.connectedNodes.some(el => el.id === connectedNode.id))) {
+            node.children.forEach(connectedNode => {
+                if (visibleNodes.every(visibleNode => visibleNode.children.some(el => el.id === connectedNode.id))) {
                     visibleNodesWithConnected.push(connectedNode);
                 }
             });

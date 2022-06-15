@@ -5,7 +5,8 @@ interface INode {
     name: string;
     x: number;
     y: number;
-    connectedNodes: INode[];
+    children: INode[];
+    parents: INode[];
     type: EntityType;
     text: string;
     radius: number;

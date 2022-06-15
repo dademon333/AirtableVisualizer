@@ -3,6 +3,7 @@ import INode from '../../interfaces/graph/node.interface';
 import ILink from '../../interfaces/graph/nodes-link.interface';
 import IEntitiesAndConnectionsResponse from "../../interfaces/response/entities-connections-response.interface";
 import { onTransformToElement } from '../../services/event.service';
+import { getRandomArbitrary } from '../../utils/random';
 import LinkModel from './link.model';
 import NodeModel from './node.model';
 
@@ -50,11 +51,12 @@ class GraphModel {
 
         //const collideFormula = (radius: number) => radius > 5 ? (radius) / 25 + 15 : 25;
         const formula = (radius: number) =>  15 + radius / 5 + 5;
+        //const linkDistance = (d: ILink): number => {};
 
         d3.forceSimulation(this.nodes)
         .force('link', d3.forceLink(this.links).distance(d => getRandomArbitrary(200, 2000)))
         .force("charge", d3.forceManyBody().strength(-50))
-        .force("center", d3.forceCenter(this._width / 2, this._height / 2))
+        .force("center", d3.forceRadial(d => d.radius, d => d.parents[0].x, d => d.parents[0].y))
         .force("collide", d3.forceCollide(d => formula(d.radius)))
         .on("tick", ticked.bind(this));
     }
@@ -68,10 +70,11 @@ class GraphModel {
                 x,
                 y,
                 id: entity[0],
-                connectedNodes: [],
+                children: [],
                 type: entity[1].type,
                 text: entity[1].name,
-                radius: 15
+                radius: 15,
+                parents: []
             };
 
             return node;
@@ -86,8 +89,8 @@ class GraphModel {
                 if (!source || !target) {return;}
                 source.radius++;
                 //source.connectedNodes.push(target);
-                source.connectedNodes.push(target);
-
+                source.children.push(target);
+                target.parents.push(source);
                 const link: ILink = {
                     source, target
                 };
@@ -95,6 +98,10 @@ class GraphModel {
                 this.links.push(link);
             }
         }
+
+        this.nodes.forEach(node => {
+            node.parents.sort((parent1, parent2) => parent1.children.length - parent2.children.length)
+        });
     }
 
     private addZooming(): void {
@@ -120,10 +127,6 @@ class GraphModel {
 
         zoom(this._svg);
     }
-}
-
-function getRandomArbitrary(min: number, max: number) {
-    return Math.random() * (max - min) + min;
 }
 
 export default GraphModel;

@@ -41,7 +41,7 @@ export function getShortestPath(from: string, to: string): PathFindingNode | nul
 
     nodes.forEach(el => {
         f(el);
-        el.connectedNodes.forEach(cn => f(cn));
+        el.children.forEach(cn => f(cn));
 
       });
 
@@ -56,7 +56,7 @@ export function getShortestPath(from: string, to: string): PathFindingNode | nul
 
 const visitNodesRecursivly = (currentNode: PathFindingNode, distances: {[id: string]: PathFindingNode}) => {
 
-    const paths = currentNode.connectedNodes;
+    const paths = currentNode.children;
     for (const connectedNode of paths) {
         const distanceToCity = currentNode.distance + 1;
         if (distanceToCity < distances[connectedNode.id].distance) {

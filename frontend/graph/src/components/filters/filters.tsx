@@ -7,6 +7,8 @@ export default function Filters() {
     return (<div className="filters">
         <Components />
         <Nodes />
-        <ShortestPath />
+        
     </div>)
 }
+
+//<ShortestPath />
