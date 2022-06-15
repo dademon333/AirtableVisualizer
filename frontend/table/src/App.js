@@ -17,12 +17,12 @@ function App() {
             <AccountIcon />
           </div>
           <Routes>
-            <Route path="/routes/" element={ <Navigation activeLink="course" Table={ <CoursesTable /> } /> } />
-            <Route path="/routes/theme" element={ <Navigation activeLink="theme" Table={ <ThemesTable /> } /> } />
-            <Route path="/routes/knowledge" element={ <Navigation activeLink="knowledge" Table={ <KnowledgesTable /> } /> } />
-            <Route path="/routes/quantum" element={ <Navigation activeLink="quantum" Table={ <QuantsTable /> } /> } />
-            <Route path="/routes/task" element={ <Navigation activeLink="task" Table={ <TasksTable /> } /> } />
-            <Route path="/routes/users" element={ <Navigation activeLink="users" /> } />
+            <Route path="/table/" element={ <Navigation activeLink="course" Table={ <CoursesTable /> } /> } />
+            <Route path="/table/theme" element={ <Navigation activeLink="theme" Table={ <ThemesTable /> } /> } />
+            <Route path="/table/knowledge" element={ <Navigation activeLink="knowledge" Table={ <KnowledgesTable /> } /> } />
+            <Route path="/table/quantum" element={ <Navigation activeLink="quantum" Table={ <QuantsTable /> } /> } />
+            <Route path="/table/task" element={ <Navigation activeLink="task" Table={ <TasksTable /> } /> } />
+            <Route path="/table/users" element={ <Navigation activeLink="users" /> } />
           </Routes>
         </div>
       </BrowserRouter>
