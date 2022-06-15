@@ -85,8 +85,8 @@ class GraphModel {
                 const target = this.nodes.find(node => node.id === entityConnection.child_id.toString());
                 if (!source || !target) {return;}
                 source.radius++;
+                //source.connectedNodes.push(target);
                 source.connectedNodes.push(target);
-                target.connectedNodes.push(source);
 
                 const link: ILink = {
                     source, target

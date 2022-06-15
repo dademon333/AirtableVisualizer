@@ -23,19 +23,25 @@ export function getShortestPath(from: string, to: string): PathFindingNode | nul
     let startNode: PathFindingNode;
     const distances: {[id: string]: PathFindingNode} = {};
     const nodes = visibleNodes();
+    console.log(nodes);
 
-    nodes.forEach(el => {
-        const node: PathFindingNode = {
-            ...el,
-            visited: el.id === from,
-            distance: el.id === from ? 0 : Number.MAX_VALUE,
+    const f = (node: INode) => {
+        const pathFindingNode: PathFindingNode = {
+            ...node,
+            visited: node.id === from,
+            distance: node.id === from ? 0 : Number.MAX_VALUE,
         };
 
-        if (node.visited) {
-            startNode = node;
+        if (pathFindingNode.visited) {
+            startNode = pathFindingNode;
         }
         
-        distances[el.name] = node;
+        distances[node.id] = pathFindingNode;
+    }
+
+    nodes.forEach(el => {
+        f(el);
+        el.connectedNodes.forEach(cn => f(cn));
 
       });
 

@@ -82,16 +82,23 @@ class NodeModel {
             return;
         }
 
-        const visibleNodes: INode[] = [];
+        let visibleNodes: INode[] = [];
         
         this.node.filter(el => !entitesToShow.includes(el.id)).attr('opacity', 0);
         this.node.filter(el => {
-            const res = entitesToShow.includes(el.id) || el.connectedNodes.some(node => entitesToShow.includes(node.id));
+            const res = entitesToShow.includes(el.id);
             if (res) {
                 visibleNodes.push(el);
+                visibleNodes.push(...el.connectedNodes);
             }
             return res;
-        }).attr('opacity', 1);
+        });
+
+        console.log(visibleNodes);
+
+        this.node
+        .filter(el => visibleNodes.some(node => node.id === el.id))
+        .attr('opacity', 1);
 
         setVisibleNodes(visibleNodes);
     }
@@ -108,10 +115,25 @@ class NodeModel {
 
         this.node.attr('opacity', 0);
         this.node.filter(el => {
-            const res = entitesToShow.includes(el.id) || el.connectedNodes.filter(node => entitesToShow.includes(node.id)).length >= entitesToShow.length;
-            if (res) {visibleNodes.push(el);}
+            const res = entitesToShow.includes(el.id);
+            if (res) {
+                visibleNodes.push(el);
+            }
             return res;
         }).attr('opacity', 1);
+
+        const visibleNodesWithConnected: INode[] = [...visibleNodes];
+        visibleNodes.forEach(node => {
+            node.connectedNodes.forEach(connectedNode => {
+                if (visibleNodes.every(visibleNode => visibleNode.connectedNodes.some(el => el.id === connectedNode.id))) {
+                    visibleNodesWithConnected.push(connectedNode);
+                }
+            });
+        });
+
+        this.node
+        .filter(el => visibleNodesWithConnected.some(node => node.id === el.id))
+        .attr('opacity', 1);
 
         setVisibleNodes(visibleNodes);
     }

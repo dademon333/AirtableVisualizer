@@ -45,3 +45,7 @@ export function entitiesToSelectItems(type?: EntityType): ISelect<EntityType>[] 
 
     return entities.map(el =>  {return {id: el[0],name: el[1].name}});
 }
+
+export function getAllEntityTypes(): EntityType[] {
+    return Object.values(EntityType);
+}
