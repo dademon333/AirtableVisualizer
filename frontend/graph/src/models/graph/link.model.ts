@@ -26,7 +26,7 @@ class LinkModel {
         .append("line")
         .attr("refX", 250)
         .attr("refY", 250)
-        .attr("stroke-width", d => 0.5)
+        .attr("stroke-width", d => 1)
         .attr('opacity', 0)
         .attr("stroke", d => getEntityColor(d.source.type))
         .attr('marker-end', (d) => `url(#arrow-${d.source.type})`)
@@ -40,18 +40,31 @@ class LinkModel {
     private addArrows(): void {
         const defs = this._svg.append('defs');
         getAllEntityTypes().forEach(el => {
-            defs
+            const marker = defs
             .append('marker')
             .attr('id', 'arrow' + `-${el}`)
             .attr('viewBox', [0, 0, 10, 10])
-            .attr('refX', 24)
+            .attr('refX', 17)
             .attr('refY', 5)
             .attr('markerWidth', 25)
             .attr('markerHeight', 50)
-            .attr('orient', 'auto')
-            .append('path')
-            .attr('d', 'M 0 0 L 10 5 L 0 10 z')
-            .attr('fill', getEntityColor(el));
+            .attr('orient', 'auto');
+
+            marker
+            .append('line')
+            .attr('x1', 0)
+            .attr('y1', 0)
+            .attr('x2', 10)
+            .attr('y2', 5)
+            .attr('stroke', getEntityColor(el));
+
+            marker
+            .append('line')
+            .attr('x1', 0)
+            .attr('y1', 10)
+            .attr('x2', 10)
+            .attr('y2', 5)
+            .attr('stroke', getEntityColor(el));
         });
 
     }

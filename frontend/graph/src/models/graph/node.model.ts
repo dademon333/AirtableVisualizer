@@ -68,10 +68,10 @@ class NodeModel {
     private appendText(): d3.Selection<SVGTextElement, INode, SVGGElement, unknown> {
         return this.node
         .append("text")
-        .attr("font-size", d => d.radius / 25 + 30)
+        .attr("font-size", d => d.radius / 25 + 40)
         .attr("dx", 20)
         .attr("dy", "0.5em")
-        .text(d => d.text);
+        .text(d => d.text.length > 20 ? d.text.slice(0, 20) + '...' : d.text);
     }
 
     private handleUnionSetType(state: {filters: IFilterState}) {
