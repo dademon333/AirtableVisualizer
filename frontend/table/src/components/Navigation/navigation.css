@@ -41,7 +41,7 @@
     margin-right: 6px;
     width: 25px;
     height: 25px;
-    background-image: url('/public/icons/users.svg');
+    background-image: url('../../icons/users.svg');
 }
 
 /* TABLE LINKS */
@@ -124,7 +124,7 @@
     left: 12px;
     width: 13px;
     height: 13px;
-    background-image: url('/public/icons/check_mark.svg');
+    background-image: url('../../icons/check_mark.svg');
 }
 
 .table-links .search_tables,

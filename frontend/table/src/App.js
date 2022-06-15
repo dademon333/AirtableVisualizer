@@ -2,6 +2,8 @@ import React from "react";
 import Navigation from "./components/Navigation/Navigation";
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CoursesTable, ThemesTable, KnowledgesTable, QuantsTable, TasksTable } from './components/Tables';
+import { ReactComponent as ArrowIcon } from './icons/arrow.svg';
+import { ReactComponent as AccountIcon } from './icons/account.svg';
 
 function App() {
   return (
@@ -9,10 +11,10 @@ function App() {
         <div className="App">
           <div className="core">
             <p>Ядро N курсов</p>
-            <div className="arrow"><img src="icons/arrow.svg" alt="arrow" /></div>
+            <div className="arrow"><ArrowIcon /></div>
           </div>
           <div className="account">
-            <img src="icons/account.svg" alt="account" />
+            <AccountIcon />
           </div>
           <Routes>
             <Route path="/" element={ <Navigation activeLink="course" Table={ <CoursesTable /> } /> } />

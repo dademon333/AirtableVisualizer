@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Link } from 'react-router-dom';
 import { getSearchingElement } from "../../services/services";
 import './navigation.css';
+import { ReactComponent as SearchTableIcon } from '../../icons/search_table.svg';
 
 const TableLinks = ({ setOpen }) => {
     const [query, setQuery] = useState("");
@@ -17,7 +18,7 @@ const TableLinks = ({ setOpen }) => {
     return (
         <div className="table-links">
             <div className="search_tables">
-                <img src="icons/search_table.svg" alt="search" />
+                <SearchTableIcon />
                 <input placeholder="Найти таблицу" onChange={event => setQuery(event.target.value)} />
             </div>
             { tables.map((table, idx) => {

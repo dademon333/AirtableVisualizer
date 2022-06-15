@@ -3,6 +3,8 @@ import { Nav } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import TableLinks from "./TableLinks";
 import './navigation.css';
+import { ReactComponent as SearchTableIcon} from '../../icons/hamburger.svg';
+
 
 const Navigation = ({ activeLink, Table }) => {
     const [isOpen, setOpen] = useState(false);
@@ -10,7 +12,9 @@ const Navigation = ({ activeLink, Table }) => {
 	return (
 		<>
 			<div className="finder-tables">
-				<img className={`hamburger ${isOpen ? 'open' : 'closed'}`} src="icons/hamburger.svg" alt="hamburger" onClick={() => setOpen(!isOpen)} />
+				<div className={`hamburger ${isOpen ? 'open' : 'closed'}`} onClick={() => setOpen(!isOpen)}>
+					<SearchTableIcon />
+				</div>
 				{ isOpen ? <TableLinks setOpen={setOpen} /> : null }
 			</div>
 			<Nav variant="tabs">

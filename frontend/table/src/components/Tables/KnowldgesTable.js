@@ -6,6 +6,7 @@ import { getChilds, getItems, wrapName, getParents, getSearchingElement, compare
 import withData from "../withData";
 import Toolbar from "../Toolbar/Toolbar";
 import './tables.css';
+import { ReactComponent as SearchTableIcon } from '../../icons/search_table.svg';
 
 const AddMenu = ({ removeFromHiddenColumns }) => {
     const [isOpenAddMenu, setOpenAddMenu] = useState(false);
@@ -24,7 +25,7 @@ const AddMenu = ({ removeFromHiddenColumns }) => {
             { isOpenAddMenu ?
                 <div className="addMenu">
                     <div className="add_search">
-                        <img src="icons/search_table.svg" alt="search" />
+                        <SearchTableIcon />
                         <input placeholder="Поиск" onChange={event => setQuery(event.target.value)} />
                     </div>
                     { menuNames.map((menuName, idx) => {
