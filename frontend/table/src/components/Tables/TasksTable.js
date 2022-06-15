@@ -1,5 +1,7 @@
 import React, { Component, useState } from "react";
+import { PagingState, IntegratedPaging } from '@devexpress/dx-react-grid';
 import { Grid, Table, TableHeaderRow } from '@devexpress/dx-react-grid-bootstrap4';
+import { PagingPanel } from '@devexpress/dx-react-grid-material-ui';
 import { wrapName, getParents, getItems, getChilds, comparePriority } from '../../services/services';
 import withData from "../withData";
 import Toolbar from "../Toolbar/Toolbar";
@@ -38,7 +40,8 @@ class TasksTable extends Component {
             { columnName: 'add', width: '65px' }
         ],
         isSortingOptionsOpen: false,
-        sortingOption: 'default'
+        sortingOption: 'default',
+        pageSizes: [5, 10, 15, 0]
     }
 
     setRows = () => {
@@ -89,8 +92,9 @@ class TasksTable extends Component {
     }
 
     render() {
-        const {columns, tableColumnExtensions, isSortingOptionsOpen, sortingOption} = this.state;
+        const {columns, tableColumnExtensions, isSortingOptionsOpen, sortingOption, pageSizes} = this.state;
         const rows = this.setRows();
+        const messages = {showAll: 'Все', rowsPerPage: 'Строк на странице:', info: '{from}-{to} из {count}'};
         return (
             <div className='table_container taskTable'>
                 <Toolbar 
@@ -104,7 +108,10 @@ class TasksTable extends Component {
                     rows={rows}
                     columns={columns}
                 >
+                    <PagingState defaultCurrentPage={0} defaultPageSize={10} />
+                    <IntegratedPaging />
                     <Table columnExtensions={tableColumnExtensions} />
+                    <PagingPanel pageSizes={pageSizes} messages={messages} />
                     <TableHeaderRow />
                 </Grid>
             </div>
