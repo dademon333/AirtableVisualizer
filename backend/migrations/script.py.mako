@@ -5,6 +5,8 @@ Revises: ${down_revision | comma,n}
 Create Date: ${create_date}
 
 """
+from typing import NoReturn
+
 import sqlalchemy as sa
 from alembic import op
 ${imports if imports else ""}
@@ -16,9 +18,9 @@ branch_labels = ${repr(branch_labels)}
 depends_on = ${repr(depends_on)}
 
 
-def upgrade():
+def upgrade() -> NoReturn:
     ${upgrades if upgrades else "pass"}
 
 
-def downgrade():
+def downgrade() -> NoReturn:
     ${downgrades if downgrades else "pass"}

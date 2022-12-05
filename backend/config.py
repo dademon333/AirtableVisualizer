@@ -1,12 +1,7 @@
 import os
-from distutils.util import strtobool
+import sys
 
+IS_DEBUG = os.getenv('IS_DEBUG') == 'True'
+IS_PYTEST = "pytest" in sys.argv[0] or 'PYTEST_XDIST_WORKER' in os.environ
 
-class Config:
-    DEBUG = strtobool(os.getenv('DEBUG'))
-
-    GRAPH_FRONT_ROOT = '/frontend/graph/build'
-    TABLE_FRONT_ROOT = '/frontend/table/build'
-    BACKUPS_FOLDER = '/var/lib/postgres_backups'
-
-    CORS_ALLOWED_ORIGINS_REGEX = r'https?://localhost:[0-9]{1,5}'
+CORS_ALLOWED_ORIGINS_REGEX = r'https?://localhost:[0-9]{1,5}'

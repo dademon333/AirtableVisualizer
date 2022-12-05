@@ -1,0 +1,39 @@
+volumes:
+  postgres:
+  redis:
+
+
+services:
+  app:
+    build:
+      context: ./backend
+    environment:
+      IS_DEBUG: "True"
+      PYTHONUNBUFFERED: 1
+      SQLALCHEMY_WARN_20: 1
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgres
+      - redis
+
+  postgres:
+    build:
+      context: ./docker_files
+      dockerfile: postgres.dockerfile
+    ports:
+      - 127.0.0.1:5433:5432
+    environment:
+      POSTGRES_DB: corevision
+      POSTGRES_PASSWORD: password
+      PGDATA: /var/lib/postgresql/data  # to not lose data on image updates https://stackoverflow.com/a/62301253
+    volumes:
+      - postgres:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7.0.5-alpine
+    command: --loglevel warning
+    ports:
+      - 127.0.0.1:6380:6379
+    volumes:
+      - redis:/data

@@ -2,6 +2,7 @@
   "name": "table",
   "version": "0.1.0",
   "private": true,
+  "homepage": "/table",
   "dependencies": {
     "@devexpress/dx-react-core": "^3.0.3",
     "@devexpress/dx-react-grid": "^3.0.3",

@@ -1,30 +1,48 @@
 from logging.config import fileConfig
+from typing import NoReturn
 
-from dotenv import load_dotenv
+from alembic import context
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
-from alembic import context
-
-load_dotenv('../.env')
-
-from tokens import Tokens  # noqa: E402
-from common.db import metadata  # noqa: E402
-
+from config import IS_PYTEST
+from infrastructure.db import metadata
+from tests.utils import get_test_db_url
+from tokens import POSTGRESQL_URL
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+
+if IS_PYTEST:
+    config.set_main_option(
+        'sqlalchemy.url',
+        get_test_db_url().replace('+asyncpg', '')
+    )
+else:
+    config.set_main_option(
+        'sqlalchemy.url',
+        POSTGRESQL_URL.replace('+asyncpg', '')
+    )
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
 if config.config_file_name is not None:
     fileConfig(config.config_file_name)
 
+# add your model's MetaData object here
+# for 'autogenerate' support
+# from myapp import mymodel
+# target_metadata = mymodel.Base.metadata
 target_metadata = metadata
 
+# other values from the config, defined by the needs of env.py,
+# can be acquired:
+# my_important_option = config.get_main_option("my_important_option")
+# ... etc.
 
-def run_migrations_offline():
+
+def run_migrations_offline() -> NoReturn:
     """Run migrations in 'offline' mode.
 
     This configures the context with just a URL
@@ -36,9 +54,9 @@ def run_migrations_offline():
     script output.
 
     """
-    # url = config.get_main_option("sqlalchemy.url")
+    url = config.get_main_option("sqlalchemy.url")
     context.configure(
-        url=Tokens.ALEMBIC_POSTGRESQL_URL,
+        url=url,
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
@@ -48,17 +66,15 @@ def run_migrations_offline():
         context.run_migrations()
 
 
-def run_migrations_online():
+def run_migrations_online() -> NoReturn:
     """Run migrations in 'online' mode.
 
     In this scenario we need to create an Engine
     and associate a connection with the context.
 
     """
-    configuration = config.get_section(config.config_ini_section)
-    configuration['sqlalchemy.url'] = Tokens.ALEMBIC_POSTGRESQL_URL
     connectable = engine_from_config(
-        configuration,
+        config.get_section(config.config_ini_section),
         prefix="sqlalchemy.",
         poolclass=pool.NullPool,
     )

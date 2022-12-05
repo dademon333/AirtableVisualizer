@@ -1,94 +1,58 @@
 volumes:
-    redis:
-    postgres:
+  postgres:
+  redis:
+
 
 services:
-    graph_front:
-        build:
-            context: ./frontend/graph
+  app:
+    build:
+      context: ./backend
+    environment:
+      POSTGRESQL_USER: $POSTGRESQL_USER
+      POSTGRESQL_HOST: $POSTGRESQL_HOST
+      POSTGRESQL_PASSWORD: $POSTGRESQL_PASSWORD
+      POSTGRESQL_DATABASE: $POSTGRESQL_DATABASE
+      POSTGRESQL_PORT: $POSTGRESQL_PORT
 
-    table_front:
-        build:
-            context: ./frontend/table
+      REDIS_HOST: $REDIS_HOST
 
-    app:
-        build: 
-            context: ./backend
-            args: 
-                COMPOSE_PROJECT_NAME: $COMPOSE_PROJECT_NAME
-        environment:
-            POSTGRESQL_USER: $POSTGRESQL_USER
-            POSTGRESQL_PASSWORD: $POSTGRESQL_PASSWORD
-            POSTGRESQL_DATABASE: $POSTGRESQL_DATABASE
+      IS_DEBUG: False
+      PYTHONUNBUFFERED: 1
+      SQLALCHEMY_WARN_20: 1
+    deploy:
+      replicas: $APP_REPLICAS
+    depends_on:
+      - postgres
+      - redis
 
-            REDIS_HOST: $REDIS_HOST
-            DOCKER_POSTGRESQL_HOST: $DOCKER_POSTGRESQL_HOST
-            DEFAULT_POSTGRESQL_HOST: $DEFAULT_POSTGRESQL_HOST
+  nginx:
+    build:
+      context: .
+      dockerfile: nginx.dockerfile
+    ports:
+      - 80:80
+    volumes:
+      - /var/log/nginx:/var/log/nginx
+    depends_on:
+      - app
 
-            DEBUG: $DEBUG
-            PYTHONUNBUFFERED: 1
-            SQLALCHEMY_WARN_20: 1
-        deploy:
-            replicas: $APP_REPLICAS
-        depends_on:
-            - postgres
-            - redis
-            - graph_front
-            - table_front
+  postgres:
+    build:
+      context: ./docker_files
+      dockerfile: postgres.dockerfile
+    ports:
+      - 127.0.0.1:5432:5432
+    environment:
+      POSTGRES_DB: $POSTGRESQL_DATABASE
+      POSTGRES_PASSWORD: $POSTGRESQL_PASSWORD
+      PGDATA: /var/lib/postgresql/data  # to not lose data on image updates https://stackoverflow.com/a/62301253
+    volumes:
+      - postgres:/var/lib/postgresql/data
 
-    background_workers:
-        build:
-            context: ./backend
-            dockerfile: background_workers.dockerfile
-        environment:
-            POSTGRESQL_USER: $POSTGRESQL_USER
-            POSTGRESQL_PASSWORD: $POSTGRESQL_PASSWORD
-            POSTGRESQL_DATABASE: $POSTGRESQL_DATABASE
-
-            REDIS_HOST: $REDIS_HOST
-            DOCKER_POSTGRESQL_HOST: $DOCKER_POSTGRESQL_HOST
-            DEFAULT_POSTGRESQL_HOST: $DEFAULT_POSTGRESQL_HOST
-
-            DEBUG: $BACKGROUND_WORKERS_DEBUG
-            PYTHONUNBUFFERED: 1
-            SQLALCHEMY_WARN_20: 1
-        volumes:
-            - ~/db_backups:/var/lib/postgres_backups
-        depends_on:
-            - redis
-            - postgres
-
-    postgres:
-        build:
-            context: ./docker_files
-            dockerfile: postgres.dockerfile
-        ports:
-            - "127.0.0.1:5432:5432"
-        environment:
-            POSTGRES_DB: $POSTGRESQL_DATABASE
-            POSTGRES_PASSWORD: $POSTGRESQL_PASSWORD
-            PGDATA: /var/lib/postgresql/data  # to not lose data on image updates
-            # https://stackoverflow.com/a/62301253
-        volumes:
-            - postgres:/var/lib/postgresql/data
-
-    nginx:
-        build:
-            context: ./docker_files
-            dockerfile: nginx.dockerfile
-            args: 
-                COMPOSE_PROJECT_NAME: $COMPOSE_PROJECT_NAME
-        ports:
-            - "80:80"
-        volumes:
-            - /var/log/nginx:/var/log/nginx
-        depends_on:
-            - app
-            - graph_front
-            - table_front
-
-    redis:
-        image: redis:7-alpine
-        command: --loglevel warning
-        volumes:
-            - redis:/data
+  redis:
+    image: redis:7.0.5-alpine
+    command: --loglevel warning
+    ports:
+      - 127.0.0.1:6379:6379
+    volumes:
+      - redis:/data

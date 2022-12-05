@@ -1,29 +1,24 @@
 import fastapi
-from aioredis import Redis
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from redis.asyncio.client import Redis
 from sqlalchemy.util import greenlet_spawn
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from config import Config
-from exceptions_handlers import cors_handler
-from middlewares.html_page import html_page_middleware
-from middlewares.response_validation import response_validation_middleware, parse_raw
+from config import CORS_ALLOWED_ORIGINS_REGEX
+from fix_backward_compatibility import fix_compatibility
+from middlewares.response_validation import response_validation_middleware, \
+    parse_raw
 from middlewares.server_timing import ServerTimingMiddleware
 from root_router import root_router
+from exceptions_handler import cors_handler
 
 app = FastAPI(exception_handlers={500: cors_handler})
 app.include_router(root_router)
 
-
 app.add_middleware(
     BaseHTTPMiddleware,
     dispatch=response_validation_middleware
-)
-
-app.add_middleware(
-    BaseHTTPMiddleware,
-    dispatch=html_page_middleware
 )
 
 app.add_middleware(ServerTimingMiddleware, calls_to_track={
@@ -43,7 +38,9 @@ app.add_middleware(ServerTimingMiddleware, calls_to_track={
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origin_regex=Config.CORS_ALLOWED_ORIGINS_REGEX,
+    allow_origin_regex=CORS_ALLOWED_ORIGINS_REGEX,
     allow_methods=['*'],
     allow_headers=['*'],
 )
+
+fix_compatibility()
