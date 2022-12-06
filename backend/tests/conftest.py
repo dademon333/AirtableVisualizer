@@ -30,7 +30,7 @@ def chdir():
 
 
 
-@pytest.yield_fixture(scope='session')
+@pytest.fixture(scope='session')
 def event_loop():
     """Replaces pytest-asyncio 'event_loop' function-scope fixture
     by session-scope variant. This allows to use session-scope async fixtures.

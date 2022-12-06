@@ -1,0 +1,94 @@
+name: master-pipeline
+
+on:
+  push:
+    branches: [master]
+
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build App
+        uses: docker/build-push-action@v3
+        with:
+          context: backend
+          tags: app:latest
+          outputs: type=docker,dest=/tmp/app.tar
+
+      - name: Build Nginx
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: nginx.dockerfile
+          tags: nginx:latest
+          outputs: type=docker,dest=/tmp/nginx.tar
+
+      - name: Build Postgres
+        uses: docker/build-push-action@v3
+        with:
+          context: ./docker_files
+          file: ./docker_files/postgres.dockerfile
+          tags: postgres:latest
+          outputs: type=docker,dest=/tmp/postgres.tar
+
+      - name: Upload app image
+        uses: actions/upload-artifact@v3
+        with:
+          name: app-image
+          path: /tmp/app.tar
+
+      - name: Upload nginx image
+        uses: actions/upload-artifact@v3
+        with:
+          name: nginx-image
+          path: /tmp/nginx.tar
+
+      - name: Upload postgres image
+        uses: actions/upload-artifact@v3
+        with:
+          name: postgres-image
+          path: /tmp/postgres.tar
+
+  pytest:
+    runs-on: ubuntu-22.04
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Download app image
+        uses: actions/download-artifact@v3
+        with:
+          name: app-image
+          path: /tmp
+
+      - name: Download postgres image
+        uses: actions/download-artifact@v3
+        with:
+          name: postgres-image
+          path: /tmp
+
+      - name: Load docker images
+        run: |
+          docker load --input /tmp/app.tar
+          docker load --input /tmp/postgres.tar
+          docker image ls -a
+
+      - name: Run pytest
+        run: |
+          docker-compose -f docker-compose.test.yaml up -d
+          docker-compose -f docker-compose.test.yaml exec -T app pytest /usr/src/app --cov --cov-report xml:coverage.xml
+          docker cp app_test:/usr/src/app/coverage.xml coverage.xml
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3

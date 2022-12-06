@@ -2,7 +2,7 @@ import os
 
 POSTGRESQL_USER = os.getenv('POSTGRESQL_USER', 'postgres')
 POSTGRESQL_HOST = os.getenv('POSTGRESQL_HOST', 'localhost')
-POSTGRESQL_PORT = os.getenv('POSTGRESQL_HOST', '5433')
+POSTGRESQL_PORT = os.getenv('POSTGRESQL_PORT', '5433')
 POSTGRESQL_PASSWORD = os.getenv('POSTGRESQL_PASSWORD', 'password')
 POSTGRESQL_DATABASE = os.getenv('POSTGRESQL_DATABASE', 'corevision')
 

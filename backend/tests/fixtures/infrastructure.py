@@ -10,7 +10,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 from httpx import AsyncClient
 from redis.asyncio.client import Redis
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, \
     AsyncEngine
 from sqlalchemy.orm import sessionmaker, Session
@@ -48,11 +48,13 @@ def kill_database_connections(session: Session) -> NoReturn:
 
     Uses before each drop database (or it can raise exception).
     """
-    session.execute(f'''
-        SELECT pg_terminate_backend(pid)
-        FROM pg_stat_activity
-        WHERE datname='{get_test_db_name()}'
-    ''')
+    session.execute(
+        text(f'''
+            SELECT pg_terminate_backend(pid)
+            FROM pg_stat_activity
+            WHERE datname='{get_test_db_name()}'
+        ''')
+    )
 
 
 @pytest.fixture(scope="session")
@@ -80,11 +82,11 @@ def tables(db_name: str) -> NoReturn:
     session.connection().connection.set_isolation_level(0)
 
     try:
-        session.execute(f'CREATE DATABASE "{db_name}"')
+        session.execute(text(f'CREATE DATABASE "{db_name}"'))
     except Exception:
         kill_database_connections(session)
-        session.execute(f'DROP DATABASE "{db_name}"')
-        session.execute(f'CREATE DATABASE "{db_name}"')
+        session.execute(text(f'DROP DATABASE "{db_name}"'))
+        session.execute(text(f'CREATE DATABASE "{db_name}"'))
 
     alembic_config = Config("alembic.ini")
     alembic.command.upgrade(alembic_config, "head")

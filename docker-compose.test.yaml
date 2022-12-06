@@ -1,0 +1,21 @@
+services:
+  app:
+    image: app
+    tty: true
+    container_name: app_test
+    environment:
+      POSTGRESQL_HOST: "postgres"
+      POSTGRESQL_PORT: 5432
+      IS_DEBUG: "True"
+      PYTHONUNBUFFERED: 1
+      SQLALCHEMY_WARN_20: 1
+    depends_on:
+      - postgres
+    entrypoint: sh -c
+    command: tail -f /dev/null
+
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_DB: corevision
+      POSTGRES_PASSWORD: password
