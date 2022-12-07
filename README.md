@@ -1,6 +1,6 @@
 # Core Vision
 
-### Cервис для визуализации университетской программы в виде графа
+### Cервис для визуализации образовательной программы в виде графа
 
 <p align="center">
     <a href="https://github.com/dademon333/CoreVision/actions/workflows/pipeline.yaml" target="_blank">
