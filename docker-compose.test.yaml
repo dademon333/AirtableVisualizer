@@ -1,6 +1,7 @@
 services:
   app:
-    image: app
+    build:
+      context: ./backend
     tty: true
     container_name: app_test
     environment:
@@ -15,7 +16,9 @@ services:
     command: tail -f /dev/null
 
   postgres:
-    image: postgres
+    build:
+      context: ./docker_files
+      dockerfile: postgres.dockerfile
     environment:
       POSTGRES_DB: corevision
       POSTGRES_PASSWORD: password

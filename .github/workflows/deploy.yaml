@@ -1,9 +1,8 @@
-name: master-pipeline
+name: deploy
 
 on:
-  push:
+  workflow_dispatch:
     branches: [master]
-
 
 jobs:
   build:
@@ -92,3 +91,48 @@ jobs:
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
+
+  push:
+    runs-on: ubuntu-22.04
+    needs: pytest
+    steps:
+      - name: Download app image
+        uses: actions/download-artifact@v3
+        with:
+          name: app-image
+          path: /tmp
+
+      - name: Download postgres image
+        uses: actions/download-artifact@v3
+        with:
+          name: postgres-image
+          path: /tmp
+
+      - name: Download nginx image
+        uses: actions/download-artifact@v3
+        with:
+          name: nginx-image
+          path: /tmp
+
+      - name: Load docker images
+        run: |
+          docker load --input /tmp/app.tar
+          docker load --input /tmp/postgres.tar
+          docker load --input /tmp/nginx.tar
+          docker image ls -a
+
+      - name: Login to GitHub Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push to registry
+        run: |
+          docker tag app ghcr.io/dademon333/corevision-app:latest
+          docker tag postgres ghcr.io/dademon333/corevision-postgres:latest
+          docker tag nginx ghcr.io/dademon333/corevision-nginx:latest
+          docker push ghcr.io/dademon333/corevision-app:latest
+          docker push ghcr.io/dademon333/corevision-postgres:latest
+          docker push ghcr.io/dademon333/corevision-nginx:latest
