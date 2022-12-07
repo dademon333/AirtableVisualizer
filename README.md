@@ -1,6 +1,18 @@
 # Core Vision
 
-### Веб-сервис для визуализации университетской программы в виде графа
+### Cервис для визуализации университетской программы в виде графа
+
+<p align="center">
+    <a href="https://github.com/dademon333/CoreVision/actions/workflows/pipeline.yaml" target="_blank">
+        <img src="https://github.com/dademon333/CoreVision/actions/workflows/pipeline.yaml/badge.svg" alt="Tests">
+    </a>
+    <a href="https://codecov.io/gh/dademon333/CoreVision" target="_blank">
+        <img src="https://codecov.io/gh/dademon333/CoreVision/branch/master/graph/badge.svg?token=23HZLHIQU5"/> 
+    </a>
+    <a href="https://www.python.org/downloads/release/python-3110/" target="_blank">
+        <img src="https://img.shields.io/badge/python-3.11-blue.svg" alt="Supported Python versions">
+    </a>
+</p>
 
 ---
 
