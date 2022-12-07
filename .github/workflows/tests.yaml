@@ -1,0 +1,19 @@
+name: tests
+
+on: push
+
+jobs:
+  pytest:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build and run docker
+        run: |
+          docker-compose -f docker-compose.test.yaml build
+          docker-compose -f docker-compose.test.yaml up -d
+
+      - name: Run pytest
+        run: |
+          docker-compose -f docker-compose.test.yaml exec -T app pytest /usr/src/app

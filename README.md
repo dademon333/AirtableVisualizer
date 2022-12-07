@@ -3,8 +3,8 @@
 ### Cервис для визуализации образовательной программы в виде графа
 
 <p align="center">
-    <a href="https://github.com/dademon333/CoreVision/actions/workflows/pipeline.yaml" target="_blank">
-        <img src="https://github.com/dademon333/CoreVision/actions/workflows/pipeline.yaml/badge.svg" alt="Tests">
+    <a href="https://github.com/dademon333/CoreVision/actions/workflows/tests.yaml" target="_blank">
+        <img src="https://github.com/dademon333/CoreVision/actions/workflows/tests.yaml/badge.svg" alt="Tests">
     </a>
     <a href="https://codecov.io/gh/dademon333/CoreVision" target="_blank">
         <img src="https://codecov.io/gh/dademon333/CoreVision/branch/master/graph/badge.svg?token=23HZLHIQU5"/> 
