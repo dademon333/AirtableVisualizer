@@ -1,10 +1,16 @@
 from datetime import datetime
 
 import pytest
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from infrastructure.db import User, UserStatus
 from users.dto import UserInsertDTO
 from users.repository import UserRepository
+
+
+@pytest.fixture()
+def user_repository(db: AsyncSession) -> UserRepository:
+    return UserRepository(db)
 
 
 @pytest.fixture()

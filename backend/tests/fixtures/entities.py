@@ -1,10 +1,16 @@
 from datetime import datetime
 
 import pytest
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from entities.dto import EntityDBInsertDTO
 from entities.repository import EntityRepository
 from infrastructure.db import Entity, EntityType, EntitySize
+
+
+@pytest.fixture()
+def entity_repository(db: AsyncSession) -> EntityRepository:
+    return EntityRepository(db)
 
 
 @pytest.fixture()

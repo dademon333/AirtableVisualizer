@@ -23,7 +23,7 @@ def upgrade():
         sa.Column('id', sa.Integer(), nullable=False),
         sa.Column('editor_id', sa.Integer()),
         sa.Column('type', sa.Enum('create', 'update', 'delete', name='change_type'), nullable=False),
-        sa.Column('table', sa.Enum('entities', 'entities_connections', 'entities_types_connections', 'hidden_courses', 'users', name='changed_table'), nullable=False),
+        sa.Column('table', sa.Enum('entities', 'entity_connections', 'entity_type_connections', 'hidden_courses', 'users', name='changed_table'), nullable=False),
         sa.Column('element_id', sa.Integer(), nullable=False),
         sa.Column('parent_change_id', sa.Integer(), nullable=True),
         sa.Column('created_at', sa.DateTime(), server_default=sa.text('now()'), nullable=False),

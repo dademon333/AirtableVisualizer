@@ -11,6 +11,8 @@ fix_compatibility()
 pytest_plugins = [
     'tests.fixtures.auth',
     'tests.fixtures.entities',
+    'tests.fixtures.entity_connections',
+    'tests.fixtures.entity_type_connections',
     'tests.fixtures.infrastructure',
     'tests.fixtures.users',
 ]

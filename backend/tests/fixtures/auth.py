@@ -20,12 +20,3 @@ def admin_status_request(
 ) -> NoReturn:
     """Overrides get_user_status dependency to return editor status."""
     di_override(get_user_status, UserStatus.ADMIN)
-
-
-@pytest.fixture()
-def get_user_id_override(
-        user_admin: User,
-        di_override: Callable[[Any, Any], NoReturn]
-) -> int:
-    di_override(get_user_id_soft, user_admin.id)
-    return user_admin.id

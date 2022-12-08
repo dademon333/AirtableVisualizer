@@ -7,7 +7,6 @@ import pytest
 from alembic.config import Config
 from asynctest import CoroutineMock
 from fastapi import FastAPI
-from fastapi.testclient import TestClient
 from httpx import AsyncClient
 from redis.asyncio.client import Redis
 from sqlalchemy import create_engine, text
@@ -15,11 +14,9 @@ from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, \
     AsyncEngine
 from sqlalchemy.orm import sessionmaker, Session
 
-from entities.repository import EntityRepository
 from infrastructure.db import json_serializer, json_deserializer, get_db
 from infrastructure.redis_utils import get_redis_client
 from tests.utils import get_test_db_url, get_test_db_name
-from users.repository import UserRepository
 
 
 @pytest.fixture()
@@ -57,12 +54,12 @@ def kill_database_connections(session: Session) -> NoReturn:
     )
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope='session')
 def db_name() -> str:
     return get_test_db_name()
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope='session')
 def db_engine() -> AsyncEngine:
     return create_async_engine(
         get_test_db_url(),
@@ -73,7 +70,7 @@ def db_engine() -> AsyncEngine:
     )
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope='session')
 def tables(db_name: str) -> NoReturn:
     url = get_test_db_url()
     url = url.replace(f"/{db_name}", "").replace("+asyncpg", "")
@@ -100,16 +97,6 @@ async def db(tables: None, db_engine: AsyncEngine) -> AsyncSession:
     )()
     yield session
     await session.rollback()
-
-
-@pytest.fixture()
-def user_repository(db: AsyncSession) -> UserRepository:
-    return UserRepository(db)
-
-
-@pytest.fixture()
-def entity_repository(db: AsyncSession) -> EntityRepository:
-    return EntityRepository(db)
 
 
 @pytest.fixture()

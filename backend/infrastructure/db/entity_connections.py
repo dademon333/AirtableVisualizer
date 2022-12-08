@@ -18,7 +18,7 @@ class EntityConnection(Base):
         nullable=False,
         index=True
     )
-    types_connection_id = Column(
+    type_connection_id = Column(
         Integer,
         ForeignKey(
             'entity_type_connections.id',

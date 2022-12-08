@@ -22,7 +22,7 @@ class EntityRepository(
             .limit(limit)
             .offset(offset)
         )
-        return result.unique().all()
+        return result.all()
 
     async def search_by_name(
             self,
@@ -42,4 +42,4 @@ class EntityRepository(
             .limit(limit)
             .offset(offset)
         )
-        return result.unique().all()
+        return result.all()
