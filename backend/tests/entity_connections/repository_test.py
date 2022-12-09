@@ -35,3 +35,13 @@ async def test_get_by_entities_not_found(
         child_id=456,
     )
     assert result is None
+
+
+async def test_get_by_type_connection(
+        entity_connection_in_db: EntityConnection,
+        entity_connection_repository: EntityConnectionRepository,
+):
+    result = await entity_connection_repository.get_by_type_connection(
+        entity_connection_in_db.type_connection_id
+    )
+    assert result

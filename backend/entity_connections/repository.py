@@ -40,3 +40,13 @@ class EntityConnectionRepository(
             )
         )
         return result.first()
+
+    async def get_by_type_connection(
+            self,
+            type_connection_id: int,
+    ) -> list[EntityConnection]:
+        result = await self.db.scalars(
+            select(EntityConnection)
+            .where(EntityConnection.type_connection_id == type_connection_id)
+        )
+        return result.all()

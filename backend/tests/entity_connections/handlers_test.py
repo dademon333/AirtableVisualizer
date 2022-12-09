@@ -2,6 +2,7 @@ from httpx import AsyncClient
 
 from common.responses import OkResponse
 from entity_connections.dto import EntityConnectionInputDTO
+from entity_connections.exceptions import EntityConnectionNotFoundResponse
 from entity_connections.repository import EntityConnectionRepository
 from infrastructure.db import Entity, EntityConnection
 
@@ -38,3 +39,12 @@ async def test_disconnect_entities_success(
     )
     assert result.status_code == 200
     assert result.json() == OkResponse()
+
+
+async def test_disconnect_entities_not_found(
+        test_client: AsyncClient,
+        editor_status_request: None,
+):
+    result = await test_client.delete('/api/entity_connections/123')
+    assert result.status_code == 404
+    assert result.json()['detail'] == EntityConnectionNotFoundResponse().detail

@@ -1,10 +1,12 @@
 from sqlalchemy import select
+from sqlalchemy.orm import joinedload
 
 from entity_type_connections.dto import EntityTypeConnectionDBInsertDTO, \
     EntityTypeConnectionDBUpdateDTO
 from entity_type_connections.exceptions import \
     TypeConnectionAlreadyExistsError
-from infrastructure.db import BaseRepository, EntityTypeConnection, EntityType
+from infrastructure.db import BaseRepository, EntityTypeConnection, EntityType, \
+    EntityConnection
 
 
 class EntityTypeConnectionRepository(
@@ -15,6 +17,17 @@ class EntityTypeConnectionRepository(
     ]
 ):
     model = EntityTypeConnection
+
+    # noinspection PyShadowingBuiltins
+    async def get_by_id_with_connections(
+            self, id: int
+    ) -> EntityTypeConnection | None:
+        result = await self.db.scalars(
+            select(EntityTypeConnection, EntityConnection)
+            .where(EntityTypeConnection.id == id)
+            .options(joinedload(EntityTypeConnection.entity_connections))
+        )
+        return result.first()
 
     async def get_by_types(
             self,
