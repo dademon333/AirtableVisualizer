@@ -136,3 +136,24 @@ jobs:
           docker push ghcr.io/dademon333/corevision-app:latest
           docker push ghcr.io/dademon333/corevision-postgres:latest
           docker push ghcr.io/dademon333/corevision-nginx:latest
+
+  deploy:
+    runs-on: ubuntu-22.04
+    needs: push
+    steps:
+      - name: Deploy
+        uses: appleboy/ssh-action@v0.1.6
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          password: ${{ secrets.SERVER_PASSWORD }}
+          script: |
+            cd ${{ secrets.PROJECT_DIR }}
+            git pull
+
+            cd backend
+            ${{ secrets.ALEMBIC_PATH }} upgrade head
+            cd ..
+
+            docker-compose pull
+            docker-compose stop && docker-compose up -d

@@ -5,8 +5,7 @@ volumes:
 
 services:
   app:
-    build:
-      context: ./backend
+    image: ghcr.io/dademon333/corevision-app:latest
     environment:
       POSTGRESQL_USER: $POSTGRESQL_USER
       POSTGRESQL_HOST: $POSTGRESQL_HOST
@@ -16,7 +15,7 @@ services:
 
       REDIS_HOST: $REDIS_HOST
 
-      IS_DEBUG: False
+      IS_DEBUG: "False"
       PYTHONUNBUFFERED: 1
       SQLALCHEMY_WARN_20: 1
     deploy:
@@ -26,9 +25,7 @@ services:
       - redis
 
   nginx:
-    build:
-      context: .
-      dockerfile: nginx.dockerfile
+    image: ghcr.io/dademon333/corevision-nginx:latest
     ports:
       - 80:80
     volumes:
@@ -37,9 +34,7 @@ services:
       - app
 
   postgres:
-    build:
-      context: ./docker_files
-      dockerfile: postgres.dockerfile
+    image: ghcr.io/dademon333/corevision-postgres:latest
     ports:
       - 127.0.0.1:5432:5432
     environment:
