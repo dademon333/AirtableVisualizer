@@ -55,7 +55,7 @@ class BaseRepository(Generic[ModelType, InsertSchemaType, UpdateSchemaType]):
             .limit(limit)
             .offset(offset)
         )
-        return result.unique().all()
+        return result.all()
 
     async def get_all(self) -> list[ModelType]:
         result = await self.db.scalars(

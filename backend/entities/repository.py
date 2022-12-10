@@ -1,7 +1,8 @@
-from sqlalchemy import select
+from sqlalchemy import select, union
 
 from entities.dto import EntityDBInsertDTO, EntityDBUpdateDTO
-from infrastructure.db import BaseRepository, Entity, EntityType
+from infrastructure.db import BaseRepository, Entity, EntityType, \
+    EntityConnection
 
 
 class EntityRepository(
@@ -9,7 +10,7 @@ class EntityRepository(
 ):
     model = Entity
 
-    async def list_by_type(
+    async def get_by_type(
             self,
             entity_type: EntityType,
             limit: int = 250,
@@ -22,7 +23,7 @@ class EntityRepository(
             .limit(limit)
             .offset(offset)
         )
-        return result.unique().all()
+        return result.all()
 
     async def search_by_name(
             self,
@@ -42,4 +43,27 @@ class EntityRepository(
             .limit(limit)
             .offset(offset)
         )
-        return result.unique().all()
+        return result.all()
+
+    async def get_all_connected(self) -> list[Entity]:
+        result = await self.db.execute(
+            union(
+                (
+                    select(Entity)
+                    .join(
+                        EntityConnection,
+                        EntityConnection.parent_id == Entity.id,
+                    )
+                    .order_by(Entity.id)
+                ),
+                (
+                    select(Entity)
+                    .join(
+                        EntityConnection,
+                        EntityConnection.child_id == Entity.id,
+                    )
+                    .order_by(Entity.id)
+                ),
+            )
+        )
+        return result.all()

@@ -13,9 +13,8 @@ class ChangeType(str, enum.Enum):
 
 class ChangedTable(str, enum.Enum):
     ENTITIES = 'entities'
-    ENTITIES_CONNECTIONS = 'entities_connections'
-    ENTITIES_TYPES_CONNECTIONS = 'entities_types_connections'
-    HIDDEN_COURSES = 'hidden_courses'
+    ENTITY_CONNECTIONS = 'entity_connections'
+    ENTITY_TYPE_CONNECTIONS = 'entity_type_connections'
 
     USERS = 'users'
 

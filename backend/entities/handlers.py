@@ -117,8 +117,7 @@ async def update_entity(
     Требует статус editor.
 
     """
-    result = await use_case.execute(entity_id, update_dto)
-    return result
+    return await use_case.execute(entity_id, update_dto)
 
 
 @entities_router.delete(

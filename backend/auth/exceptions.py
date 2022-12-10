@@ -31,13 +31,3 @@ class LowStatusError(HTTPException):
             status_code=status.HTTP_403_FORBIDDEN,
             detail=f'This operation requires minimum {min_status} status'
         )
-
-
-class EditorStatusRequiredError(LowStatusError):
-    def __init__(self):
-        super().__init__(min_status=UserStatus.EDITOR)
-
-
-class AdminStatusRequiredError(LowStatusError):
-    def __init__(self):
-        super().__init__(min_status=UserStatus.ADMIN)
