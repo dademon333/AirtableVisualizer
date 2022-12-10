@@ -2,18 +2,14 @@ from entity_connections.repository import EntityConnectionRepository
 from infrastructure.db import EntityConnection
 
 
-async def test_get_by_entity_id(
-        entity_connection_in_db: EntityConnection,
+async def test_get_by_parent_ids(
+        entity_connection_list_in_db: list[EntityConnection],
         entity_connection_repository: EntityConnectionRepository,
 ):
-    [result_by_child] = await entity_connection_repository.get_by_entity_id(
-        entity_connection_in_db.parent_id
+    result = await entity_connection_repository.get_by_parent_ids(
+        [x.parent_id for x in entity_connection_list_in_db]
     )
-    [result_by_parent] = await entity_connection_repository.get_by_entity_id(
-        entity_connection_in_db.parent_id
-    )
-    assert result_by_child.id == result_by_parent.id \
-           == entity_connection_in_db.id
+    assert len(result) == len(entity_connection_list_in_db)
 
 
 async def test_get_by_entities(

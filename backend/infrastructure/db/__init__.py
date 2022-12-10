@@ -5,7 +5,6 @@ from .base_repository import BaseRepository
 from .entities import Entity, EntityType, EntitySize
 from .entity_connections import EntityConnection
 from .entity_type_connections import EntityTypeConnection
-from .hidden_courses import HiddenCourse
 
 from .users import User, UserStatus, user_status_weights
 

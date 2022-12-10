@@ -14,16 +14,13 @@ class EntityConnectionRepository(
 ):
     model = EntityConnection
 
-    async def get_by_entity_id(
+    async def get_by_parent_ids(
             self,
-            entity_id: int
+            entity_ids: list[int]
     ) -> list[EntityConnection]:
         result = await self.db.scalars(
             select(EntityConnection)
-            .where(
-                (EntityConnection.parent_id == entity_id)
-                | (EntityConnection.child_id == entity_id)
-            )
+            .where(EntityConnection.parent_id.in_(entity_ids))
         )
         return result.all()
 

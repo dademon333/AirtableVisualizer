@@ -15,7 +15,6 @@ class ChangedTable(str, enum.Enum):
     ENTITIES = 'entities'
     ENTITY_CONNECTIONS = 'entity_connections'
     ENTITY_TYPE_CONNECTIONS = 'entity_type_connections'
-    HIDDEN_COURSES = 'hidden_courses'
 
     USERS = 'users'
 

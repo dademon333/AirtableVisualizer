@@ -17,10 +17,10 @@ from entity_connections.use_cases.disconnect_entities import \
 from entity_type_connections.exceptions import TypeConnectionNotFoundResponse
 from infrastructure.db import UserStatus
 
-entity_connection_router = APIRouter()
+entity_connections_router = APIRouter()
 
 
-@entity_connection_router.post(
+@entity_connections_router.post(
     '',
     response_model=EntityConnectionOutputDTO,
     responses={
@@ -44,7 +44,7 @@ async def connect_entities(
     return EntityConnectionOutputDTO.from_orm(result)
 
 
-@entity_connection_router.delete(
+@entity_connections_router.delete(
     '/{connection_id}',
     response_model=OkResponse,
     responses={

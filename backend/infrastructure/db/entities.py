@@ -1,7 +1,7 @@
 import enum
 
 from sqlalchemy import Column, Integer, String, Text, Enum, DateTime, func, \
-    Index
+    Index, Boolean
 
 from infrastructure.db.base import Base, get_enum_values
 
