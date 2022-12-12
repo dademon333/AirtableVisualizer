@@ -1,11 +1,13 @@
 from typing import NoReturn
 
-from fastapi import Depends
+from fastapi import Depends, Cookie
 from fastapi.security import OAuth2PasswordBearer
 from redis.asyncio.client import Redis
 
 from auth.exceptions import UnauthorizedError, LowStatusError
 from auth.repository import AuthRepository
+from auth.use_cases.login import LoginUseCase
+from auth.use_cases.logout import LogoutUseCase
 from infrastructure.db import UserStatus, user_status_weights
 from infrastructure.redis_utils import get_redis_client
 from users.di import get_user_repository
@@ -20,18 +22,31 @@ def get_auth_repository(
     return AuthRepository(redis_client)
 
 
+def get_login_use_case(
+        user_repository: UserRepository = Depends(get_user_repository),
+        auth_repository: AuthRepository = Depends(get_auth_repository),
+) -> LoginUseCase:
+    return LoginUseCase(auth_repository, user_repository)
+
+
+def get_logout_use_case(
+        auth_repository: AuthRepository = Depends(get_auth_repository),
+) -> LogoutUseCase:
+    return LogoutUseCase(auth_repository)
+
+
 async def get_user_id_soft(
-        access_token: str | None = Depends(oauth2_scheme),
+        session_id: str | None = Cookie(default=None, include_in_schema=False),
         auth_repository: AuthRepository = Depends(get_auth_repository),
 ) -> int | None:
     """Returns user id by 'Authorization' header.
 
     If access_token passed, but invalid, raises 401 UNAUTHORIZED.
     """
-    if access_token is None:
+    if session_id is None:
         return None
 
-    user_id = await auth_repository.get_user_id_by_token(access_token)
+    user_id = await auth_repository.get_user_id_by_session_id(session_id)
     if not user_id:
         raise UnauthorizedError()
     return user_id

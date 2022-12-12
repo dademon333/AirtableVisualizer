@@ -20,6 +20,10 @@ class NotEnoughRightsResponse(BaseModel):
     detail: str = 'Not enough rights'
 
 
+class LoginErrorResponse(BaseModel):
+    detail: str = 'Invalid email or password'
+
+
 class UnauthorizedError(HTTPException):
     def __init__(self):
         super().__init__(status_code=status.HTTP_401_UNAUTHORIZED)
@@ -29,5 +33,13 @@ class LowStatusError(HTTPException):
     def __init__(self, min_status: UserStatus):
         super().__init__(
             status_code=status.HTTP_403_FORBIDDEN,
-            detail=f'This operation requires minimum {min_status} status'
+            detail=f'This operation requires minimum {min_status} status',
+        )
+
+
+class LoginError(HTTPException):
+    def __init__(self):
+        super().__init__(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=LoginErrorResponse().detail,
         )

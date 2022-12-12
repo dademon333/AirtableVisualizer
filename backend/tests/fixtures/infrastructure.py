@@ -40,6 +40,15 @@ def redis_mock() -> Mock:
     return mock
 
 
+@pytest.fixture()
+def redis_override(
+        redis_mock: Mock,
+        di_override: Callable[[Any, Any], NoReturn],
+) -> Mock:
+    di_override(get_redis_client, redis_mock)
+    return redis_mock
+
+
 def kill_database_connections(session: Session) -> NoReturn:
     """Kills all connections to db.
 

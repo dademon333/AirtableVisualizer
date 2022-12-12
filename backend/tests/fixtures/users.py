@@ -4,7 +4,7 @@ import pytest
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from infrastructure.db import User, UserStatus
-from users.dto import UserInsertDTO
+from users.dto import UserDBInsertDTO
 from users.repository import UserRepository
 
 
@@ -55,7 +55,7 @@ def user_admin() -> User:
 @pytest.fixture()
 async def user_in_db(user: User, user_repository: UserRepository) -> User:
     user.password = 'password|1'
-    await user_repository.insert(UserInsertDTO.from_orm(user))
+    await user_repository.insert(UserDBInsertDTO.from_orm(user))
     return user
 
 
@@ -64,6 +64,6 @@ async def user_admin_in_db(
         user_admin: User,
         user_repository: UserRepository
 ) -> User:
-    user_admin.password = f'password|{user_admin.id}'
-    await user_repository.insert(UserInsertDTO.from_orm(user_admin))
+    user_admin.password = f'password'
+    await user_repository.insert(UserDBInsertDTO.from_orm(user_admin))
     return user_admin

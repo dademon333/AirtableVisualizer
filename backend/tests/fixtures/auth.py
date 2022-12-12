@@ -2,8 +2,8 @@ from typing import Callable, Any, NoReturn
 
 import pytest
 
-from auth.di import get_user_status, get_user_id_soft
-from infrastructure.db import UserStatus, User
+from auth.di import get_user_status
+from infrastructure.db import UserStatus
 
 
 @pytest.fixture()

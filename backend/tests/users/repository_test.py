@@ -1,6 +1,6 @@
 from auth.utils import hash_password
 from infrastructure.db import User
-from users.dto import UserUpdateDTO, UserInsertDTO
+from users.dto import UserDBUpdateDTO, UserDBInsertDTO
 from users.repository import UserRepository
 
 
@@ -17,7 +17,7 @@ async def test_update_hashes_password(
 ):
     await user_repository.update(
         user_in_db.id,
-        UserUpdateDTO(password="foobarbaz")
+        UserDBUpdateDTO(password="foobarbaz")
     )
 
     user_in_db = await user_repository.get_by_id(user_in_db.id)
@@ -29,7 +29,7 @@ async def test_create_hashes_password(
         user_repository: UserRepository,
 ):
     user.password = "foobarbaz"
-    await user_repository.insert(UserInsertDTO.from_orm(user))
+    await user_repository.insert(UserDBInsertDTO.from_orm(user))
 
     user_in_db = await user_repository.get_by_id(user.id)
     assert user_in_db.password == hash_password(user_in_db.id, "foobarbaz")
