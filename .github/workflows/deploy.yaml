@@ -147,7 +147,7 @@ jobs:
           POSTGRESQL_USER: ${{ secrets.POSTGRESQL_USER }}
           POSTGRESQL_PORT: "5432"
           POSTGRESQL_PASSWORD: ${{ secrets.POSTGRESQL_PASSWORD }}
-          POSTGRESQL_DATABASE: 'corevision'
+          POSTGRESQL_DATABASE: "corevision"
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USERNAME }}
@@ -155,12 +155,17 @@ jobs:
           envs:
             POSTGRESQL_USER, POSTGRESQL_PORT, POSTGRESQL_PASSWORD, POSTGRESQL_DATABASE
           script: |
-            cd ${{ secrets.PROJECT_DIR }}
-            git pull
-
-            cd backend
-            ${{ secrets.ALEMBIC_PATH }} upgrade head
-            cd ..
-
-            docker-compose pull
-            docker-compose stop && docker-compose up -d
+            export \
+              POSTGRESQL_USER=$POSTGRESQL_USER \
+              POSTGRESQL_PORT=$POSTGRESQL_PORT \
+              POSTGRESQL_PASSWORD=$POSTGRESQL_PASSWORD \
+              POSTGRESQL_DATABASE=$POSTGRESQL_DATABASE \
+            && cd ${{ secrets.PROJECT_DIR }} \
+            && git pull \
+            \
+            && cd backend \
+            && ${{ secrets.ALEMBIC_PATH }} upgrade head \
+            && cd .. \
+            \
+            && docker-compose pull \
+            && docker-compose stop && docker-compose up -d
