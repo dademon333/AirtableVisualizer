@@ -34,31 +34,26 @@
 
 
 ## Техническая часть
+## Режим разработки
+Пишем `docker-compose -f docker-compose.dev.yaml up` и радуемся жизни  
+Ну и миграции алембика можно накатить: `cd backend && alembic upgrade head`
 
 ## Deploy
+Весь проект обмазан контейнерами (даже сборка фронтенда), поэтому деплой максимально прост
 
-Весь проект обмазан контейнерами (даже сборка фронтенда), поэтому деплой максимально прост:
-
+### Без CI/CD:
 1. Настраиваем переменные окружения:  
   В корне проекта (рядом с docker-compose.yaml) создаем файл .env и заполняем его следующими значениями:
-  * `COMPOSE_PROJECT_NAME` - Имя проекта для docker, будет использоваться 
-     как приставка для названий контейнеров и всего остального
+  * `POSTGRESQL_USER` - имя пользователя postgres
+  * `POSTGRESQL_HOST` - хост postgres
+  * `POSTGRESQL_PORT` - порт postgres
+  * `POSTGRESQL_PASSWORD` - пароль от postgres
+  * `POSTGRESQL_DATABASE` - имя бд postgres
+
+  * `REDIS_HOST` - хост redis
   * `APP_REPLICAS` - количество application контейнеров (вертикальное масштабирование)
 
-  * `POSTGRESQL_USER` - имя пользователя postgres
-  * `POSTGRESQL_PASSWORD` - пароль от postgres
-  * `POSTGRESQL_DATABASE` - название базы данных в postgres
-
-  * `REDIS_HOST` - адрес redis, достижимый из других контейнеров -
-  название сервиса с redis. Вставляем 'redis'
-  * `DOCKER_POSTGRESQL_HOST` - адрес postgres, достижимый из других контейнеров -
-  название сервиса с postgres. Вставляем 'postgres'
-  * `DEFAULT_POSTGRESQL_HOST` - адрес postgres вне контейнеров, вставляем 'localhost'
-  * `DEBUG` - переключатель режима разработки, True/False
-  * `BACKGROUND_WORKERS_DEBUG` - то же самое, но отдельно для background_workers
-(чтобы не спамили логами sql запросов)
-
-2. Устанавливаем docker, docker-compose, python (желательно 3.10), с помощью pip прикручиваем alembic
+2. Устанавливаем docker, docker-compose, python (желательно 3.11), с помощью pip прикручиваем alembic
 3. Собираем образы и запускаем postgres:  
 `docker-compose build && docker-compose up -d postgres`
 4. Переходим в папку backend и загружаем чистую базу данных из миграций:  
@@ -67,16 +62,20 @@
 5. Возвращаемся в корневой каталог и запускаем все остальные сервисы:  
 `docker-compose up -d`
 
-## Обновление на сервере
+### С CI/CD
+В проекте настроен Github Actions, нужно лишь прописать пару конфигов:
 
-Как было сказано, весь проект обмазан контейнерами.
-Поэтому и обновление не вызовет особых трудностей
+1. Выполняем все шаги `Без CI/CD`
+2. Идем в настройки репозитория -> Security -> Secrets -> Actions
+3. Указываем следующие переменные:
+  * `ALEMBIC_PATH` - абсолютный путь к исполнимому файлу alembic (например, `/root/.pyenv/shims/alembic`)
+  * `POSTGRESQL_PASSWORD` - пароль от бд
+  * `POSTGRESQL_USER` - имя пользователя от бд
+  * `PROJECT_DIR` - абсолютный путь к папке на сервере (например, `/home/user/CoreVision`)
+  * `SERVER_HOST` - адрес сервера
+  * `SERVER_PASSWORD` - пароль от пользователя на сервере
+  * `SERVER_USERNAME` - имя пользователя на сервере
 
-1. Загружаем коммиты:  
-`git pull`  
-2. Если есть новые миграции бд - скармливаем постгресу:  
-`cd backend && alembic upgrade head`  
-3. Пересобираем изображения и перезапускаем сервисы:  
-`docker-compose build && docker-compose up -d`  
+4. Когда нужно задеплоиться - идём в actions -> deploy -> run workflow
 
 Всё. ¯\\_(ツ)_/¯
