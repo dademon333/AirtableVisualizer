@@ -62,15 +62,13 @@ async def search_entities(
 @entities_router.get(
     '/{entity_id}',
     response_model=EntityOutputDTO,
-    responses={
-        401: {'model': UnauthorizedResponse},
-        404: {'model': EntityNotFoundResponse}
-    },
+    responses={404: {'model': EntityNotFoundResponse}},
 )
 async def get_entity(
         entity_id: int,
         use_case: GetEntityUseCase = Depends(get_get_entity_use_case),
 ):
+    """Возвращает информацию о сущности по её идентификатору"""
     result = await use_case.execute(entity_id)
     if result is None:
         raise EntityNotFoundError()
