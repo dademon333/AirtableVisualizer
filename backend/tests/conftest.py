@@ -4,6 +4,7 @@ from pathlib import Path
 
 import pytest
 
+from config import IS_PARALLEL_PYTEST
 from fix_backward_compatibility import fix_compatibility
 
 fix_compatibility()
@@ -18,10 +19,14 @@ pytest_plugins = [
 ]
 
 
-def pytest_make_parametrize_id(config, val):
-    """Crutch, which fixes display of parametrize tests names:
-    instead of \u0418\u0432... will be normal names."""
-    return repr(val)
+if not IS_PARALLEL_PYTEST:
+    # With extended test names pytest-xdist raises
+    # 'Different tests were collected between workers'
+    # So, in parallel run just use default names
+    def pytest_make_parametrize_id(config, val):
+        """Crutch, which fixes display of parametrize tests names:
+        instead of \u0418\u0432... will be normal names."""
+        return repr(val)
 
 
 @pytest.fixture(autouse=True, scope='session')

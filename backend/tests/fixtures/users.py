@@ -27,19 +27,6 @@ def user() -> User:
 
 
 @pytest.fixture()
-def user_editor() -> User:
-    return User(
-        id=2,
-        name='editor',
-        email='editor@example.com',
-        password='c893b50d34064516d796a9074f82a5cc'
-                 'cf975c93749ac1de848687f7afa9bb37',
-        status=UserStatus.EDITOR,
-        created_at=datetime.fromisoformat('2022-10-10T00:00:00')
-    )
-
-
-@pytest.fixture()
 def user_admin() -> User:
     return User(
         id=3,

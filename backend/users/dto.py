@@ -35,3 +35,29 @@ class UserOutputDTO(BaseModel):
 
     class Config:
         orm_mode = True
+
+
+class CreateUserInputDTO(BaseModel):
+    name: str
+    email: str = Field(
+        ...,
+        regex=_EMAIL_REGEX
+    )
+    password: str = Field(..., min_length=8, max_length=30)
+    status: UserStatus
+
+    class Config:
+        orm_mode = True
+
+
+class UserSelfUpdateInputDTO(BaseModel):
+    name: str | None = None
+    email: str | None = Field(None, regex=_EMAIL_REGEX)
+    password: str | None = Field(None, min_length=8, max_length=30)
+
+
+class UserUpdateInputDTO(BaseModel):
+    name: str | None = None
+    email: str | None = Field(None, regex=_EMAIL_REGEX)
+    password: str | None = Field(None, min_length=8, max_length=30)
+    status: UserStatus | None = None

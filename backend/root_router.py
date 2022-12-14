@@ -6,6 +6,7 @@ from entities.handlers import entities_router
 from entity_connections.handlers import entity_connections_router
 from entity_type_connections.handlers import type_connections_router
 from stuff_handlers.handlers import stuff_router
+from users.handlers import users_router
 
 root_router = APIRouter()
 
@@ -15,6 +16,12 @@ root_router.include_router(
     auth_router,
     prefix='/api/auth',
     tags=['Auth'],
+)
+
+root_router.include_router(
+    users_router,
+    prefix='/api/users',
+    tags=['Users']
 )
 
 root_router.include_router(

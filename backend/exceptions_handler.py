@@ -7,7 +7,7 @@ from config import CORS_ALLOWED_ORIGINS_REGEX
 _COMPILED_ORIGIN_REGEX = re.compile(CORS_ALLOWED_ORIGINS_REGEX)
 
 
-async def cors_handler(request, exception):  # noqa: ignore=F523 (Unused positional arguments)
+async def cors_handler(request, exception):  # pragma: no cover
     """Adds cors policies to response on internal server error.
 
     Added because default fastapi CORSMiddleware ignore this case.

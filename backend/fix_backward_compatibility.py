@@ -46,7 +46,7 @@ _is_coroutine = object()
 
 
 
-class CoroWrapper:
+class CoroWrapper:  # pragma: no cover
     # Wrapper for coroutine object in _DEBUG mode.
 
     def __init__(self, gen, func=None):
@@ -115,7 +115,7 @@ class CoroWrapper:
             logger.error(msg)
 
 
-def coroutine(func):
+def coroutine(func):  # pragma: no cover
     """Decorator to mark coroutines.
 
     If the coroutine is not yielded from before it is destroyed,
@@ -167,7 +167,7 @@ def coroutine(func):
     return wrapper
 
 
-def _format_coroutine(coro):
+def _format_coroutine(coro):  # pragma: no cover
     assert iscoroutine(coro)
 
     is_corowrapper = isinstance(coro, CoroWrapper)

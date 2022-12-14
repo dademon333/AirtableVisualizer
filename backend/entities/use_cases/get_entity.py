@@ -7,4 +7,7 @@ class GetEntityUseCase:
         self.repository = entity_repository
 
     async def execute(self, entity_id: int) -> EntityOutputDTO | None:
-        return await self.repository.get_by_id(entity_id)
+        entity = await self.repository.get_by_id(entity_id)
+        if not entity:
+            return None
+        return EntityOutputDTO.from_orm(entity)
