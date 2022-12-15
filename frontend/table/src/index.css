@@ -1,45 +1,483 @@
-@font-face {
-  font-family: 'Montserrat';
-  src: url('font/Montserrat-VariableFont_wght.ttf');
-}
-
 body {
-  margin: 0;
-  background: #E5E5E5;
-  font-family: 'Montserrat';
-  font-size: 17px;
+  font-family: Montserrat, sans-serif;
 }
 
-.error {
+table th, table td {
+  border-right: 0.05rem solid #DADADA;
+}
+
+.table_container table {
+  max-width: 100%;
+}
+
+.table_container {
   position: relative;
-  top: 90px;
-  padding: 20px 40px;
+  background: #F4F4F4;
+  counter-reset: counter;
 }
 
-.core {
+.table_container table {
+  width: 100%;
+  margin: 0;
+}
+
+.table_container thead {
+  height: 45px;
+  background: #E9E9E9;
+}
+
+.table_container tbody tr td:nth-child(1) .id {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  transition: 0.1s;
+}
+
+.table_container tbody {
+  background: #F4F4F4;
+}
+
+.first-column-element {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 30px;
+  font-size: 15px;
+  width: 300px;
+}
+
+.secondary-column-elements {
+  position: relative;
+  display: flex;
+  overflow: scroll;
+  scrollbar-width: none;
+  transition: 0.2s;
+  width: 700px;
+}
+
+.secondary-column-elements::-webkit-scrollbar {
+  display: none;
+}
+
+.secondary-column-elements .secondary-column-element {
+  background: #DADADA;
+  border-radius: 5px;
+  margin-right: 5px;
+  line-height: 30px;
+  font-size: 14px;
+  padding: 0 6px;
+}
+
+/* CHECKBOX */
+
+/* .table_container tbody td {
+  position: relative;
+}
+
+.table_container tbody td input[type="checkbox"] {
+  display: none !important;
+}
+
+.table_container tbody td input[type="checkbox"] + label {
+  display: block;
+  position: relative;
+}
+
+.table_container tbody td input[type="checkbox"] + label::after {
+  position: absolute;
+  width: 20px;
+  transform: translateY(40%);
+  left: 25px;
+  z-index: 10;
+}
+
+.table_container.themeTable tbody td input[type="checkbox"] + label::after {
+  left: 18px;
+}
+
+.table_container tbody tr:hover td:nth-child(2) .id {
+  opacity: 0;
+  transform: scale(0.2);
+}
+
+.table_container tbody tr:hover td input[type="checkbox"] + label::after {
+  content: "";
+  background-image: url('/public/icons/Rectangle.svg');
+  width: 15px;
+  height: 15px;
+  cursor: pointer;
+}
+
+.table_container tbody td input[type="checkbox"]:checked + label::after,
+.table_container tbody tr:hover td input[type="checkbox"]:checked + label::after {
+  content: "";
+  background-image: url('/public/icons/FillRectangle.svg');
+  width: 15px;
+  height: 15px;
+}
+
+.table_container tbody td input[type="checkbox"]:checked + label::before,
+.table_container tbody tr:hover td input[type="checkbox"]:checked + label::before {
+  content: "";
+  background-color: #F4F4F4;
+  width: 35px;
+  height: 20px;
+  position: absolute;
+  transform: translateY(15%);
+  left: 15px;
+  z-index: 10;
+}
+
+.table_container.themeTable tbody td input[type="checkbox"]:checked + label::before,
+.table_container.themeTable tbody tr:hover td input[type="checkbox"]:checked + label::before {
+  left: 8px;
+} */
+
+/* ADD MENU */
+
+.add {
+  position: relative;
+  display: block;
+  width: 65px;
+  height: 30px;
+  align-self: center;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.add.opened {
+  transform: rotate(45deg);
+}
+
+.add::before, .add::after {
+  content: "";
+  position: absolute;
+  width: 0.1rem;
+  height: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 50%;
+  background-color: black;
+  transition: 0.2s;
+}
+
+.add::after {
+  transform: translateY(-50%) rotate(90deg);
+}
+
+.add:hover::after, .add:hover::before,
+.add.opened::after, .add.opened::before {
+  height: 25px;
+}
+
+@keyframes addMenuAppearance {
+  0% {
+      opacity: 0;
+      width: 0;
+      top: 0;
+      transform: translateX(-40%) scale(0.5);
+  }
+  100% {
+      opacity: 1;
+      width: 360px;
+  }
+}
+
+.addMenu {
+  position: absolute;
+  top: 50px;
+  transform: translateX(-80%);
+  width: 360px;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  list-style: none;
+  background: #E3E3E3;
+  border-radius: 5px;
+  animation: addMenuAppearance 0.2s;
+  z-index: 10;
+}
+
+.postControls {
+  position: relative;
+  top: 100px;
+}
+
+.nav {
+  position: relative;
+  margin-top: 90px;
+  left: 80px;
+  width: calc(100% - 80px);
+}
+
+.nav .nav-item .nav-link {
+  background: #DBDBDB;
+  text-decoration: none;
+  color: #797979;
+  margin-right: 5px;
+  height: 40px;
+  font-size: 17px;
+  padding: 10px 20px;
+  border: none;
+  transition: 0.2s;
+}
+
+.nav .nav-item .nav-link:hover {
+  box-shadow: inset 0 0 2px 2px #f4f4f4;
+}
+
+.nav .nav-item .nav-link.active {
+  background: #F4F4F4;
+  color: #000;
+  border: none;
+}
+
+.nav .nav-item:last-child .nav-link {
   position: absolute;
   display: flex;
-  left: 50%;
-  top: 30px;
-  transform: translateX(-50%);
-  font-size: 23px;
-  line-height: 23px;
-  font-weight: 600;
-}
-
-.core p {
-  margin: 0;
-}
-
-.core .arrow {
-  margin-left: 10px;
-}
-
-.account {
-  width: 35px;
-  height: 35px;
-  position: absolute;
   right: 30px;
-  top: 15px;
+  margin-right: 0;
+  font-weight: 600;
+  color: #000;
+}
+
+.nav .nav-item:last-child .nav-link svg {
+  margin-right: 5px;
+}
+
+/* TABLE LINKS */
+
+.finder-tables {
+  position: relative;
+}
+
+.hamburger {
+  position: absolute;
+  left: 40px;
   cursor: pointer;
+  padding: 5px;
+  border-radius: 5px;
+  transition: 0.2s;
+}
+
+.hamburger:hover {
+  background-color: #DBDBDB;
+}
+
+.hamburger.open {
+  background: #F9F9F9;
+}
+
+@keyframes tableAppearance {
+  0% {
+      opacity: 0;
+      width: 0;
+      left: 0;
+      transform: scale(0.5);
+  }
+  100% {
+      opacity: 1;
+      width: 360px;
+  }
+}
+
+.hamburger.open + .table-links {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  padding: 15px;
+  list-style: none;
+  width: 360px;
+  background: #E3E3E3;
+  border-radius: 5px;
+  left: 80px;
+  animation: tableAppearance 0.2s;
+  z-index: 10;
+}
+
+.table-links .table-link,
+.addMenu .addMenu_item {
+  display: flex;
+  position: relative;
+  color: black;
+  align-items: center;
+  text-decoration: none;
+  font-weight: 400;
+  line-height: 35px;
+  font-size: 16px;
+  border-radius: 5px;
+  padding-left: 40px;
+  transition: 0.1s;
+  cursor: pointer;
+}
+
+.table-links .table-link:hover,
+.addMenu .addMenu_item:hover {
+  background: #EBEBEB;
+}
+
+.checkMark::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  width: 13px;
+  height: 13px;
+  background-image: url('/public/icons/check_mark.svg');
+}
+
+.table-links .search_tables,
+.addMenu .add_search {
+  display: flex;
+  border-bottom: 2px solid #F4F4F4;
+  margin-bottom: 5px;
+  transition: 0.2s;
+}
+
+.table-links input,
+.addMenu input {
+  background: #E3E3E3;
+  border: none;
+  margin-left: 8px;
+  width: 100%;
+  font-weight: 400;
+  line-height: 30px;
+  font-size: 16px;
+}
+
+.table-links input:focus,
+.addMenu input {
+  outline: none;
+}
+
+/* TOOLBAR */
+
+.toolbar {
+  display: flex;
+  position: relative;
+  align-items: center;
+  justify-content: space-between;
+  background: #F4F4F4;
+  height: 70px;
+  padding: 16px 25px;
+}
+
+.toolbar .left {
+  display: flex;
+}
+
+/* SEARCH */
+
+.toolbar .search {
+  display: flex;
+  align-items: center;
+  padding: 10px 4px;
+  width: 90px;
+  height: 40px;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.2s;
+}
+
+.toolbar .search:hover, .toolbar .search:hover input {
+  background: #EBEBEB;
+}
+
+.toolbar .search input {
+  width: 100%;
+  background-color: #F4F4F4;
+  border: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: 0.2s;
+}
+
+.toolbar .search:focus-within {
+  width: 200px;
+}
+
+.toolbar .search input:focus {
+  outline: none;
+}
+
+/* SORTING */
+
+.toolbar .sorting {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 13px;
+  height: 40px;
+  padding: 10px 4px;
+  margin-left: 15px;
+  cursor: pointer;
+  border-radius: 5px;
+  transition: 0.2s;
+}
+
+.toolbar .sorting:hover, .toolbar .sorting.opened,
+.toolbar .sorting .options div:hover, .toolbar .sorting .options .option.clicked,
+.toGraph a:hover {
+  background: #EBEBEB;
+}
+
+.toolbar .sorting .options {
+  position: absolute;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  bottom: -55px;
+  width: 200px;
+  padding: 15px;
+  height: 50px;
+  background: #E3E3E3;
+  border-radius: 5px;
+  z-index: 10;
+  visibility: visible;
+  transition: 0.2s;
+}
+
+.toolbar .sorting .options.closed {
+  visibility: hidden;
+  opacity: 0;
+}
+
+.toolbar .sorting .options div {
+  padding: 5px;
+  border-radius: 5px;
+  transition: 0.2s;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+/* TO_GRAPH */
+
+.toGraph a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  text-decoration: none;
+  color: #000;
+  border-radius: 5px;
+  padding: 10px 4px;
+  transition: .2s;
+}
+
+.toGraph a svg {
+  margin-right: 5px;
+}
+
+/* SPINNER */
+
+.spinner {
+  position: relative;
+  height: calc(100vh - 200px);
+}
+
+.spinner div {
+  position: absolute;
+  top: 40%;
 }
