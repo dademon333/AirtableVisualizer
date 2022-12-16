@@ -10,6 +10,7 @@ const createAPI = (): AxiosInstance => {
     baseURL: BASE_URL,
     timeout: REQUEST_TIMEOUT,
   });
+  
   return api;
 }
 

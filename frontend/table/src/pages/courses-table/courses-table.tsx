@@ -13,7 +13,7 @@ import { setRows } from '../../utils/set-rows';
 import { messages } from '../../const';
 
 const CoursesTable = (): JSX.Element => {
-  const columnWidths = [
+  const columnWidths: Table.ColumnExtension[] = [
     { columnName: 'name', width: 230 },
     { columnName: 'body', width: 700 },
   ];

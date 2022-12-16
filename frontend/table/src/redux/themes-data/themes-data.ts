@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { Column } from '@devexpress/dx-react-grid';
-import { fetchCourses } from '../courses-data/api-actions';
+import { fetchThemes } from '../themes-data/api-actions';
 import { Row } from '../../types/types';
 import { NameSpace } from '../../const';
 
@@ -11,21 +11,21 @@ const initialState: {
 } = {
   rows: [],
   columns: [
-    { name: 'name', title: 'Курс' },
-    { name: 'body', title: 'Темы' },
+    { name: 'name', title: 'Тема' },
+    { name: 'body', title: 'Знания' },
   ],
   isLoading: true,
 };
 
-export const coursesData = createSlice({
-  name: NameSpace.COURSES,
+export const themesData = createSlice({
+  name: NameSpace.THEMES,
   initialState,
   reducers: {},
   extraReducers(builder) {
-    builder.addCase(fetchCourses.pending, (state) => {
+    builder.addCase(fetchThemes.pending, (state) => {
       state.isLoading = true;
     })
-    .addCase(fetchCourses.fulfilled, (state, action) => {
+    .addCase(fetchThemes.fulfilled, (state, action) => {
       state.rows = action.payload;
       state.isLoading = false;
     });

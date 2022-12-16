@@ -1,32 +1,32 @@
 import { AxiosInstance } from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { AppDispatch, State, AllData, Course } from '../../types/types';
+import { AppDispatch, State, AllData, Entitiy } from '../../types/types';
 import { Row, EntityConnection, TypeConnections } from '../../types/types';
 import { wrapSecondColElements, wrapFirstColElement } from '../../utils/wrap';
 import { getChilds, getItems } from '../../utils/get-items';
 import { getEmptyRow } from '../../utils/get-empty-Row';
 import { APIRoute, NameSpace, EntityType } from '../../const';
 
-export const fetchCourses = createAsyncThunk<Row[], undefined, {
+export const fetchThemes = createAsyncThunk<Row[], undefined, {
   dispatch: AppDispatch,
   state: State,
   extra: AxiosInstance
 }
 >(
-  `${NameSpace.COURSES}/fetchData`,
+  `${NameSpace.THEMES}/fetchData`,
   async (_arg, {dispatch, extra: api}) => {
-    const courses = await api.get<Course[]>(`${APIRoute.Courses}${APIRoute.List}`);
+    const themes = await api.get<Entitiy[]>(`${APIRoute.Entities}${APIRoute.List}/${EntityType.Theme}?limit=1000`);
     const {data} = await api.get<AllData>(`${APIRoute.Courses}${APIRoute.All}`);
     const typeConnections = await api.get<TypeConnections[]>(`${APIRoute.TypeConnections}${APIRoute.List}`);
     
-    const type = typeConnections.data.filter(e => e.parent_type === EntityType.Course && e.child_column_name !== null)[0];
+    const type = typeConnections.data.filter(e => e.parent_type === EntityType.Theme && e.child_column_name !== null)[0];
     const connections: EntityConnection[] = data.entity_connections
       .filter((connection) => connection.type_connection_id === type.id);
-    const rows = courses.data.map((course) => {
+    const rows = themes.data.map((theme) => {
       const row = getEmptyRow();
-      const childs = getChilds(connections, course.id);
+      const childs = getChilds(connections, theme.id);
       const items = getItems([], childs, data);
-      row.name = wrapFirstColElement(course.name);
+      row.name = wrapFirstColElement(theme.name);
       row.body = wrapSecondColElements(items);
       return row;
     });
