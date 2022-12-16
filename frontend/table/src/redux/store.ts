@@ -3,7 +3,7 @@ import axios, { AxiosInstance }from 'axios';
 import { rootReducer } from './root-reducer';
 
 const BASE_URL = 'http://corevision.ru/api';
-const REQUEST_TIMEOUT = 5000;
+const REQUEST_TIMEOUT = 10000;
 
 const createAPI = (): AxiosInstance => {
   const api = axios.create({

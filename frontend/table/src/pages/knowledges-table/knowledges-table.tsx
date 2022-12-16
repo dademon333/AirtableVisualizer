@@ -8,7 +8,7 @@ import { useAppSelector } from '../../hooks';
 import { fetchData } from '../../redux/api-actions';
 import Navigation from '../../components/navigation/navigation';
 import Toolbar from '../../components/tool-bar/tool-bar';
-import { getRows, getColumns, getIsLoading } from '../../redux/main-data/selectors';
+import { getRows, getColumns, getIsLoading } from '../../redux/courses-data/selectors';
 import { setRows } from '../../utils/set-rows';
 import { messages } from '../../const';
 

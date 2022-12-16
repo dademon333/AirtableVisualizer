@@ -1,10 +1,9 @@
 import { AxiosInstance } from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, State } from '../types/types';
-import { Row } from '../types/types';
-import { wrapSecColElement, wrapFirstColElement } from '../utils/wrap';
+import { APIRoute } from '../const';
 
-export const fetchData = createAsyncThunk<Row[], undefined, {
+export const fetchData = createAsyncThunk<null, undefined, {
   dispatch: AppDispatch,
   state: State,
   extra: AxiosInstance
@@ -12,21 +11,7 @@ export const fetchData = createAsyncThunk<Row[], undefined, {
 >(
   'DATA/fetchData',
   async (_arg, {dispatch, extra: api}) => {
-    const {data} = await api.get<Row[]>('/posts');
-    wrapSecColElement(data);
-    wrapFirstColElement(data);
+    const {data} = await api.get(`${APIRoute.Courses}${APIRoute.List}`);
     return data;
   }
 );
-
-export const postElement = createAsyncThunk<void, object, {
-  dispatch: AppDispatch,
-  state: State,
-  extra: AxiosInstance
-}
->(
-  'DATA/addElement', 
-  async (_arg, {dispatch, extra: api}) => {
-    const {data} = await api.post('/posts', _arg);
-    console.log(data);
-});

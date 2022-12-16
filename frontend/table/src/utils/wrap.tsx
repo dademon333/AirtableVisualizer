@@ -1,20 +1,12 @@
-import { Row } from "../types/types";
+export const wrapFirstColElement = (name: string): JSX.Element => (
+  <div className='first-column-element'>{name}</div>
+);
 
-export const wrapFirstColElement = (rows: Row[]) => {
-  const rowsCopy = rows;
-  return rowsCopy.map(row => (
-    row.title = <div className="first-column-element">{row.title}</div>
-  ));
-};
 
-export const wrapSecColElement = (rows: Row[]) => {
-  const rowsCopy = rows;
-  return rowsCopy.map(row => (
-    row.body = 
-    <div className='secondary-column-elements'>
-      <div className="secondary-column-element">{row.title}</div>
-      <div className="secondary-column-element">{row.title}</div>
-      <div className="secondary-column-element">{row.title}</div>
-    </div>
-  ));
-};
+export const wrapSecondColElement = (name: string, index: number): JSX.Element => (
+  <div className='secondary-column-element' key={`${name}-${index}`}>{name}</div>
+);
+
+export const wrapSecondColElements = (items: JSX.Element[]): JSX.Element => (
+  <div className='secondary-column-elements'>{items}</div>
+);
