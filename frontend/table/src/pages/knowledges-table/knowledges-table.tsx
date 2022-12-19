@@ -13,7 +13,7 @@ import { setRows } from '../../utils/set-rows';
 import { messages } from '../../const';
 
 const KnowledgesTable = (): JSX.Element => {
-  const columnExtensions: Table.ColumnExtension[] = [
+  const columnWidths: Table.ColumnExtension[] = [
     { columnName: 'name', width: 230 },
     { columnName: 'body', width: 700 },
   ];
@@ -49,7 +49,7 @@ const KnowledgesTable = (): JSX.Element => {
               <IntegratedSelection />
               <PagingState defaultCurrentPage={0} defaultPageSize={10} />
               <IntegratedPaging />
-              <Table columnExtensions={columnExtensions} />
+              <Table columnExtensions={columnWidths} />
               <PagingPanel pageSizes={[5, 10, 15, 0]} messages={messages} />
               <TableHeaderRow />
               <TableSelection showSelectAll />

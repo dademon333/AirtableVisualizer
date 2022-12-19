@@ -7,26 +7,26 @@ import { getChilds, getItems } from '../../utils/get-items';
 import { getEmptyRow } from '../../utils/get-empty-Row';
 import { APIRoute, NameSpace, EntityType } from '../../const';
 
-export const fetchKnowledges = createAsyncThunk<Row[], undefined, {
+export const fetchQuauntums = createAsyncThunk<Row[], undefined, {
   dispatch: AppDispatch,
   state: State,
   extra: AxiosInstance
 }
 >(
-  `${NameSpace.KNOWLEDGES}/fetchData`,
+  `${NameSpace.QUANTUMS}/fetchData`,
   async (_arg, {dispatch, extra: api}) => {
-    const knowledges = await api.get<Entitiy[]>(`${APIRoute.Entities}${APIRoute.List}/${EntityType.Knowledge}?limit=1000`);
+    const quantums = await api.get<Entitiy[]>(`${APIRoute.Entities}${APIRoute.List}/${EntityType.Quantum}?limit=1000`);
     const {data} = await api.get<AllData>(`${APIRoute.Courses}${APIRoute.All}`);
     const typeConnections = await api.get<TypeConnections[]>(`${APIRoute.TypeConnections}${APIRoute.List}`);
     
-    const type = typeConnections.data.filter(e => e.parent_type === EntityType.Knowledge && e.child_column_name !== null)[0];
+    const type = typeConnections.data.filter(e => e.parent_type === EntityType.Quantum && e.child_column_name !== null)[0];
     const connections: EntityConnection[] = data.entity_connections
       .filter((connection) => connection.type_connection_id === type.id);
-    const rows = knowledges.data.map((knowledge) => {
+    const rows = quantums.data.map((quantum) => {
       const row = getEmptyRow();
-      const childs = getChilds(connections, knowledge.id);
+      const childs = getChilds(connections, quantum.id);
       const items = getItems([], childs, data);
-      row.name = wrapFirstColElement(knowledge.name);
+      row.name = wrapFirstColElement(quantum.name);
       row.body = wrapSecondColElements(items);
       return row;
     });

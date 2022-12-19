@@ -5,21 +5,18 @@ import { PagingPanel } from '@devexpress/dx-react-grid-material-ui';
 import Spinner from 'react-bootstrap/Spinner';
 import { useAppDispatch } from '../../hooks';
 import { useAppSelector } from '../../hooks';
-import { fetchData } from '../../redux/api-actions';
+import { fetchQuauntums } from '../../redux/quntams-data/api-actions';
 import Navigation from '../../components/navigation/navigation';
 import Toolbar from '../../components/tool-bar/tool-bar';
-import { getRows, getColumns, getIsLoading } from '../../redux/courses-data/selectors';
+import { getRows, getColumns, getIsLoading } from '../../redux/quntams-data/selectors';
 import { setRows } from '../../utils/set-rows';
 import { messages } from '../../const';
 
 const QuantumsTable = (): JSX.Element => {
-  const columnExtensions: Table.ColumnExtension[] = [{
-    columnName: 'body',
-    width: '700px'
-  }, {
-    columnName: 'title',
-    width: '300px'
-  }];
+  const columnWidths: Table.ColumnExtension[] = [
+    { columnName: 'name', width: 230 },
+    { columnName: 'body', width: 700 },
+  ];
 
   const dispatch = useAppDispatch();
   const rows = useAppSelector(getRows);
@@ -30,7 +27,7 @@ const QuantumsTable = (): JSX.Element => {
   const [selection, setSelection] = useState<(number | string)[]>([]);
 
   useEffect(() => {
-    dispatch(fetchData());
+    dispatch(fetchQuauntums());
   }, [dispatch]);
 
   return (
@@ -52,7 +49,7 @@ const QuantumsTable = (): JSX.Element => {
               <IntegratedSelection />
               <PagingState defaultCurrentPage={0} defaultPageSize={10} />
               <IntegratedPaging />
-              <Table columnExtensions={columnExtensions} />
+              <Table columnExtensions={columnWidths} />
               <PagingPanel pageSizes={[5, 10, 15, 0]} messages={messages} />
               <TableHeaderRow />
               <TableSelection showSelectAll />
