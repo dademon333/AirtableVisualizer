@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { Column } from '@devexpress/dx-react-grid';
-import { fetchQuauntums } from '../quntams-data/api-actions';
+import { fetchTasks } from '../tasks-data/api-actions';
 import { Row } from '../../types/types';
 import { NameSpace } from '../../const';
 
@@ -11,21 +11,21 @@ const initialState: {
 } = {
   rows: [],
   columns: [
-    { name: 'name', title: 'Кванты' },
+    { name: 'name', title: 'Задания' },
     { name: 'body', title: '' },
   ],
   isLoading: true,
 };
 
-export const quantumsData = createSlice({
-  name: NameSpace.QUANTUMS,
+export const tasksData = createSlice({
+  name: NameSpace.TASKS,
   initialState,
   reducers: {},
   extraReducers(builder) {
-    builder.addCase(fetchQuauntums.pending, (state) => {
+    builder.addCase(fetchTasks.pending, (state) => {
       state.isLoading = true;
     })
-    .addCase(fetchQuauntums.fulfilled, (state, action) => {
+    .addCase(fetchTasks.fulfilled, (state, action) => {
       state.rows = action.payload;
       state.isLoading = false;
     });
