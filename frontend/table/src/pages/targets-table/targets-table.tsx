@@ -16,6 +16,7 @@ const TargetsTable = (): JSX.Element => {
   const columnWidths: Table.ColumnExtension[] = [
     { columnName: 'name', width: 500 },
     { columnName: 'body', width: 700 },
+    { columnName: 'add', width: 65 }
   ];
 
   const dispatch = useAppDispatch();
