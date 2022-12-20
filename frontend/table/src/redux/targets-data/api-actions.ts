@@ -7,7 +7,7 @@ import { getChilds, getItems } from '../../utils/get-items';
 import { getEmptyRow } from '../../utils/get-empty-Row';
 import { APIRoute, NameSpace, EntityType } from '../../const';
 import actions from './targets-data';
-import { getAddMenu } from '../../components/add-menu/add-menu';
+import { getAddMenu } from './get-add-menu';
 
 export const fetchTargets = createAsyncThunk<Row[], undefined, {
   dispatch: AppDispatch,

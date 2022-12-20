@@ -1,22 +1,29 @@
 import { useState } from 'react';
+import { ActionCreatorWithPayload, AsyncThunk } from '@reduxjs/toolkit';
+import { AxiosInstance } from 'axios';
 import SearchIcon from '@mui/icons-material/Search';
-import { TypeConnections } from '../../types/types';
+import { State, AppDispatch, Row } from '../../types/types';
 import { getSearchingElement } from '../../utils/get-searching-element';
 import { useAppDispatch, useAppSelector } from '../../hooks';
-import { getConnectionNumber } from '../../redux/targets-data/selectors';
-import { fetchTargets } from '../../redux/targets-data/api-actions';
-import actions from '../../redux/targets-data/targets-data';
 
 type AddMenuProps = {
   names: string[];
+  getConnectionNumber: (state: State) => number;
+  changeConnectionNumber: ActionCreatorWithPayload<number>;
+  fetchData: AsyncThunk<Row[], undefined, {
+    dispatch: AppDispatch;
+    state: State;
+    extra: AxiosInstance
+  }>;
 }
 
-const AddMenu = ({ names }: AddMenuProps): JSX.Element => {
+export const AddMenu = ({ names, getConnectionNumber, changeConnectionNumber, fetchData }: AddMenuProps): JSX.Element => {
   const dispatch = useAppDispatch();
   
   const [isOpenAddMenu, setOpenAddMenu] = useState(false);
   const [query, setQuery] = useState<string>('');
-  const activeItem = useAppSelector(getConnectionNumber);
+
+  const connectionNumber = useAppSelector(getConnectionNumber);
   
   const initMenuNames = names.map((name) => { return {name, to: ''} });
   const menuNames = getSearchingElement({initData: initMenuNames, query});
@@ -33,12 +40,12 @@ const AddMenu = ({ names }: AddMenuProps): JSX.Element => {
           { menuNames.map((menuName, idx) => {
             return (
               <div 
-                className={`addMenu_item ${activeItem === idx && 'checkMark'}`}
+                className={`addMenu_item ${connectionNumber === idx && 'checkMark'}`}
                 key={`${idx}-${menuName}`}
                 onClick={() => {
                   setOpenAddMenu(false);
-                  dispatch(actions.changeConnectionNumber(idx));
-                  dispatch(fetchTargets());
+                  dispatch(changeConnectionNumber(idx));
+                  dispatch(fetchData());
                 }}>
                   {menuName.name}
               </div>
@@ -48,10 +55,4 @@ const AddMenu = ({ names }: AddMenuProps): JSX.Element => {
       }
     </div>
   );
-};
-
-export const getAddMenu = (props: TypeConnections[]) => {
-  const names = props.map((p) => p.child_column_name);
-
-  return <AddMenu names={names} />;
 };
