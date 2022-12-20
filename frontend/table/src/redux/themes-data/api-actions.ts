@@ -7,6 +7,7 @@ import { getChilds, getItems } from '../../utils/get-items';
 import { getEmptyRow } from '../../utils/get-empty-Row';
 import { APIRoute, NameSpace, EntityType } from '../../const';
 import actions from './themes-data';
+import { getAddMenu } from '../../pages/themes-table/get-add-menu';
 
 export const fetchThemes = createAsyncThunk<Row[], undefined, {
   dispatch: AppDispatch,
@@ -15,17 +16,20 @@ export const fetchThemes = createAsyncThunk<Row[], undefined, {
 }
 >(
   `${NameSpace.THEMES}/fetchData`,
-  async (_arg, {dispatch, extra: api}) => {
+  async (_arg, {dispatch, extra: api, getState}) => {
     const themes = await api.get<Entitiy[]>(`${APIRoute.Entities}${APIRoute.List}/${EntityType.Theme}?limit=1000`);
     const {data} = await api.get<AllData>(`${APIRoute.Courses}${APIRoute.All}`);
     const typeConnections = await api.get<TypeConnections[]>(`${APIRoute.TypeConnections}${APIRoute.List}`);
     
-    const type = typeConnections.data.filter(e => e.parent_type === EntityType.Theme && e.child_column_name !== null)[0];
-    dispatch(actions.changeNameColumn(type.parent_column_name));
-    dispatch(actions.changeBodyColumn(type.child_column_name));
+    const connectionNumber = getState().QUANTUMS.connectionNumber;
+    const types = typeConnections.data.filter(e => e.parent_type === EntityType.Theme && e.child_column_name !== null);
+
+    dispatch(actions.changeNameColumn(types[connectionNumber].parent_column_name));
+    dispatch(actions.changeBodyColumn(types[connectionNumber].child_column_name));
+    dispatch(actions.changeAddColumn(getAddMenu(types)));
 
     const connections: EntityConnection[] = data.entity_connections
-      .filter((connection) => connection.type_connection_id === type.id);
+      .filter((connection) => connection.type_connection_id === types[connectionNumber].id);
 
     const rows = themes.data.map((theme) => {
       const row = getEmptyRow();

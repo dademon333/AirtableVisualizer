@@ -7,3 +7,6 @@ export const getRows = (state: State): Row[] => state.THEMES.rows;
 export const getColumns = (state: State): Column[] => state.THEMES.columns;
 
 export const getIsLoading = (state: State): boolean => state.THEMES.isLoading;
+
+export const getConnectionNumber = (state: State): number => state.THEMES.connectionNumber;
+

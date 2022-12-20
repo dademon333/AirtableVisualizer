@@ -7,3 +7,6 @@ export const getRows = (state: State): Row[] => state.COURSES.rows;
 export const getColumns = (state: State): Column[] => state.COURSES.columns;
 
 export const getIsLoading = (state: State): boolean => state.COURSES.isLoading;
+
+export const getConnectionNumber = (state: State): number => state.COURSES.connectionNumber;
+

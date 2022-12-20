@@ -8,13 +8,16 @@ const initialState: {
   rows: Row[];
   columns: Column[];
   isLoading: boolean;
+  connectionNumber: number;
 } = {
   rows: [],
   columns: [
     { name: 'name', title: '' },
     { name: 'body', title: '' },
+    { name: 'add', title: '' }
   ],
   isLoading: true,
+  connectionNumber: 0,
 };
 
 export const quantumsData = createSlice({
@@ -26,6 +29,12 @@ export const quantumsData = createSlice({
     },
     changeBodyColumn: (state, action) => {
       state.columns[1].title = action.payload;
+    },
+    changeAddColumn: (state, action) => {
+      state.columns[2].title = action.payload;
+    },
+    changeConnectionNumber: (state, action) => {
+      state.connectionNumber = action.payload;
     }
   },
   extraReducers(builder) {
