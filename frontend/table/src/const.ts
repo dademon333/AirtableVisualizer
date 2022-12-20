@@ -3,7 +3,7 @@ export enum AppRoute {
   Theme = '/table/theme',
   Knowledge = '/table/knowledge',
   Quantum = '/table/quantum',
-  Task = '/table/task',
+  Target = '/table/target',
   Users = '/table/users'
 };
 
@@ -43,6 +43,6 @@ export enum NameSpace {
   THEMES = 'THEMES',
   KNOWLEDGES = 'KNOWLEDGES',
   QUANTUMS = 'QUANTUMS',
-  TASKS = 'TASKS',
+  TARGETS = 'TARGETS',
   USERS = 'USERS',
 };

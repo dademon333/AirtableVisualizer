@@ -33,7 +33,7 @@ const Navigation = (): JSX.Element => {
 					<Link className={`nav-link ${activeLink === AppRoute.Quantum ? 'active' : 'disable'}`} to={AppRoute.Quantum}>Кванты знаний</Link>
 				</Nav.Item>
 				<Nav.Item>
-					<Link className={`nav-link ${activeLink === AppRoute.Task ? 'active' : 'disable'}`} to={AppRoute.Task}>Задание</Link>
+					<Link className={`nav-link ${activeLink === AppRoute.Target ? 'active' : 'disable'}`} to={AppRoute.Target}>Цель</Link>
 				</Nav.Item>
 				<Nav.Item>
 					<Link className={`nav-link ${activeLink === AppRoute.Users ? 'active' : 'disable'}`} to={AppRoute.Users}>

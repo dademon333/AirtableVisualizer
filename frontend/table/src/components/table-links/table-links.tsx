@@ -15,7 +15,7 @@ const TableLinks = ({ setOpen }: TableLinksProps) => {
         { name: 'Тема', to: `${AppRoute.Theme}` },
         { name: 'Знание', to: `${AppRoute.Knowledge}` },
         { name: 'Кванты знаний', to: `${AppRoute.Quantum}` },
-        { name: 'Задание', to: `${AppRoute.Task}` }
+        { name: 'Цель', to: `${AppRoute.Target}` }
     ];
 
     const tables = getSearchingElement({initData: initTables, query});

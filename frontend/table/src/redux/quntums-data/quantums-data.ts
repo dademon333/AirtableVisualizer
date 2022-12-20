@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { Column } from '@devexpress/dx-react-grid';
-import { fetchThemes } from '../themes-data/api-actions';
+import { fetchQuauntums } from './api-actions';
 import { Row } from '../../types/types';
 import { NameSpace } from '../../const';
 
@@ -17,8 +17,8 @@ const initialState: {
   isLoading: true,
 };
 
-export const themesData = createSlice({
-  name: NameSpace.THEMES,
+export const quantumsData = createSlice({
+  name: NameSpace.QUANTUMS,
   initialState,
   reducers: {
     changeNameColumn: (state, action) => {
@@ -29,14 +29,14 @@ export const themesData = createSlice({
     }
   },
   extraReducers(builder) {
-    builder.addCase(fetchThemes.pending, (state) => {
+    builder.addCase(fetchQuauntums.pending, (state) => {
       state.isLoading = true;
     })
-    .addCase(fetchThemes.fulfilled, (state, action) => {
+    .addCase(fetchQuauntums.fulfilled, (state, action) => {
       state.rows = action.payload;
       state.isLoading = false;
     });
   }
 });
 
-export default themesData.actions;
+export default quantumsData.actions;

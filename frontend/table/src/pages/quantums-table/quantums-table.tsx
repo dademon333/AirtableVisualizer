@@ -5,10 +5,10 @@ import { PagingPanel } from '@devexpress/dx-react-grid-material-ui';
 import Spinner from 'react-bootstrap/Spinner';
 import { useAppDispatch } from '../../hooks';
 import { useAppSelector } from '../../hooks';
-import { fetchQuauntums } from '../../redux/quntams-data/api-actions';
+import { fetchQuauntums } from '../../redux/quntums-data/api-actions';
 import Navigation from '../../components/navigation/navigation';
 import Toolbar from '../../components/tool-bar/tool-bar';
-import { getRows, getColumns, getIsLoading } from '../../redux/quntams-data/selectors';
+import { getRows, getColumns, getIsLoading } from '../../redux/quntums-data/selectors';
 import { setRows } from '../../utils/set-rows';
 import { messages } from '../../const';
 

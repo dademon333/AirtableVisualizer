@@ -5,16 +5,16 @@ import { PagingPanel } from '@devexpress/dx-react-grid-material-ui';
 import Spinner from 'react-bootstrap/Spinner';
 import { useAppDispatch } from '../../hooks';
 import { useAppSelector } from '../../hooks';
-import { fetchTasks } from '../../redux/tasks-data/api-actions';
+import { fetchTargets } from '../../redux/targets-data/api-actions';
 import Navigation from '../../components/navigation/navigation';
 import Toolbar from '../../components/tool-bar/tool-bar';
-import { getRows, getColumns, getIsLoading } from '../../redux/tasks-data/selectors';
+import { getRows, getColumns, getIsLoading } from '../../redux/targets-data/selectors';
 import { setRows } from '../../utils/set-rows';
 import { messages } from '../../const';
 
-const TasksTable = (): JSX.Element => {
+const TargetsTable = (): JSX.Element => {
   const columnWidths: Table.ColumnExtension[] = [
-    { columnName: 'name', width: 230 },
+    { columnName: 'name', width: 500 },
     { columnName: 'body', width: 700 },
   ];
 
@@ -27,7 +27,7 @@ const TasksTable = (): JSX.Element => {
   const [selection, setSelection] = useState<(number | string)[]>([]);
 
   useEffect(() => {
-    dispatch(fetchTasks());
+    dispatch(fetchTargets());
   }, [dispatch]);
 
   return (
@@ -40,7 +40,7 @@ const TasksTable = (): JSX.Element => {
             <Spinner animation='border' />
           </div>
           :
-          <div className='table_container tasksTable'>
+          <div className='table_container targetsTable'>
             <Grid
               rows={setRows(rows, query)}
               columns={columns}
@@ -60,4 +60,4 @@ const TasksTable = (): JSX.Element => {
     );
 }
 
-export default TasksTable;
+export default TargetsTable;

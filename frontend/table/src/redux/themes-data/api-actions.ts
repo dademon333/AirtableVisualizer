@@ -6,6 +6,7 @@ import { wrapSecondColElements, wrapFirstColElement } from '../../utils/wrap';
 import { getChilds, getItems } from '../../utils/get-items';
 import { getEmptyRow } from '../../utils/get-empty-Row';
 import { APIRoute, NameSpace, EntityType } from '../../const';
+import actions from './themes-data';
 
 export const fetchThemes = createAsyncThunk<Row[], undefined, {
   dispatch: AppDispatch,
@@ -20,8 +21,12 @@ export const fetchThemes = createAsyncThunk<Row[], undefined, {
     const typeConnections = await api.get<TypeConnections[]>(`${APIRoute.TypeConnections}${APIRoute.List}`);
     
     const type = typeConnections.data.filter(e => e.parent_type === EntityType.Theme && e.child_column_name !== null)[0];
+    dispatch(actions.changeNameColumn(type.parent_column_name));
+    dispatch(actions.changeBodyColumn(type.child_column_name));
+
     const connections: EntityConnection[] = data.entity_connections
       .filter((connection) => connection.type_connection_id === type.id);
+
     const rows = themes.data.map((theme) => {
       const row = getEmptyRow();
       const childs = getChilds(connections, theme.id);

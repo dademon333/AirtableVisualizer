@@ -11,8 +11,8 @@ const initialState: {
 } = {
   rows: [],
   columns: [
-    { name: 'name', title: 'Курс' },
-    { name: 'body', title: 'Темы' },
+    { name: 'name', title: '' },
+    { name: 'body', title: '' },
   ],
   isLoading: true,
 };
@@ -20,7 +20,14 @@ const initialState: {
 export const coursesData = createSlice({
   name: NameSpace.COURSES,
   initialState,
-  reducers: {},
+  reducers: {
+    changeNameColumn: (state, action) => {
+      state.columns[0].title = action.payload;
+    },
+    changeBodyColumn: (state, action) => {
+      state.columns[1].title = action.payload;
+    }
+  },
   extraReducers(builder) {
     builder.addCase(fetchCourses.pending, (state) => {
       state.isLoading = true;
@@ -31,3 +38,5 @@ export const coursesData = createSlice({
     });
   }
 });
+
+export default coursesData.actions;
