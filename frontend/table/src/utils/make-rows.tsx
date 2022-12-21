@@ -1,6 +1,5 @@
-import { Entity, EntityConnection, TypeConnections, AllData, Course } from '../types/types';
+import { Entity, EntityConnection, TypeConnections, AllData, Course, Row } from '../types/types';
 import { EntityType } from '../const';
-import { getEmptyRow } from './get-empty-row';
 import { getChilds, getParents, getItems } from './get-items';
 import { wrapFirstColElement, wrapSecondColElements } from './wrap';
 
@@ -14,7 +13,7 @@ type MakeRowsProps = {
 
 export const makeRows = ({ items, connections, typeConnection, entityType, data }: MakeRowsProps) => {
   return items.map((item) => {
-    const row = getEmptyRow();
+    const row = makeEmptyRow();
     const childs = getChilds(connections, item.id);
     const parents = getParents(connections, item.id);
     const items = getItems(
@@ -26,3 +25,10 @@ export const makeRows = ({ items, connections, typeConnection, entityType, data 
     return row;
   });
 };
+
+
+const makeEmptyRow = (): Row => ({
+  id: 0,
+  name: <></>,
+  body: <></>
+});
