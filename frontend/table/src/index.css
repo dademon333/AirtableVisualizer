@@ -269,7 +269,7 @@ table th, table td {
   left: 12px;
   width: 13px;
   height: 13px;
-  background-image: url('/public/icons/check_mark.svg');
+  background-image: url('assets/icons/check_mark.svg');
 }
 
 .table-links .search_tables,
