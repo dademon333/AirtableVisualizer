@@ -7,9 +7,15 @@ export const getChilds = (connections: EntityConnection[], id: number): number[]
     .map((connection: EntityConnection) => connection.child_id);
 };
 
-export const getItems = (items: JSX.Element[], childs: number[], data: AllData): JSX.Element[] => {
-  childs.forEach((child, index) => {
-    const item = data.entities.filter((entity) => entity.id === child);
+export const getParents = (connections: EntityConnection[], id: number) => {
+  return connections
+    .filter((connection: EntityConnection) => connection.child_id === id)
+    .map((connection: EntityConnection) => connection.parent_id);
+}
+
+export const getItems = (items: JSX.Element[], ids: number[], data: AllData): JSX.Element[] => {
+  ids.forEach((id, index) => {
+    const item = data.entities.filter((entity) => entity.id === id);
     items.push(
       wrapSecondColElement(item[0].name, index)
     );

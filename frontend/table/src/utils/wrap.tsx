@@ -1,5 +1,5 @@
 export const wrapFirstColElement = (name: string): JSX.Element => (
-  <div className='first-column-element'>{name}</div>
+  <div className='first-column-element' title={name}>{name}</div>
 );
 
 

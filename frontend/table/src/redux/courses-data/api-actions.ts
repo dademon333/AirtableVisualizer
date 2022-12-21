@@ -2,12 +2,11 @@ import { AxiosInstance } from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, State, AllData, Course } from '../../types/types';
 import { Row, EntityConnection, TypeConnections } from '../../types/types';
-import { wrapSecondColElements, wrapFirstColElement } from '../../utils/wrap';
-import { getChilds, getItems } from '../../utils/get-items';
-import { getEmptyRow } from '../../utils/get-empty-Row';
 import { APIRoute, NameSpace, EntityType } from '../../const';
 import actions from './courses-data';
 import { getAddMenu } from '../../pages/courses-table/get-add-menu';
+import { dispatchActions } from '../../utils/dispatch-actions';
+import { makeRows } from '../../utils/make-rows';
 
 export const fetchCourses = createAsyncThunk<Row[], undefined, {
   dispatch: AppDispatch,
@@ -22,23 +21,25 @@ export const fetchCourses = createAsyncThunk<Row[], undefined, {
     const typeConnections = await api.get<TypeConnections[]>(`${APIRoute.TypeConnections}${APIRoute.List}`);
     
     const connectionNumber = getState().COURSES.connectionNumber;
-    const types = typeConnections.data.filter(e => e.parent_type === EntityType.Course && e.child_column_name !== null);
+    const types = typeConnections
+      .data.filter(e => (e.parent_type === EntityType.Course || e.child_type === EntityType.Course) && e.child_column_name !== null);
     
-    dispatch(actions.changeNameColumn(types[connectionNumber].parent_column_name));
-    dispatch(actions.changeBodyColumn(types[connectionNumber].child_column_name));
-    dispatch(actions.changeAddColumn(getAddMenu(types)));
+    dispatchActions({
+      connectionNumber,
+      entityType: EntityType.Course,
+      dispatch,
+      types,
+      actions: {
+        changeNameColumn: actions.changeNameColumn,
+        changeBodyColumn: actions.changeBodyColumn,
+        changeAddColumn: actions.changeAddColumn
+      },
+      getAddMenu
+    });
 
     const connections: EntityConnection[] = data.entity_connections
       .filter((connection) => connection.type_connection_id === types[connectionNumber].id);
 
-    const rows = courses.data.map((course) => {
-      const row = getEmptyRow();
-      const childs = getChilds(connections, course.id);
-      const items = getItems([], childs, data);
-      row.name = wrapFirstColElement(course.name);
-      row.body = wrapSecondColElements(items);
-      return row;
-    });
-    return rows;
+    return makeRows({items: courses.data, connections, data, entityType: EntityType.Course, typeConnection: types[connectionNumber]});
   }
 );

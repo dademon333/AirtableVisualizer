@@ -21,7 +21,7 @@ export type Course = {
   description: string;
 };
 
-export type Entitiy = {
+export type Entity = {
   id: number;
   name: string;
   type: string;
@@ -32,7 +32,7 @@ export type Entitiy = {
 
 export type AllData = {
   courses: [];
-  entities: Entitiy[];
+  entities: Entity[];
   entity_connections: EntityConnection[];
 };
 

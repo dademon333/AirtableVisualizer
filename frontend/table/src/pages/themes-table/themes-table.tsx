@@ -15,7 +15,7 @@ import { messages } from '../../const';
 const ThemesTable = (): JSX.Element => {
   const columnWidths: Table.ColumnExtension[] = [
     { columnName: 'name', width: 230 },
-    { columnName: 'body', width: 700 },
+    { columnName: 'body', width: 900 },
     { columnName: 'add', width: 65 }
   ];
 

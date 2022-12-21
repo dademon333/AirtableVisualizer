@@ -54,7 +54,7 @@ table th, table td {
   overflow: scroll;
   scrollbar-width: none;
   transition: 0.2s;
-  width: 700px;
+  width: 900px;
 }
 
 .secondary-column-elements::-webkit-scrollbar {
@@ -74,6 +74,10 @@ table th, table td {
 
 .targetsTable .first-column-element {
   width: 500px;
+}
+
+.targetsTable .secondary-column-elements {
+  width: 700px;
 }
 
 /* ADD MENU */
