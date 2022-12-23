@@ -13,7 +13,7 @@ from users.repository import UserRepository
 
 async def test_get_user_id_soft_no_access_token():
     result = await get_user_id_soft(
-        session_id=None,
+        access_token=None,
         auth_repository=Mock(spec=AuthRepository)
     )
     assert result is None
@@ -21,21 +21,21 @@ async def test_get_user_id_soft_no_access_token():
 
 async def test_get_user_id_soft_session_expired():
     repository_mock = Mock(spec=AuthRepository)
-    repository_mock.get_user_id_by_session_id = CoroutineMock(return_value=None)
+    repository_mock.get_user_id_by_token = CoroutineMock(return_value=None)
 
     with pytest.raises(UnauthorizedError):
         await get_user_id_soft(
-            session_id="abc",
+            access_token='abc',
             auth_repository=repository_mock
         )
 
 
 async def test_get_user_id_soft_success():
     repository_mock = Mock(spec=AuthRepository)
-    repository_mock.get_user_id_by_session_id = CoroutineMock(return_value=123)
+    repository_mock.get_user_id_by_token = CoroutineMock(return_value=123)
 
     result = await get_user_id_soft(
-        session_id="abc",
+        access_token="abc",
         auth_repository=repository_mock
     )
     assert result == 123

@@ -66,5 +66,4 @@ async def test_success(
     )
 
     response = await use_case.execute(input_dto)
-    assert response.status_code == 200
-    assert 'session_id=123' in response.headers['set-cookie']
+    assert response.access_token == '123'
