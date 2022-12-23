@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import ArrowRightAltOutlinedIcon from '@mui/icons-material/ArrowRightAltOutlined';
 import SyncAltOutlinedIcon from '@mui/icons-material/SyncAltOutlined';
 import SearchIcon from '@mui/icons-material/Search';
-import { ReactComponent as ToGraphIcon } from '../../assets/icons/toGraph.svg';
+import { ReactComponent as ToGraphIcon } from '../../assets/icons/to_graph.svg';
 
 type ToolbarProps = {
   onSearchChange: React.Dispatch<React.SetStateAction<string>>;

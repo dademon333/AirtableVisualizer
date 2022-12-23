@@ -80,6 +80,90 @@ table th, table td {
   width: 700px;
 }
 
+/* LOGIN */
+
+.login {
+  position: absolute;
+  top: 15px;
+  right: 30px;
+}
+
+.account_icon {
+  position: relative;
+  left: 100%;
+  transform: translateX(-100%);
+  width: 43px;
+  height: 43px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.account_icon:hover {
+  background-color: #DBDBDB;
+}
+
+.account_icon.opened {
+  background-color: #F9F9F9;
+}
+
+.login__form {
+  display: none;
+}
+
+.login__form.opened {
+  display: block;
+  position: relative;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  background-color: #E0E0E0;
+  border-radius: 5px;
+  padding: 15px 20px;
+  margin-top: 10px;
+  z-index: 10;
+}
+
+.login__form input {
+  border: none;
+  border-bottom: 2px solid #D0D0D0;
+  background-color: #E0E0E0;
+  outline: #000;
+  margin-bottom: 10px;
+  transition: .2s;
+}
+
+.login__form input:focus {
+  border-bottom-color: #999;
+}
+
+.login__form button {
+  position: relative;
+  border: none;
+  outline: none;
+  background-color: #E0E0E0;
+  transition: .2s;
+  align-self: flex-start;
+  display: flex;
+  align-items: center;
+  padding: 3px 0;
+}
+
+.login__form button:hover::after {
+  position: absolute;
+  bottom: 0;
+  content: '';
+  width: 100%;
+  border: 1px solid #999;
+}
+
+.login__form button svg {
+  margin-right: 5px;
+}
+
 /* ADD MENU */
 
 .add {

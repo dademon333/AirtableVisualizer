@@ -44,5 +44,13 @@ export enum NameSpace {
   KNOWLEDGES = 'KNOWLEDGES',
   QUANTUMS = 'QUANTUMS',
   TARGETS = 'TARGETS',
+  AUTH = 'AUTH',
   USERS = 'USERS',
 };
+
+export enum UserStatus {
+  User = 'user',
+  Editor = 'editor',
+  Admin = 'admin',
+  Unauthorized = 'Unauthorized',
+}

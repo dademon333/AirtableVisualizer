@@ -1,5 +1,5 @@
 import { store } from '../redux/store';
-import { EntityType } from '../const';
+import { EntityType, UserStatus } from '../const';
 
 export type Row = {
   id: number;
@@ -42,6 +42,14 @@ export type TypeConnections = {
   child_type: EntityType;
   parent_column_name: string;
   child_column_name: string;
+}
+
+export type UserData = {
+  id: number;
+  name: string;
+  email: string;
+  status: UserStatus;
+  created_at: string;
 }
 
 export type State = ReturnType<typeof store.getState>;

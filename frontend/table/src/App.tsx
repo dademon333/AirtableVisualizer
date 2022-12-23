@@ -1,10 +1,12 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { CoursesTable, ThemesTable, KnowledgesTable, QuantumsTable, TargetsTable, UsersTable } from './pages';
+import { Login } from './components/login/login';
 import { AppRoute } from './const';
 
 function App() {
   return (
     <BrowserRouter>
+      <Login />
       <div className="App">
         <Routes>
             <Route path={AppRoute.Main} element={ <CoursesTable /> } />
