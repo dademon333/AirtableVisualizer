@@ -21,7 +21,6 @@ async def test_list_connections_success(
 async def test_get_connection_info_success(
         test_client: AsyncClient,
         entity_connection_in_db: EntityConnection,
-        admin_status_request: None,
 ):
     result = await test_client.get(
         f'/api/type_connections/{entity_connection_in_db.id}'
