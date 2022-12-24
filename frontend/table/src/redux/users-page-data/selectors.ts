@@ -1,8 +1,8 @@
 import { State } from '../../types/types';
 import { Column } from '@devexpress/dx-react-grid';
-import { Row } from '../../types/types';
+import { UsersRow } from '../../types/types';
 
-export const getRows = (state: State): Row[] => state.USERS.rows;
+export const getRows = (state: State): UsersRow[] => state.USERS.rows;
 
 export const getColumns = (state: State): Column[] => state.USERS.columns;
 

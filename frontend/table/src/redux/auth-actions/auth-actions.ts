@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosInstance } from "axios";
-import { State, AppDispatch, UserData, AuthData, Response, MeData } from "../../types/types";
+import { State, AppDispatch, UserData, AuthData, Response } from "../../types/types";
 import { APIRoute, NameSpace } from "../../const";
 
 export const loginAction = createAsyncThunk<UserData, AuthData, {
@@ -29,7 +29,7 @@ export const logoutAction = createAsyncThunk<Response, undefined, {
   }
 );
 
-export const getMeAction = createAsyncThunk<MeData, undefined, {
+export const getMeAction = createAsyncThunk<UserData, undefined, {
   dispatch: AppDispatch,
   state: State,
   extra: AxiosInstance
@@ -37,7 +37,7 @@ export const getMeAction = createAsyncThunk<MeData, undefined, {
 >(
   `${NameSpace.AUTH}/getMe`,
   async (_arg, {dispatch, extra: api}) => {
-    const {data} = await api.get<MeData>(`${APIRoute.Users}${APIRoute.Me}`);
+    const {data} = await api.get<UserData>(`${APIRoute.Users}${APIRoute.Me}`);
     return data;
   }
 );

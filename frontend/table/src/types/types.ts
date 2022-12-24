@@ -8,6 +8,14 @@ export type Row = {
   add?: JSX.Element;
 };
 
+export type UsersRow = {
+  id: number;
+  name: string;
+  email: string;
+  status: UserStatus;
+  created: string;
+};
+
 export type EntityConnection = {
   child_id: number;
   id: number;
@@ -48,15 +56,11 @@ export type UserData = {
   access_token: string;
   token_type: string;
   detail: string;
-}
-
-export type MeData = {
   id: number,
   name: string,
   email: string,
   status: UserStatus,
   created_at: string;
-  detail: string;
 }
 
 export type AuthData = {

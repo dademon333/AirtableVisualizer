@@ -1,9 +1,10 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice } from '@reduxjs/toolkit';
 import { Column } from '@devexpress/dx-react-grid';
-import { Row } from "../../types/types";
+import { UsersRow } from "../../types/types";
+import { getUsersListAction } from './api-actions';
 
 const initialState: {
-  rows: Row[];
+  rows: UsersRow[];
   columns: Column[];
   isLoading: boolean;
 } = {
@@ -22,4 +23,14 @@ export const usersData = createSlice({
   name: 'USERS',
   initialState,
   reducers: {},
+  extraReducers(builder) {
+    builder
+      .addCase(getUsersListAction.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(getUsersListAction.fulfilled, (state, action) => {
+        state.rows = action.payload;
+        state.isLoading = false;
+      })
+  }
 });

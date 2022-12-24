@@ -29,6 +29,7 @@ export const Login = (): JSX.Element => {
     } else {
       dispatch(logoutAction());
     }
+    setIsOpen(false);
   }
 
   const LoginForm = () => (

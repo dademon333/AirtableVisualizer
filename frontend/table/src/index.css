@@ -263,7 +263,7 @@ table th, table td {
   border: none;
 }
 
-.nav .nav-item:last-child .nav-link {
+.nav .nav-item:nth-child(6) .nav-link {
   position: absolute;
   display: flex;
   right: 30px;
@@ -272,7 +272,7 @@ table th, table td {
   color: #000;
 }
 
-.nav .nav-item:last-child .nav-link svg {
+.nav .nav-item:nth-child(6) .nav-link svg {
   margin-right: 5px;
 }
 
