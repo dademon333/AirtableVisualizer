@@ -1,8 +1,6 @@
-from fastapi.responses import JSONResponse
+from typing import NoReturn
 
 from auth.repository import AuthRepository
-from common.cookie import ProjectCookies
-from common.responses import OkResponse
 
 
 class LogoutUseCase:
@@ -12,8 +10,5 @@ class LogoutUseCase:
     ):
         self.auth_repository = auth_repository
 
-    async def execute(self, session_id: str) -> JSONResponse:
-        response = JSONResponse(OkResponse().dict())
-        response.delete_cookie(key=ProjectCookies.SESSION_ID.value)  # noqa
-        await self.auth_repository.delete_session(session_id)
-        return response
+    async def execute(self, access_token: str) -> NoReturn:
+        await self.auth_repository.delete_session(access_token)

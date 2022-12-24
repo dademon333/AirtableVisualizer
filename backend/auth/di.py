@@ -1,6 +1,6 @@
 from typing import NoReturn
 
-from fastapi import Depends, Cookie
+from fastapi import Depends
 from fastapi.security import OAuth2PasswordBearer
 from redis.asyncio.client import Redis
 
@@ -36,17 +36,17 @@ def get_logout_use_case(
 
 
 async def get_user_id_soft(
-        session_id: str | None = Cookie(default=None, include_in_schema=False),
+        access_token: str | None = Depends(oauth2_scheme),
         auth_repository: AuthRepository = Depends(get_auth_repository),
 ) -> int | None:
     """Returns user id by 'Authorization' header.
 
     If access_token passed, but invalid, raises 401 UNAUTHORIZED.
     """
-    if session_id is None:
+    if access_token is None:
         return None
 
-    user_id = await auth_repository.get_user_id_by_session_id(session_id)
+    user_id = await auth_repository.get_user_id_by_token(access_token)
     if not user_id:
         raise UnauthorizedError()
     return user_id

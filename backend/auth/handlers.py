@@ -1,19 +1,19 @@
-from fastapi import APIRouter, Depends, Cookie
+from fastapi import APIRouter, Depends
 
-from auth.di import get_login_use_case, check_auth, get_logout_use_case
-from auth.dto import LoginInputDTO
+from auth.di import get_login_use_case, check_auth, get_logout_use_case, \
+    oauth2_scheme
+from auth.dto import LoginInputDTO, LoginOutputDTO
 from auth.exceptions import LoginErrorResponse, UnauthorizedResponse
 from auth.use_cases.login import LoginUseCase
 from auth.use_cases.logout import LogoutUseCase
 from common.responses import OkResponse
-from users.dto import UserOutputDTO
 
 auth_router = APIRouter()
 
 
 @auth_router.post(
     '/login',
-    response_model=UserOutputDTO,
+    response_model=LoginOutputDTO,
     responses={403: {'model': LoginErrorResponse}}
 )
 async def login(
@@ -22,8 +22,7 @@ async def login(
 ):
     """Endpoint авторизации.
 
-    Если все окей, устанавливает cookie 'session_id' и возвращает информацию
-    о пользователе. Срок жизни сессии - 30 дней.
+    Если все окей, возвращает access token. Срок жизни сессии - 30 дней.
 
     """
     return await use_case.execute(input_dto)
@@ -36,12 +35,9 @@ async def login(
     dependencies=[Depends(check_auth)]
 )
 async def logout(
-        session_id: str = Cookie(default=None, include_in_schema=False),
+        access_token: str | None = Depends(oauth2_scheme),
         use_case: LogoutUseCase = Depends(get_logout_use_case),
 ):
-    """Сбрасывает авторизацию пользователя.
-
-    Удаляет cookie 'session_id' и информацию о сессии на сервере.
-
-    """
-    return await use_case.execute(session_id)
+    """Удаляет информацию о авторизационной сессии на сервере."""
+    await use_case.execute(access_token)
+    return OkResponse()
