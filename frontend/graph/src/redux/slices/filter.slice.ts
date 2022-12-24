@@ -5,7 +5,7 @@ import SetType from '../../enums/set-type.enum';
 export interface IFilterState {
   components: {
     /** Тип сущности */
-    type?: EntityType,
+    types: Array<EntityType>,
 
     /** id сущностей */
     entities: Array<string>,
@@ -26,7 +26,7 @@ export interface IVisibleEntity {
 
 const initialState: IFilterState = {
   components: {
-    type: undefined,
+    types: [],
     entities: [],
     setType: SetType.Union,
     visibleEntities: []
@@ -37,8 +37,8 @@ export const filterSlice = createSlice({
   name: 'filter',
   initialState,
   reducers: {
-    setComponentType: (state, action: PayloadAction<EntityType>) => {
-      state.components.type = action.payload;
+    setComponentType: (state, action: PayloadAction<EntityType[]>) => {
+        state.components.types = action.payload;
     },
     addComponentEntity: (state, action: PayloadAction<string>) => {
         state.components.entities = [...state.components.entities, action.payload];

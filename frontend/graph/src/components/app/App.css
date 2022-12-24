@@ -1,8 +1,12 @@
-.links line {
-  
-  stroke-opacity: 0.6;
+
+
+.container {
+  background-color: #EBEBEB;
+  display: flex;
+  flex-direction: row;
 }
 
-.node text {
-  font-family: 'Montserrat';
+.column {
+  display: flex;
+  flex-direction: column;
 }

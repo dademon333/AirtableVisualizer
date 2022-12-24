@@ -1,0 +1,6 @@
+.network-graph {
+    border: 2px solid red;
+    /* min-height: 900px; */
+    /* width: 100%; */
+    display: inline-block;
+}

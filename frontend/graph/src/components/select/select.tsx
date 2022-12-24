@@ -4,7 +4,7 @@ import { ReactComponent as Minus } from '../../assets/minus.svg';
 import { useEffect, useState } from 'react';
 
 export default function Select<T>(props: { model: SelectModel<T> }) {
-    //const [model] = useState(props.model);
+    const [model] = useState(props.model);
     const [value, setValue] = useState('0');
     const onSelectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         props.model.setSelectedItemById(e.target.value);

@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import GraphModel from '../../models/graph/graph.model';
 import { setConnectionsAndEntities } from '../../redux/slices/entity-connection.slice';
 import { getEntitiesAndConnectionsAsync } from '../../services/entities-connections.service';
+import NetworkGraph from '../NetworkGraph/NetworkGraph';
 
 export default function Graph(): JSX.Element {
 
@@ -22,7 +23,7 @@ export default function Graph(): JSX.Element {
     const width = window.innerWidth - 1;
     const height = window.innerHeight - 4;
 
-    return <svg height={height} width={width}></svg>;
+    return <div></div>;
 }
 
 export {};

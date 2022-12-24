@@ -14,12 +14,13 @@ export default function Components() {
 
     const [componentTypeModel] = useState(new SelectModel<EntityType>(items));
     const [setTypeModel] = useState(new SelectModel<SetType>(setTypeItems, {}, setTypeItems[0]));
-    const [controls, setControls] = useState<Array<SelectModel<string>>>([]);
+    const [controls, setControls] = useState<Array<SelectModel<EntityType>>>([new SelectModel<EntityType>(items)]);
 
-    const onComponentTypeChange = (item: ISelect<EntityType>) => {
-        dispatch(setComponentType(item.value!));
-        dispatch(setComponentEntities([]));
-        setControls([]);
+    const onComponentTypeChange = () => {
+        const newValues = controls.filter(el => el.SelectedItem !== null)
+        .map(el => el.SelectedItem?.value!);
+        dispatch(setComponentType(newValues))
+        // dispatch(setComponentEntities([]));
     };
 
     const onSetTypeChange = (item: ISelect<SetType>) => {
@@ -34,8 +35,9 @@ export default function Components() {
     const dispatch = useDispatch();
 
     const updateEntitiesToShow = () => {
-        const newValues = controls.filter(el => el.SelectedItem !== null).map(el => el.SelectedItem?.id!);
-        dispatch(setComponentEntities(newValues));
+        const newValues = controls.filter(el => el.SelectedItem !== null)
+        .map(el => el.SelectedItem?.value!);
+        dispatch(setComponentType(newValues))
     };
     
     useEffect(() => {
@@ -45,25 +47,25 @@ export default function Components() {
 
     const onPlusClick = () => {
         const entities = entitiesToSelectItems(componentTypeModel.SelectedItem?.value);
-        const newModel = new SelectModel<string>(entities, { isDeletable: true });
+        const newModel = new SelectModel<EntityType>(items, { isDeletable: true });
         setControls([...controls, newModel]);
     };
 
     return (
     <div className="components">
-        <h2 className='components-title'>КОМПОНЕНТЫ</h2>
-        <Select model={componentTypeModel}/>
-        {componentTypeModel.SelectedItem && <Plus className='plus' onClick={() => onPlusClick()}/>}
+        {/* <Select model={componentTypeModel}/> */}
+        
         {controls.map(model => {
             model.OnDelete.subscribe(() => setControls(controls.filter(el => el.id !== model.id)));
-            model.OnItemChange.subscribe(() => updateEntitiesToShow());
+            model.OnItemChange.subscribe(() => onComponentTypeChange());
             return  <Select key={model.id} model={model}/>;
         })}
-        {controls.length > 1 && <Select model={setTypeModel}/>}
+        <Plus className='plus' onClick={() => onPlusClick()}/>
+        {/* {controls.length > 1 && <Select model={setTypeModel}/>} */}
     </div>)
 }
 
-const items: ISelect<EntityType>[] = [
+const items = [
     {id: '1', name: 'Курс', value: EntityType.Course },
     {id: '2', name: 'Тема', value: EntityType.Theme },
     {id: '3', name: 'Знание', value: EntityType.Knowledge },
@@ -78,7 +80,7 @@ const items: ISelect<EntityType>[] = [
     {id: '12', name: 'Компетенция СУОС', value: EntityType.SuosCompetence },
 ];
 
-const setTypeItems: ISelect<SetType>[] = [
+const setTypeItems = [
     {id: '1', name: 'Объединение', value: SetType.Union },
     {id: '2', name: 'Пересечение', value: SetType.Intersection },
 ];
