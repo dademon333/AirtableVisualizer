@@ -1,20 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { AxiosInstance } from "axios";
-import { State, AppDispatch, UserData } from "../../types/types";
+import { State, AppDispatch, UserData, AuthData, Response, MeData } from "../../types/types";
 import { APIRoute, NameSpace } from "../../const";
-
-type AuthData = {
-  email: string;
-  password: string;
-}
-
-type Detail = {
-  detail: string;
-}
-
-type Response = {
-  response: string;
-}
 
 export const loginAction = createAsyncThunk<UserData, AuthData, {
   dispatch: AppDispatch,
@@ -24,12 +11,12 @@ export const loginAction = createAsyncThunk<UserData, AuthData, {
 >(
   `${NameSpace.AUTH}/login`,
   async ({email, password}, {dispatch, extra: api}) => {
-    const {data} = await api.post<UserData>(`${APIRoute.Auth}/login`, {email, password});
+    const {data} = await api.post<UserData>(`${APIRoute.Auth}${APIRoute.Login}`, {email, password});
     return data;
   }
 );
 
-export const logoutAction = createAsyncThunk<void, undefined, {
+export const logoutAction = createAsyncThunk<Response, undefined, {
   dispatch: AppDispatch,
   state: State,
   extra: AxiosInstance
@@ -37,7 +24,20 @@ export const logoutAction = createAsyncThunk<void, undefined, {
 >(
   `${NameSpace.AUTH}/logout`,
   async (_arg, {dispatch, extra: api}) => {
-    const {data} = await api.delete<Response | Detail>(`${APIRoute.Auth}/logout`);
-    console.log(data);
+    const {data} = await api.delete<Response>(`${APIRoute.Auth}${APIRoute.Logout}`);
+    return data;
+  }
+);
+
+export const getMeAction = createAsyncThunk<MeData, undefined, {
+  dispatch: AppDispatch,
+  state: State,
+  extra: AxiosInstance
+}
+>(
+  `${NameSpace.AUTH}/getMe`,
+  async (_arg, {dispatch, extra: api}) => {
+    const {data} = await api.get<MeData>(`${APIRoute.Users}${APIRoute.Me}`);
+    return data;
   }
 );

@@ -1,3 +1,12 @@
+import { ToastOptions } from 'react-toastify';
+
+export const toastifyOptions: ToastOptions = {
+  theme: 'colored',
+  position: 'bottom-right',
+  autoClose: 2500,
+  toastId: 1,
+};
+
 export enum AppRoute {
   Main = '/table',
   Theme = '/table/theme',
@@ -19,6 +28,9 @@ export enum APIRoute {
   List = '/list',
   All = '/all',
   Search = '/search',
+  Login = '/login',
+  Logout = '/logout',
+  Me = '/me',
 };
 
 export enum EntityType {
@@ -52,5 +64,6 @@ export enum UserStatus {
   User = 'user',
   Editor = 'editor',
   Admin = 'admin',
+  Authorized = 'Authorized',
   Unauthorized = 'Unauthorized',
 }

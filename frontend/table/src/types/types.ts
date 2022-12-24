@@ -45,11 +45,28 @@ export type TypeConnections = {
 }
 
 export type UserData = {
-  id: number;
-  name: string;
-  email: string;
-  status: UserStatus;
+  access_token: string;
+  token_type: string;
+  detail: string;
+}
+
+export type MeData = {
+  id: number,
+  name: string,
+  email: string,
+  status: UserStatus,
   created_at: string;
+  detail: string;
+}
+
+export type AuthData = {
+  email: string;
+  password: string;
+}
+
+export type Response = {
+  response: string;
+  detail: string;
 }
 
 export type State = ReturnType<typeof store.getState>;

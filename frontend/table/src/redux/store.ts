@@ -1,6 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit';
-import axios, { AxiosInstance }from 'axios';
+import axios, { AxiosInstance, AxiosError, AxiosRequestConfig } from 'axios';
+import { toast } from 'react-toastify';
+import { toastifyOptions, UserStatus } from '../const';
 import { rootReducer } from './root-reducer';
+import { getUser } from '../services/user';
 
 const BASE_URL = 'http://corevision.ru/api';
 const REQUEST_TIMEOUT = 10000;
@@ -11,7 +14,31 @@ const createAPI = (): AxiosInstance => {
     timeout: REQUEST_TIMEOUT,
     withCredentials: true
   });
+
+  api.interceptors.request.use((config: AxiosRequestConfig) => {
+    const user = getUser();
+
+    config.headers = config.headers ?? {};
+    if (user) {
+      config.headers['Authorization'] = `Bearer ${user.access_token}`;
+    }
+
+    return config;
+  });
   
+  api.interceptors.response.use(
+    (response) => response,
+    (error: AxiosError<{ detail: string }>) => {
+      if (error.response) {
+        if (error.response.data.detail !== UserStatus.Unauthorized) {
+          toast.error(error.response.data.detail, toastifyOptions);
+        }
+      }
+
+      throw error;
+    }
+  );
+
   return api;
 }
 
