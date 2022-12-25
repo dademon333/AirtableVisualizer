@@ -2,8 +2,7 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import ORJSONResponse
 
 from auth.di import UserStatusChecker
-from auth.exceptions import UnauthorizedResponse, EditorStatusRequiredResponse, \
-    AdminStatusRequiredResponse
+from auth.exceptions import UnauthorizedResponse, AdminStatusRequiredResponse
 from common.responses import OkResponse
 from entity_type_connections.di import get_list_type_connections_use_case, \
     get_create_type_connection_use_case, get_type_connection_use_case, \
