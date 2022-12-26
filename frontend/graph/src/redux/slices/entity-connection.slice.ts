@@ -3,8 +3,13 @@ import IEntitiesAndConnectionsResponse, { IConnection, IEntity } from '../../int
 
 const initialState : IEntitiesAndConnectionsResponse = {
     connections: [],
-    entities: {}
+    entities: {},
+    visibleEntities: {}
 };
+export interface IVisibleEntity {
+  nodes: object[],
+  links: object[]
+}
 
 export const entityConnectionSlice = createSlice({
   name: 'course',
@@ -19,10 +24,14 @@ export const entityConnectionSlice = createSlice({
     },
     setEntities: (state, action: PayloadAction<{ [id: string]: IEntity }>) => {
         state.entities = action.payload;
-    }
+    },
+    setVisibleEntites: (state, action: PayloadAction<IVisibleEntity[]>) => {
+      state.visibleEntities = action.payload;
+   },
+    
   },
 });
 
-export const { setConnectionsAndEntities, setConnections, setEntities } = entityConnectionSlice.actions;
+export const { setConnectionsAndEntities, setConnections, setEntities, setVisibleEntites } = entityConnectionSlice.actions;
 
 export default entityConnectionSlice.reducer;

@@ -4,6 +4,7 @@ import EntityType from "../../enums/entity-type.enum";
 export interface IEntitiesAndConnectionsResponse {
     connections: IConnection[],
     entities: { [id: string]: IEntity }
+    visibleEntities: {}
 }
 
 export interface IConnection {
