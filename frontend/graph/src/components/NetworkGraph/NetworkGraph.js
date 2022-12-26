@@ -15,18 +15,18 @@ const NetworkGraph = ({data}) => {
   const selectFilters = useSelector(state => state.filters)
   
   const formatData = (rawData) => {
-    return{
-    nodes: Object.keys(rawData.entities)
-    .filter(key => selectFilters.components.types.length ? selectFilters.components.types.includes(rawData.entities[key].type) : key)
-    .map(key => ({id: key, name: rawData.entities[key].name, type: rawData.entities[key].type})),
+   return {
+    nodes: rawData.entities
+    .filter(entity => selectFilters.components.types.length ? selectFilters.components.types.includes(entity.type) : entity)
+    .map(entity => ({id: entity.id, name: entity.name, type: entity.type})),
     links: rawData.connections
-    .map(connection => connection.entities_connections)
-    .flat(1)
-    .filter(link => selectFilters.components.types.length ? selectFilters.components.types.includes(rawData.entities[link.parent_id].type) && selectFilters.components.types.includes(rawData.entities[link.child_id].type) : link)
-    .map(link => ({source: String(link.parent_id), target: String(link.child_id)}))
-  }}
+    .filter(link => selectFilters.components.types.length ? selectFilters.components.types.includes(rawData.entities.find(entity => entity.id == link.parent_id).type) && selectFilters.components.types.includes(rawData.entities.find(entity => entity.id == link.child_id).type) : link)
+    .map(link => ({source: link.parent_id, target: link.child_id}))
+  }
+}
   useEffect(() => {
     setGraphData(formatData(data))
+    console.log(graphData)
   },[selectFilters])
 
   const lightData = {
@@ -49,31 +49,30 @@ const NetworkGraph = ({data}) => {
   }, []);
 
 const myConfig = {
+  automaticRearrangeAfterDropNode: true,
   directed: true,
-  collapsible: true,
-  nodeHighlightBehavior: false,
-  // staticGraphWithDragAndDrop: true,
+  nodeHighlightBehavior: true,
   width: windowDimensions.width - 415,
   height: windowDimensions.height - 30,
   d3: {
-    alphaTarget: 0.05,
-    gravity: -250,
-    linkLength: 120,
-    linkStrength: 2,
-    disableLinkForce: false
+    alphaTarget: 0.6,
+    gravity: -300,
+    linkLength: 50,
+    linkStrength: 20,
   },
   node: {
     fontWeight: 300,
-    fontSize: 15,
+    fontSize: 8,
     labelPosition: "bottom",
     labelProperty: 'name',
     color: "lightgreen",
     size: 468,
     highlightStrokeColor: "blue",
+    highlightFontSize: 15
     
   },
   link: {
-    type: "CURVE_SMOOTH",
+    type: "STRAIGHT",
     highlightColor: "lightblue",
     labelProperty: "label",
     renderLabel: true,

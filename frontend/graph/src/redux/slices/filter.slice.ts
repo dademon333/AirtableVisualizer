@@ -19,9 +19,8 @@ export interface IFilterState {
 }
 
 export interface IVisibleEntity {
-  name: string,
-  id: string,
-  connectedEntities?: IVisibleEntity[];
+  nodes: object[],
+  links: object[]
 }
 
 const initialState: IFilterState = {

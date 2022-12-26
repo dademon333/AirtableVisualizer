@@ -1,16 +1,18 @@
 enum EntityType {
-    Course = 'course',
-    Theme = 'theme',
-    Knowledge = 'knowledge',
-    Quantum = 'quantum',
-    Target = 'target',
-    Metric = 'metric',
-    Task = 'task',
-    Activity = 'activity',
-    Skill = 'skill',
-    Competence = 'competence',
+    EducationalProgram = 'educational program', 
+    Course = 'course', 
+    Theme = 'theme', 
+    Knowledge = 'knowledge', 
+    Quantum = 'quantum', 
+    Target = 'target', 
+    Metric = 'metric', 
+    Task = 'task', 
+    Activity = 'activity', 
+    Skill = 'skill', 
+    Competence = 'competence', 
     Profession = 'profession',
-    SuosCompetence = 'Suos_competence'
+    SuosCompetence = 'suos_competence', 
+    CompetenceModel = 'competence_model'
 };
 
 export default EntityType;

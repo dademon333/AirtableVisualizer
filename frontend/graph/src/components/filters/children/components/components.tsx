@@ -66,18 +66,20 @@ export default function Components() {
 }
 
 const items = [
-    {id: '1', name: 'Курс', value: EntityType.Course },
-    {id: '2', name: 'Тема', value: EntityType.Theme },
-    {id: '3', name: 'Знание', value: EntityType.Knowledge },
-    {id: '4', name: 'Квантум', value: EntityType.Quantum },
-    {id: '5', name: 'Цель', value: EntityType.Target },
-    {id: '6', name: 'Метрика', value: EntityType.Metric },
-    {id: '7', name: 'Задание', value: EntityType.Task },
-    {id: '8', name: 'Деятельность', value: EntityType.Activity },
-    {id: '9', name: 'Навык', value: EntityType.Skill },
-    {id: '10', name: 'Компетенция', value: EntityType.Competence },
-    {id: '11', name: 'Профессия', value: EntityType.Profession },
-    {id: '12', name: 'Компетенция СУОС', value: EntityType.SuosCompetence },
+    {id: '1', name: 'Образовательная программа', value: EntityType.EducationalProgram },
+    {id: '2', name: 'Курс', value: EntityType.Course },
+    {id: '3', name: 'Тема', value: EntityType.Theme },
+    {id: '4', name: 'Знание', value: EntityType.Knowledge },
+    {id: '5', name: 'Квантум', value: EntityType.Quantum },
+    {id: '6', name: 'Цель', value: EntityType.Target },
+    {id: '7', name: 'Метрика', value: EntityType.Metric },
+    {id: '8', name: 'Задание', value: EntityType.Task },
+    {id: '9', name: 'Деятельность', value: EntityType.Activity },
+    {id: '10', name: 'Навык', value: EntityType.Skill },
+    {id: '11', name: 'Компетенция', value: EntityType.Competence },
+    {id: '12', name: 'Профессия', value: EntityType.Profession },
+    {id: '13', name: 'Компетенция СУОС', value: EntityType.SuosCompetence },
+    {id: '14', name: 'Модель компетенций', value: EntityType.CompetenceModel }
 ];
 
 const setTypeItems = [

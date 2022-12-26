@@ -10,7 +10,7 @@ export function getVisibleNodes(): IVisibleEntity[] {
         if (opacity === '1') {
             const name = el.getAttribute('name')!;
             const id = el.getAttribute('id')!;
-            visibleEntities.push({name, id})
+            visibleEntities.push({nodes: [{}], links: [{}]})
         }
     });
 

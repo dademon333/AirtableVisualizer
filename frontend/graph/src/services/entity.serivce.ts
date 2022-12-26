@@ -9,6 +9,8 @@ import store from "../redux/store";
  */
 export function getEntityColor(entityType: EntityType): string {
     switch (entityType) {
+        case EntityType.EducationalProgram:
+            return "#57A755";
         case EntityType.Activity:
             return "#57A773";
         case EntityType.Competence:
@@ -33,6 +35,8 @@ export function getEntityColor(entityType: EntityType): string {
             return "#FED766";
         case EntityType.Theme:
             return "#700353";
+        case EntityType.CompetenceModel:
+            return "#FF33BB";
     }
 }
 
