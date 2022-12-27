@@ -10,7 +10,7 @@ import Navigation from '../../components/navigation/navigation';
 import Toolbar from '../../components/tool-bar/tool-bar';
 import { getRows, getColumns, getIsLoading } from '../../redux/themes-data/selectors';
 import { setRows } from '../../utils/set-rows';
-import { messages } from '../../const';
+import { messages, SortingOptions } from '../../const';
 
 const ThemesTable = (): JSX.Element => {
   const columnWidths: Table.ColumnExtension[] = [
@@ -26,6 +26,7 @@ const ThemesTable = (): JSX.Element => {
 
   const [query, setQuery] = useState<string>('');
   const [selection, setSelection] = useState<(number | string)[]>([]);
+  const [sortingOption, setSortingOption] = useState<SortingOptions>(SortingOptions.DEFAULT);
 
   useEffect(() => {
     dispatch(fetchThemes());
@@ -34,7 +35,7 @@ const ThemesTable = (): JSX.Element => {
   return (
     <>
       <Navigation />
-      <Toolbar onSearchChange={setQuery} />
+      <Toolbar onSearchChange={setQuery} sortingOption={sortingOption} onSortingOption={setSortingOption} />
       {
         isLoading ?
           <div className='spinner'>
@@ -43,7 +44,7 @@ const ThemesTable = (): JSX.Element => {
           :
           <div className='table_container themeTable'>
             <Grid
-              rows={setRows(rows, query)}
+              rows={setRows(rows, query, sortingOption)}
               columns={columns}
             >
               <SelectionState selection={selection} onSelectionChange={setSelection} />

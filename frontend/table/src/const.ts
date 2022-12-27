@@ -67,3 +67,9 @@ export enum UserStatus {
   Authorized = 'Authorized',
   Unauthorized = 'Unauthorized',
 }
+
+export enum SortingOptions {
+  DEFAULT = 'default',
+  ASC = 'asc',
+  DESC = 'desc',
+}

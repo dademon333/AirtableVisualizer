@@ -43,7 +43,6 @@ const UsersTable = (): JSX.Element => {
   return (
     <>
       <Navigation />
-      <Toolbar onSearchChange={setQuery} />
       {
         isLoading ?
         <div className='spinner'>

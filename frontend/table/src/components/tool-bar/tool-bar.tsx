@@ -4,13 +4,17 @@ import ArrowRightAltOutlinedIcon from '@mui/icons-material/ArrowRightAltOutlined
 import SyncAltOutlinedIcon from '@mui/icons-material/SyncAltOutlined';
 import SearchIcon from '@mui/icons-material/Search';
 import { ReactComponent as ToGraphIcon } from '../../assets/icons/to_graph.svg';
+import { SortingOptions } from '../../const';
 
 type ToolbarProps = {
   onSearchChange: React.Dispatch<React.SetStateAction<string>>;
+  sortingOption: SortingOptions;
+  onSortingOption: React.Dispatch<React.SetStateAction<SortingOptions>>;
 } 
 
-const Toolbar = ({onSearchChange}: ToolbarProps) => {
+const Toolbar = ({onSearchChange, sortingOption, onSortingOption}: ToolbarProps) => {
   const [isSortingOptionsOpen, setIsSortingOptionsOpen] = useState<boolean>(false);
+
   return (
     <div className="toolbar">
       <div className="left">
@@ -26,11 +30,11 @@ const Toolbar = ({onSearchChange}: ToolbarProps) => {
         >
           <div className="sorting_text"><SyncAltOutlinedIcon /> Сортировка</div>
           <div className={isSortingOptionsOpen ? "options" : "options closed"}>
-              <div className={/* sortingOption === 'default' ? "option clicked":  */"default"} /* onClick={() => onSortingOptionClick('default')} */>По дате</div>
-              <div className={/* sortingOption === 'asc' ? "option clicked":  */"asc"} /* onClick={() => onSortingOptionClick('asc')} */>
+              <div className={`${sortingOption === SortingOptions.DEFAULT && 'option clicked'}`} onClick={() => onSortingOption(SortingOptions.DEFAULT)}>По дате</div>
+              <div className={`${sortingOption === SortingOptions.ASC && 'option clicked'}`} onClick={() => onSortingOption(SortingOptions.ASC)}>
                   А<ArrowRightAltOutlinedIcon fontSize='small' />Я
               </div>
-              <div className={/* sortingOption === 'desc' ? "option clicked":  */"desc"} /* onClick={() => onSortingOptionClick('desc')} */>
+              <div className={`${sortingOption === SortingOptions.DESC && 'option clicked'}`} onClick={() => onSortingOption(SortingOptions.DESC)}>
                   Я<ArrowRightAltOutlinedIcon fontSize='small' />А
               </div>
           </div>
