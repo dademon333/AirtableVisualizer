@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import ArrowRightAltOutlinedIcon from '@mui/icons-material/ArrowRightAltOutlined';
 import SyncAltOutlinedIcon from '@mui/icons-material/SyncAltOutlined';
+import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone';
 import SearchIcon from '@mui/icons-material/Search';
 import { ReactComponent as ToGraphIcon } from '../../assets/icons/to_graph.svg';
 import { SortingOptions } from '../../const';
+import { AddDataWindow } from '../add-data-window/add-data-window';
 
 type ToolbarProps = {
   onSearchChange: React.Dispatch<React.SetStateAction<string>>;
@@ -12,20 +14,21 @@ type ToolbarProps = {
   onSortingOption: React.Dispatch<React.SetStateAction<SortingOptions>>;
 } 
 
-const Toolbar = ({onSearchChange, sortingOption, onSortingOption}: ToolbarProps) => {
+const Toolbar = ({onSearchChange, sortingOption, onSortingOption}: ToolbarProps): JSX.Element => {
   const [isSortingOptionsOpen, setIsSortingOptionsOpen] = useState<boolean>(false);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   return (
     <div className="toolbar">
       <div className="left">
-        <div className="search">
+        <div className="search button">
           <SearchIcon />
           <input 
               placeholder="Поиск" 
               onChange={event => onSearchChange(event.target.value)}
           />
         </div>
-        <div className={`sorting ${isSortingOptionsOpen && 'opened'}`} 
+        <div className={`sorting ${isSortingOptionsOpen && 'opened'} button`} 
           onClick={() => setIsSortingOptionsOpen(!isSortingOptionsOpen)}
         >
           <div className="sorting_text"><SyncAltOutlinedIcon /> Сортировка</div>
@@ -39,14 +42,18 @@ const Toolbar = ({onSearchChange, sortingOption, onSortingOption}: ToolbarProps)
               </div>
           </div>
         </div>
+        <div className="add-element button" onClick={() => setShowModal(true)}>
+          <AddCircleTwoToneIcon /> Добавить данные
+        </div>
       </div>
       <div className="right">
-        <div className="toGraph">
+        <div className="toGraph button">
           <Link to='#'>
             <ToGraphIcon />Перейти к графу
           </Link>
         </div>
       </div>
+      <AddDataWindow showModal={showModal} onHide={setShowModal} />
     </div> 
   );
 }

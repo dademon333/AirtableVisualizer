@@ -399,20 +399,18 @@ table th, table td {
 
 .toolbar .left {
   display: flex;
+  font-size: 13px;
 }
 
 /* SEARCH */
 
 .toolbar .search {
-  display: flex;
-  align-items: center;
-  padding: 10px 4px;
   width: 90px;
-  height: 40px;
-  font-size: 13px;
-  cursor: pointer;
-  border-radius: 5px;
   transition: 0.2s;
+}
+
+.toolbar .search svg {
+  opacity: .7;
 }
 
 .toolbar .search:hover, .toolbar .search:hover input {
@@ -440,21 +438,15 @@ table th, table td {
 
 .toolbar .sorting {
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 13px;
-  height: 40px;
-  padding: 10px 4px;
   margin-left: 15px;
-  cursor: pointer;
-  border-radius: 5px;
-  transition: 0.2s;
 }
 
-.toolbar .sorting:hover, .toolbar .sorting.opened,
-.toolbar .sorting .options div:hover, .toolbar .sorting .options .option.clicked,
-.toGraph a:hover {
+.toolbar .sorting svg {
+  opacity: .7;
+}
+
+.toolbar .sorting.opened,
+.toolbar .sorting .options div:hover, .toolbar .sorting .options .option.clicked {
   background: #EBEBEB;
 }
 
@@ -471,7 +463,6 @@ table th, table td {
   border-radius: 5px;
   z-index: 10;
   visibility: visible;
-  transition: 0.2s;
 }
 
 .toolbar .sorting .options.closed {
@@ -485,6 +476,20 @@ table th, table td {
   transition: 0.2s;
   font-weight: 600;
   font-size: 12px;
+}
+
+/* ADD_ELEMENT */
+
+.toolbar .add-element {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 15px;
+}
+
+.toolbar .add-element svg {
+  opacity: .7;
+  margin-right: 2px;
 }
 
 /* TO_GRAPH */
@@ -503,6 +508,23 @@ table th, table td {
 
 .toGraph a svg {
   margin-right: 5px;
+}
+
+/* BUTTON */
+
+.button {
+  transition: .2s;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 10px 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+}
+
+.button:hover {
+  background: #EBEBEB;
 }
 
 /* SPINNER */

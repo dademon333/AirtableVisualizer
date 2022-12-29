@@ -3,8 +3,7 @@ import { PagingState, IntegratedPaging, SelectionState, IntegratedSelection } fr
 import { Grid, Table, TableHeaderRow, TableSelection } from '@devexpress/dx-react-grid-bootstrap4';
 import { PagingPanel } from '@devexpress/dx-react-grid-material-ui';
 import Spinner from 'react-bootstrap/Spinner';
-import { useAppDispatch } from '../../hooks';
-import { useAppSelector } from '../../hooks';
+import { useAppSelector, useAppDispatch } from '../../hooks';
 import { fetchQuauntums } from '../../redux/quntums-data/api-actions';
 import Navigation from '../../components/navigation/navigation';
 import Toolbar from '../../components/tool-bar/tool-bar';
@@ -35,7 +34,11 @@ const QuantumsTable = (): JSX.Element => {
   return (
     <>
       <Navigation />
-      <Toolbar onSearchChange={setQuery} sortingOption={sortingOption} onSortingOption={setSortingOption} />
+      <Toolbar
+        onSearchChange={setQuery}
+        sortingOption={sortingOption}
+        onSortingOption={setSortingOption}
+      />
       {
         isLoading ?
           <div className='spinner'>

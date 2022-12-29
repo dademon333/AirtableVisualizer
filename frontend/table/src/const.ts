@@ -58,6 +58,7 @@ export enum NameSpace {
   TARGETS = 'TARGETS',
   AUTH = 'AUTH',
   USERS = 'USERS',
+  DATA = 'DATA',
 };
 
 export enum UserStatus {
