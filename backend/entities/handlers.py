@@ -26,7 +26,6 @@ entities_router = APIRouter()
     '/list/{entity_type}',
     response_model=list[EntityOutputDTO],
     response_class=ORJSONResponse,
-    responses={401: {'model': UnauthorizedResponse}},
 )
 async def list_entities(
         entity_type: EntityType,
@@ -43,7 +42,6 @@ async def list_entities(
     '/search',
     response_model=list[EntityOutputDTO],
     response_class=ORJSONResponse,
-    responses={401: {'model': UnauthorizedResponse}},
 )
 async def search_entities(
         entity_type: EntityType | None = Query(None),

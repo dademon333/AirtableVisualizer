@@ -2,8 +2,7 @@ from fastapi import APIRouter, Depends
 from fastapi.responses import ORJSONResponse
 
 from auth.di import UserStatusChecker
-from auth.exceptions import UnauthorizedResponse, EditorStatusRequiredResponse, \
-    AdminStatusRequiredResponse
+from auth.exceptions import UnauthorizedResponse, AdminStatusRequiredResponse
 from common.responses import OkResponse
 from entity_type_connections.di import get_list_type_connections_use_case, \
     get_create_type_connection_use_case, get_type_connection_use_case, \
@@ -51,12 +50,7 @@ async def list_connections(
     '/{connection_id}',
     response_model=TypeConnectionExtendedOutputDTO,
     response_class=ORJSONResponse,
-    responses={
-        401: {'model': UnauthorizedResponse},
-        403: {'model': EditorStatusRequiredResponse},
-        404: {'model': TypeConnectionNotFoundResponse}
-    },
-    dependencies=[Depends(UserStatusChecker(min_status=UserStatus.EDITOR))]
+    responses={404: {'model': TypeConnectionNotFoundResponse}},
 )
 async def get_connection_info(
         connection_id: int,
@@ -65,7 +59,7 @@ async def get_connection_info(
         ),
 ):
     """Возвращает информацию о связи между типами сущностей
-    вместе со списком связей самих сущностей. Требует статус editor.
+    вместе со списком связей самих сущностей.
     """
     result = await use_case.execute(connection_id)
     return ORJSONResponse(result.dict())

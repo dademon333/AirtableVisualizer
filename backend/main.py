@@ -1,3 +1,5 @@
+import tracemalloc
+
 import fastapi
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,6 +15,7 @@ from middlewares.server_timing import ServerTimingMiddleware
 from root_router import root_router
 from exceptions_handler import cors_handler
 
+tracemalloc.start()
 app = FastAPI(exception_handlers={500: cors_handler})
 app.include_router(root_router)
 

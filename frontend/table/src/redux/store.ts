@@ -18,8 +18,7 @@ const createAPI = (): AxiosInstance => {
   api.interceptors.request.use((config: AxiosRequestConfig) => {
     const user = getUser();
 
-    config.headers = config.headers ?? {};
-    if (user) {
+    if (user && config.headers) {
       config.headers['Authorization'] = `Bearer ${user.access_token}`;
     }
 
