@@ -14,7 +14,7 @@ stuff_router = APIRouter()
 
 
 @stuff_router.get(
-    '/hostname',
+    '/api/hostname',
     response_model=HostnameOutputDTO,
     responses={
         401: {'model': UnauthorizedResponse},
@@ -32,7 +32,7 @@ async def get_hostname():
 
 
 @stuff_router.get(
-    '/tracemalloc',
+    '/api/tracemalloc',
     response_class=PlainTextResponse
 )
 async def get_tracemalloc():
@@ -41,7 +41,7 @@ async def get_tracemalloc():
 
 
 @stuff_router.get(
-    '/memory',
+    '/api/memory',
     response_class=PlainTextResponse
 )
 async def get_memory_usage():
