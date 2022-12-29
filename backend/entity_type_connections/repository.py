@@ -1,5 +1,4 @@
 from sqlalchemy import select
-from sqlalchemy.orm import joinedload
 
 from entity_type_connections.dto import EntityTypeConnectionDBInsertDTO, \
     EntityTypeConnectionDBUpdateDTO
@@ -22,12 +21,20 @@ class EntityTypeConnectionRepository(
     async def get_by_id_with_connections(
             self, id: int
     ) -> EntityTypeConnection | None:
-        result = await self.db.scalars(
-            select(EntityTypeConnection, EntityConnection)
+        type_connection = await self.db.scalars(
+            select(EntityTypeConnection)
             .where(EntityTypeConnection.id == id)
-            .options(joinedload(EntityTypeConnection.entity_connections))
         )
-        return result.first()
+        type_connection: EntityTypeConnection = type_connection.first()
+        if not type_connection:
+            return
+
+        entity_connections = await self.db.scalars(
+            select(EntityConnection)
+            .where(EntityConnection.type_connection_id == id)
+        )
+        type_connection.entity_connections = entity_connections.all()
+        return type_connection
 
     async def get_by_types(
             self,
