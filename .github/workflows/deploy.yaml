@@ -168,5 +168,5 @@ jobs:
             && cd .. \
             \
             && docker-compose pull \
-            && docker-compose stop && docker-compose up -d
+            && docker-compose stop && docker-compose up -d \
             && docker rmi $(docker images -f "dangling=true" -q)
