@@ -1,7 +1,7 @@
 import { AxiosInstance } from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, State, AllData, Entity } from '../../types/types';
-import { Row, EntityConnection, TypeConnections } from '../../types/types';
+import { Row, TypeConnections } from '../../types/types';
 import { APIRoute, NameSpace, EntityType } from '../../const';
 import actions from './quantums-data';
 import { getAddMenu } from '../../pages/quantums-table/get-add-menu';
@@ -37,9 +37,6 @@ export const fetchQuauntums = createAsyncThunk<Row[], undefined, {
       getAddMenu
     });
 
-    const connections: EntityConnection[] = data.entity_connections
-      .filter((connection) => connection.type_connection_id === types[connectionNumber].id);
-
-    return makeRows({items: quantums.data, connections, data, entityType: EntityType.Quantum, typeConnection: types[connectionNumber]});
+    return makeRows({items: quantums.data, connectionNumber, data, entityType: EntityType.Quantum, types});
   }
 );

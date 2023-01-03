@@ -1,7 +1,7 @@
 import { AxiosInstance } from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, State, AllData, Entity } from '../../types/types';
-import { Row, EntityConnection, TypeConnections } from '../../types/types';
+import { Row, TypeConnections } from '../../types/types';
 import { APIRoute, NameSpace, EntityType } from '../../const';
 import actions from './knowledges-data';
 import { getAddMenu } from '../../pages/knowledges-table/get-add-menu';
@@ -37,9 +37,6 @@ export const fetchKnowledges = createAsyncThunk<Row[], undefined, {
       getAddMenu
     });
 
-    const connections: EntityConnection[] = data.entity_connections
-      .filter((connection) => connection.type_connection_id === types[connectionNumber].id);
-    
-    return makeRows({items: knowledges.data, connections, data, entityType: EntityType.Knowledge, typeConnection: types[connectionNumber]});
+    return makeRows({items: knowledges.data, connectionNumber, data, entityType: EntityType.Knowledge, types});
   }
 );

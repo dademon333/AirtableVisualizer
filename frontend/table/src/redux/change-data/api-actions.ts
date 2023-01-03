@@ -32,3 +32,16 @@ export const deleteEntity = createAsyncThunk<void, number, {
     await api.delete(`${APIRoute.Entities}/${id}`);
   }
 );
+
+export const getEntity = createAsyncThunk<Entity, number, {
+  dispatch: AppDispatch,
+  state: State,
+  extra: AxiosInstance
+}
+>(
+  `${NameSpace.DATA}/getEntity`,
+  async (id, {dispatch, extra: api, getState}) => {
+    const {data} = await api.get(`${APIRoute.Entities}/${id}`);
+    return data;
+  }
+);

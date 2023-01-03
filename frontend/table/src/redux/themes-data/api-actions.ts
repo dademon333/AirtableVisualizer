@@ -1,7 +1,7 @@
 import { AxiosInstance } from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, State, AllData, Entity } from '../../types/types';
-import { Row, EntityConnection, TypeConnections } from '../../types/types';
+import { Row, TypeConnections } from '../../types/types';
 import { APIRoute, NameSpace, EntityType } from '../../const';
 import actions from './themes-data';
 import { getAddMenu } from '../../pages/themes-table/get-add-menu';
@@ -36,10 +36,6 @@ export const fetchThemes = createAsyncThunk<Row[], undefined, {
       },
       getAddMenu
     });
-
-    const connections: EntityConnection[] = data.entity_connections
-      .filter((connection) => connection.type_connection_id === types[connectionNumber].id);
-
-    return makeRows({items: themes.data, connections, data, entityType: EntityType.Theme, typeConnection: types[connectionNumber]});
+    return makeRows({items: themes.data, connectionNumber, data, entityType: EntityType.Theme, types});
   }
 );
