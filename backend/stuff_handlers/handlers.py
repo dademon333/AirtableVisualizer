@@ -1,9 +1,6 @@
 import socket
 
 from fastapi import Depends, APIRouter
-from fastapi.responses import PlainTextResponse
-from pympler import muppy, summary
-import tracemalloc
 
 from auth.di import UserStatusChecker
 from auth.exceptions import UnauthorizedResponse, EditorStatusRequiredResponse
@@ -14,7 +11,7 @@ stuff_router = APIRouter()
 
 
 @stuff_router.get(
-    '/hostname',
+    '/api/hostname',
     response_model=HostnameOutputDTO,
     responses={
         401: {'model': UnauthorizedResponse},
@@ -29,22 +26,3 @@ async def get_hostname():
 
     """
     return HostnameOutputDTO(hostname=socket.gethostname())
-
-
-@stuff_router.get(
-    '/tracemalloc',
-    response_class=PlainTextResponse
-)
-async def get_tracemalloc():
-    snapshot = tracemalloc.take_snapshot()
-    return '\n'.join(str(x) for x in snapshot.statistics('filename'))
-
-
-@stuff_router.get(
-    '/memory',
-    response_class=PlainTextResponse
-)
-async def get_memory_usage():
-    all_objects = muppy.get_objects()
-    sum1 = summary.summarize(all_objects)
-    return '\n'.join(summary.format_(sum1))

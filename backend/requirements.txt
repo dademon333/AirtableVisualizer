@@ -7,7 +7,6 @@ uvicorn==0.20.0
 
 contextvars==2.4
 yappi==1.4.0
-pympler==1.0.1
 
 redis==4.3.5
 psycopg2-binary==2.9.5
