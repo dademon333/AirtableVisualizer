@@ -9,7 +9,7 @@ import Navigation from '../../components/navigation/navigation';
 import Toolbar from '../../components/tool-bar/tool-bar';
 import { getRows, getColumns, getIsLoading } from '../../redux/quntums-data/selectors';
 import { setRows } from '../../utils/set-rows';
-import { messages, SortingOptions } from '../../const';
+import { EntityType, messages, SortingOptions } from '../../const';
 
 const QuantumsTable = (): JSX.Element => {
   const columnWidths: Table.ColumnExtension[] = [
@@ -38,6 +38,7 @@ const QuantumsTable = (): JSX.Element => {
         onSearchChange={setQuery}
         sortingOption={sortingOption}
         onSortingOption={setSortingOption}
+        entityType={EntityType.Quantum}
       />
       {
         isLoading ?

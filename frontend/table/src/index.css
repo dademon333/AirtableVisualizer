@@ -46,6 +46,14 @@ table th, table td {
   line-height: 30px;
   font-size: 15px;
   width: 300px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.first-column-element:hover {
+  background-color: #DADADA;
+  border-radius: 5px;
+  padding: 0 5px;
 }
 
 .secondary-column-elements {
@@ -93,6 +101,10 @@ table th, table td {
   margin-bottom: 5px;
   line-height: 30px;
   padding: 0 6px;
+}
+
+.modal-footer {
+  justify-content: flex-start;
 }
 
 /* TARGETS_TABLE */

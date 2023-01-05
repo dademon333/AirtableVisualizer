@@ -16,7 +16,7 @@ export const fetchCourses = createAsyncThunk<Row[], undefined, {
 >(
   `${NameSpace.COURSES}/fetchData`,
   async (_arg, {dispatch, extra: api, getState}) => {
-    const courses = await api.get<Entity[]>(`${APIRoute.Courses}${APIRoute.List}`);
+    const courses = await api.get<Entity[]>(`${APIRoute.Entities}${APIRoute.List}/${EntityType.Course}?limit=1000`);
     const {data} = await api.get<AllData>(`${APIRoute.Courses}${APIRoute.All}`);
     const typeConnections = await api.get<TypeConnections[]>(`${APIRoute.TypeConnections}${APIRoute.List}`);
     

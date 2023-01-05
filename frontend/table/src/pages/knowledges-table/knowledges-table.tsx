@@ -10,7 +10,7 @@ import Navigation from '../../components/navigation/navigation';
 import Toolbar from '../../components/tool-bar/tool-bar';
 import { getRows, getColumns, getIsLoading } from '../../redux/knowledges-data/selectors';
 import { setRows } from '../../utils/set-rows';
-import { messages, SortingOptions } from '../../const';
+import { EntityType, messages, SortingOptions } from '../../const';
 
 const KnowledgesTable = (): JSX.Element => {
   const columnWidths: Table.ColumnExtension[] = [
@@ -35,7 +35,7 @@ const KnowledgesTable = (): JSX.Element => {
   return (
     <>
       <Navigation />
-      <Toolbar onSearchChange={setQuery} sortingOption={sortingOption} onSortingOption={setSortingOption} />
+      <Toolbar onSearchChange={setQuery} sortingOption={sortingOption} onSortingOption={setSortingOption} entityType={EntityType.Knowledge} />
       {
         isLoading ?
           <div className='spinner'>

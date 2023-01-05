@@ -1,6 +1,8 @@
 import { useState } from 'react';
-import { Modal } from 'react-bootstrap';
+import { Modal, Button } from 'react-bootstrap';
 import { Entity } from '../types/types';
+import { useAppDispatch } from '../hooks';
+import { deleteEntity } from '../redux/change-data/api-actions';
 
 type WrapperFirstColElementProps = {
   entity: Entity;
@@ -9,7 +11,14 @@ type WrapperFirstColElementProps = {
 }
 
 export const WrapperFirstColElement = ({entity, items, column_names}: WrapperFirstColElementProps): JSX.Element => {
+  const dispatch = useAppDispatch();
   const [showModal, setShowModal] = useState<boolean>(false);
+  
+  const onDeleteHandler = () => {
+    dispatch(deleteEntity({id: entity.id!, entityType: entity.type!}));
+    setShowModal(false);
+  }
+
   return (
     <>
       <Modal show={showModal} onHide={() => setShowModal(false)} size='lg'>
@@ -20,7 +29,7 @@ export const WrapperFirstColElement = ({entity, items, column_names}: WrapperFir
           {
             items.map((elements, index) => {
               return (
-                <div className='modal-block' key={`${elements}-${index}`}>
+                <div className='modal-block' key={`${elements[index]}-${index}`}>
                   <div className='modal-block__column-name'>
                     { column_names[index] }
                   </div>
@@ -33,6 +42,9 @@ export const WrapperFirstColElement = ({entity, items, column_names}: WrapperFir
             })
           }
         </Modal.Body>
+        <Modal.Footer>
+          <Button variant='danger' onClick={onDeleteHandler}>Удалить</Button>
+        </Modal.Footer>
       </Modal>
       <div className='first-column-element' onClick={() => setShowModal(true)} title={entity.name}>{entity.name}</div>
     </>

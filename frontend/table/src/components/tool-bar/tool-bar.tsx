@@ -5,16 +5,17 @@ import SyncAltOutlinedIcon from '@mui/icons-material/SyncAltOutlined';
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone';
 import SearchIcon from '@mui/icons-material/Search';
 import { ReactComponent as ToGraphIcon } from '../../assets/icons/to_graph.svg';
-import { SortingOptions } from '../../const';
+import { EntityType, SortingOptions } from '../../const';
 import { AddDataWindow } from '../add-data-window/add-data-window';
 
 type ToolbarProps = {
   onSearchChange: React.Dispatch<React.SetStateAction<string>>;
   sortingOption: SortingOptions;
   onSortingOption: React.Dispatch<React.SetStateAction<SortingOptions>>;
+  entityType: EntityType;
 } 
 
-const Toolbar = ({onSearchChange, sortingOption, onSortingOption}: ToolbarProps): JSX.Element => {
+const Toolbar = ({onSearchChange, sortingOption, onSortingOption, entityType}: ToolbarProps): JSX.Element => {
   const [isSortingOptionsOpen, setIsSortingOptionsOpen] = useState<boolean>(false);
   const [showModal, setShowModal] = useState<boolean>(false);
 
@@ -53,7 +54,7 @@ const Toolbar = ({onSearchChange, sortingOption, onSortingOption}: ToolbarProps)
           </Link>
         </div>
       </div>
-      <AddDataWindow showModal={showModal} onHide={setShowModal} />
+      <AddDataWindow showModal={showModal} onHide={setShowModal} entityType={entityType} />
     </div> 
   );
 }

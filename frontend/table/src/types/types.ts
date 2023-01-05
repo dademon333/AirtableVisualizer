@@ -32,7 +32,7 @@ export type Course = {
 export type Entity = {
   id?: number;
   name: string;
-  type?: EntityType | null;
+  type: EntityType| string | null;
   size?: string;
   description: string | null;
   study_time?: number | null;

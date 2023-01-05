@@ -1,7 +1,12 @@
 import { AxiosInstance } from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AppDispatch, State, Entity } from '../../types/types';
-import { APIRoute, NameSpace } from '../../const';
+import { APIRoute, NameSpace, EntityType } from '../../const';
+import { fetchCourses } from '../courses-data/api-actions';
+import { fetchThemes } from '../themes-data/api-actions';
+import { fetchKnowledges } from '../knowledges-data/api-actions';
+import { fetchQuauntums } from '../quntums-data/api-actions';
+import { fetchTargets } from '../targets-data/api-actions';
 
 export const postEntity = createAsyncThunk<void, Entity, {
   dispatch: AppDispatch,
@@ -18,18 +23,54 @@ export const postEntity = createAsyncThunk<void, Entity, {
       description,
       study_time
     });
+
+    switch (type) {
+      case EntityType.Course:
+        await dispatch(fetchCourses());
+        break;
+      case EntityType.Theme:
+        await dispatch(fetchThemes());
+        break;
+      case EntityType.Knowledge:
+        await dispatch(fetchKnowledges());
+        break;
+      case EntityType.Quantum:
+        await dispatch(fetchQuauntums());
+        break;
+      case EntityType.Target:
+        await dispatch(fetchTargets());
+        break;
+    }
   }
 );
 
-export const deleteEntity = createAsyncThunk<void, number, {
+export const deleteEntity = createAsyncThunk<void, {id: number, entityType: EntityType | string}, {
   dispatch: AppDispatch,
   state: State,
   extra: AxiosInstance
 }
 >(
   `${NameSpace.DATA}/deleteEntity`,
-  async (id, {dispatch, extra: api, getState}) => {
+  async ({id, entityType}, {dispatch, extra: api, getState}) => {
     await api.delete(`${APIRoute.Entities}/${id}`);
+
+    switch (entityType) {
+      case EntityType.Course:
+        await dispatch(fetchCourses());
+        break;
+      case EntityType.Theme:
+        await dispatch(fetchThemes());
+        break;
+      case EntityType.Knowledge:
+        await dispatch(fetchKnowledges());
+        break;
+      case EntityType.Quantum:
+        await dispatch(fetchQuauntums());
+        break;
+      case EntityType.Target:
+        await dispatch(fetchTargets());
+        break;
+    }
   }
 );
 
