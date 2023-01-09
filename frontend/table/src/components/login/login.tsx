@@ -1,7 +1,9 @@
-import { FormEvent, useState, useRef } from 'react';
+import { FormEvent, useRef } from 'react';
+import { Spinner } from 'react-bootstrap';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { loginAction, logoutAction } from '../../redux/auth-actions/auth-actions';
-import { getAuthorizationStatus, getUserEmail } from '../../redux/auth-actions/selectors';
+import { getAuthorizationStatus, getIsLoading, getUserEmail, getIsOpen } from '../../redux/auth-actions/selectors';
+import actions from '../../redux/auth-actions/auth-proccess';
 import { UserStatus } from '../../const';
 import { ReactComponent as AccountIcon } from '../../assets/icons/account.svg';
 import { ReactComponent as LoginIcon } from '../../assets/icons/login.svg';
@@ -10,13 +12,15 @@ import { ReactComponent as LogoutIcon } from '../../assets/icons/logout.svg';
 export const Login = (): JSX.Element => {
   const dispatch = useAppDispatch();
 
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-
   const emailRef = useRef<HTMLInputElement | null>(null);
   const passwordRef = useRef<HTMLInputElement | null>(null);
 
+  const changeIsOpen = actions.changeIsOpen;
+
   const authorizationStatus = useAppSelector(getAuthorizationStatus);
   const userEmail = useAppSelector(getUserEmail);
+  const isLoading = useAppSelector(getIsLoading);
+  const isOpen = useAppSelector(getIsOpen);
 
   const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -29,16 +33,19 @@ export const Login = (): JSX.Element => {
     } else {
       dispatch(logoutAction());
     }
-    setIsOpen(false);
-  }
+  };
 
   const LoginForm = () => (
     <form className={`login__form ${isOpen && 'opened'}`} action="/" onSubmit={onFormSubmit}>
       <input type="text" name='email' ref={emailRef} placeholder='Логин' required />
       <input type="password" name='password' ref={passwordRef} placeholder='Пароль' required />
-      <button type='submit'>
+      <button type='submit' className='login__form__button'>
         <LoginIcon />
-        Войти
+        {
+          isLoading
+          ? <Spinner animation='border' size='sm' />
+          : 'Войти'
+        }
       </button>
     </form>
   );
@@ -46,16 +53,20 @@ export const Login = (): JSX.Element => {
   const LogoutForm = () => (
     <form className={`login__form ${isOpen && 'opened'}`} action="/" onSubmit={onFormSubmit}>
       <input type="text" name='userEmail' value={userEmail} disabled />
-      <button type='submit'>
+      <button type='submit' className='login__form__button'>
         <LogoutIcon />
-        Выйти
+        {
+          isLoading
+          ? <Spinner animation='border' size='sm' />
+          : 'Выйти'
+        }
       </button>
     </form>
   );
 
   return (
     <div className='login'>
-      <div className={`account_icon ${isOpen && 'opened'}`} onClick={() => setIsOpen(!isOpen)}>
+      <div className={`account_icon ${isOpen && 'opened'}`} onClick={() => dispatch(changeIsOpen(!isOpen))}>
         <AccountIcon />
       </div>
       {

@@ -201,6 +201,10 @@ table th, table td {
   margin-right: 5px;
 }
 
+.login__form__button {
+  height: 30px;
+}
+
 /* ADD MENU */
 
 .add {
