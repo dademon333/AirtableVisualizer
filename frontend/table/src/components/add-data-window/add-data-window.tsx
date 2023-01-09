@@ -1,19 +1,22 @@
 import { FormEvent, useRef } from 'react';
-import { Modal, Form, Button } from 'react-bootstrap';
-import { useAppDispatch } from '../../hooks';
+import { Modal, Form, Button, Spinner } from 'react-bootstrap';
+import { useAppDispatch, useAppSelector } from '../../hooks';
 import { EntityType } from '../../const';
 import { postEntity } from '../../redux/change-data/api-actions';
+import actions from '../../redux/change-data/change-data';
+import { getIsLoading, getIsAddDataModalOpen } from '../../redux/change-data/selectors';
 
 type AddDataWindowProps = {
-  showModal: boolean;
-  onHide: React.Dispatch<React.SetStateAction<boolean>>;
   entityType: EntityType;
 }
 
-export const AddDataWindow = ({ showModal, onHide, entityType }: AddDataWindowProps): JSX.Element => {
+export const AddDataWindow = ({ entityType }: AddDataWindowProps): JSX.Element => {
   const dispatch = useAppDispatch();
   const inputRef = useRef<HTMLInputElement | null>(null);
   const selectRef = useRef<HTMLSelectElement | null>(null);
+
+  const isLoading = useAppSelector(getIsLoading);
+  const isAddDataModalOpen = useAppSelector(getIsAddDataModalOpen);
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -26,13 +29,11 @@ export const AddDataWindow = ({ showModal, onHide, entityType }: AddDataWindowPr
         description: '',
         study_time: 0
       }));
-
-      onHide(false);
-    }
-  }
+    };
+  };
 
   return (
-    <Modal show={showModal} onHide={() => onHide(false)}>
+    <Modal show={isAddDataModalOpen} onHide={() => dispatch(actions.changeAddDataModalOpen(false))}>
       <Modal.Header closeButton>
         Добавление в таблицу
       </Modal.Header>
@@ -50,7 +51,13 @@ export const AddDataWindow = ({ showModal, onHide, entityType }: AddDataWindowPr
               <option value={EntityType.Target}>Цель</option>
             </Form.Select>
           </Form.Group>
-          <Button type='submit'>Добавить</Button>
+          <Button type='submit'>
+            {
+              isLoading
+              ? <Spinner animation='border' size='sm' />
+              : 'Добавить'
+            }
+          </Button>
         </Form> 
       </Modal.Body>
     </Modal>

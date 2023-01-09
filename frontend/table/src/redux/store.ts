@@ -6,12 +6,10 @@ import { rootReducer } from './root-reducer';
 import { getUser } from '../services/user';
 
 const BASE_URL = 'http://corevision.ru/api';
-const REQUEST_TIMEOUT = 10000;
 
 const createAPI = (): AxiosInstance => {
   const api = axios.create({
     baseURL: BASE_URL,
-    timeout: REQUEST_TIMEOUT,
     withCredentials: true
   });
 

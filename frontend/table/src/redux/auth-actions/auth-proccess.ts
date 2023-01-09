@@ -34,7 +34,7 @@ export const authProcess = createSlice({
         removeUser();
         state.authorizationStatus = UserStatus.Unauthorized;
         state.userEmail = '';
-        toast.success('Вы вышли из системы!', toastifyOptions);
+        toast.warning('Вы вышли из системы!', toastifyOptions);
       });
   }
 })

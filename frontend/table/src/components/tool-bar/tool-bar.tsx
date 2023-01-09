@@ -5,8 +5,10 @@ import SyncAltOutlinedIcon from '@mui/icons-material/SyncAltOutlined';
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone';
 import SearchIcon from '@mui/icons-material/Search';
 import { ReactComponent as ToGraphIcon } from '../../assets/icons/to_graph.svg';
+import { useAppDispatch } from '../../hooks';
 import { EntityType, SortingOptions } from '../../const';
 import { AddDataWindow } from '../add-data-window/add-data-window';
+import actions from '../../redux/change-data/change-data';
 
 type ToolbarProps = {
   onSearchChange: React.Dispatch<React.SetStateAction<string>>;
@@ -16,8 +18,8 @@ type ToolbarProps = {
 } 
 
 const Toolbar = ({onSearchChange, sortingOption, onSortingOption, entityType}: ToolbarProps): JSX.Element => {
+  const dispatch = useAppDispatch();
   const [isSortingOptionsOpen, setIsSortingOptionsOpen] = useState<boolean>(false);
-  const [showModal, setShowModal] = useState<boolean>(false);
 
   return (
     <div className="toolbar">
@@ -43,7 +45,7 @@ const Toolbar = ({onSearchChange, sortingOption, onSortingOption, entityType}: T
               </div>
           </div>
         </div>
-        <div className="add-element button" onClick={() => setShowModal(true)}>
+        <div className="add-element button" onClick={() => dispatch(actions.changeAddDataModalOpen(true))}>
           <AddCircleTwoToneIcon /> Добавить данные
         </div>
       </div>
@@ -54,7 +56,7 @@ const Toolbar = ({onSearchChange, sortingOption, onSortingOption, entityType}: T
           </Link>
         </div>
       </div>
-      <AddDataWindow showModal={showModal} onHide={setShowModal} entityType={entityType} />
+      <AddDataWindow entityType={entityType} />
     </div> 
   );
 }

@@ -6,6 +6,7 @@ import { knowledgesData } from './knowledges-data/knowledges-data';
 import { quantumsData } from './quntums-data/quantums-data';
 import { targetsData } from './targets-data/targets-data';
 import { authProcess } from './auth-actions/auth-proccess';
+import { changeData } from './change-data/change-data';
 import { NameSpace } from '../const';
 
 export const rootReducer = combineReducers({
@@ -15,5 +16,6 @@ export const rootReducer = combineReducers({
   [NameSpace.QUANTUMS]: quantumsData.reducer,
   [NameSpace.TARGETS]: targetsData.reducer,
   [NameSpace.AUTH]: authProcess.reducer,
+  [NameSpace.DATA]: changeData.reducer,
   [NameSpace.USERS]: usersData.reducer,
 });
