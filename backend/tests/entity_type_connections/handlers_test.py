@@ -1,7 +1,7 @@
 from httpx import AsyncClient
 
 from entity_type_connections.dto import CreateTypeConnectionInputDTO, \
-    UpdateTypeConnectionInputDTO
+    UpdateTypeConnectionInputDTO, EntityTypeConnectionDBInsertDTO
 from entity_type_connections.exceptions import TypeConnectionNotFoundResponse
 from entity_type_connections.repository import EntityTypeConnectionRepository
 from infrastructure.db import EntityTypeConnection, EntityConnection, \
@@ -16,6 +16,32 @@ async def test_list_connections_success(
         '/api/type_connections/list'
     )
     assert len(result.json()) == len(entity_type_connection_list_in_db)
+
+
+async def test_get_all_connections_success(
+        entity_type_connection_repository: EntityTypeConnectionRepository,
+        entity_connection_list_in_db: list[EntityConnection],
+        entity_type_connection_list: list[EntityTypeConnection],
+        test_client: AsyncClient,
+):
+    await entity_type_connection_repository.bulk_insert(
+        [
+            EntityTypeConnectionDBInsertDTO.from_orm(x)
+            for x in entity_type_connection_list[1:]
+        ]
+    )
+
+    result = await test_client.get('/api/type_connections/all')
+    result = result.json()
+
+    result_entity_connections: list[EntityConnection] = sum(
+        [x['entity_connections'] for x in result.values()],
+        []
+    )
+
+    assert len(result) > 0
+    assert len(result) == len(entity_type_connection_list)
+    assert len(result_entity_connections) == len(entity_connection_list_in_db)
 
 
 async def test_get_connection_info_success(

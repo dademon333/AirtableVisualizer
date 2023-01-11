@@ -6,6 +6,8 @@ from entity_type_connections.use_cases.create_connection import \
     CreateTypeConnectionUseCase
 from entity_type_connections.use_cases.delete_connection import \
     DeleteTypeConnectionUseCase
+from entity_type_connections.use_cases.get_all_connections import \
+    GetAllConnectionsUseCase
 from entity_type_connections.use_cases.get_connection_info import \
     GetTypeConnectionUseCase
 from entity_type_connections.use_cases.list_connections import \
@@ -19,6 +21,14 @@ def get_entity_type_connection_repository(
         db: AsyncSession = Depends(get_db),
 ) -> EntityTypeConnectionRepository:
     return EntityTypeConnectionRepository(db)
+
+
+def get_get_all_type_connections_use_case(
+        type_connection_repository: EntityTypeConnectionRepository = Depends(
+            get_entity_type_connection_repository
+        )
+) -> GetAllConnectionsUseCase:
+    return GetAllConnectionsUseCase(type_connection_repository)
 
 
 def get_list_type_connections_use_case(

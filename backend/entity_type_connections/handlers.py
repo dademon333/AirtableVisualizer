@@ -6,7 +6,8 @@ from auth.exceptions import UnauthorizedResponse, AdminStatusRequiredResponse
 from common.responses import OkResponse
 from entity_type_connections.di import get_list_type_connections_use_case, \
     get_create_type_connection_use_case, get_type_connection_use_case, \
-    get_update_type_connection_use_case, get_delete_type_connection_use_case
+    get_update_type_connection_use_case, get_delete_type_connection_use_case, \
+    get_get_all_type_connections_use_case
 from entity_type_connections.dto import TypeConnectionOutputDTO, \
     TypeConnectionExtendedOutputDTO, CreateTypeConnectionInputDTO, \
     UpdateTypeConnectionInputDTO
@@ -16,6 +17,8 @@ from entity_type_connections.use_cases.create_connection import \
     CreateTypeConnectionUseCase
 from entity_type_connections.use_cases.delete_connection import \
     DeleteTypeConnectionUseCase
+from entity_type_connections.use_cases.get_all_connections import \
+    GetAllConnectionsUseCase
 from entity_type_connections.use_cases.get_connection_info import \
     GetTypeConnectionUseCase
 from entity_type_connections.use_cases.list_connections import \
@@ -41,6 +44,27 @@ async def list_connections(
     На основе этой информации необходимо строить колонки связей в таблицах.
     Если в названии колонки указан null, её отображать не надо.
     Также можно использовать эту информацию при построении графа.
+
+    """
+    return await use_case.execute()
+
+
+@type_connections_router.get(
+    '/all',
+    response_model=dict[int, TypeConnectionExtendedOutputDTO],
+    response_class=ORJSONResponse,
+)
+async def get_all_connections(
+        use_case: GetAllConnectionsUseCase = Depends(
+            get_get_all_type_connections_use_case
+        ),
+):
+    """Возвращает информацию о всех соединениях между типами сущностей
+    вместе со списком связей самих сущностей.
+
+    Ответ в формате словаря {connection_id: connection_data}.
+    Если нет потребности в связях сущностей - используйте /list метод:
+    он быстрее и потребляет меньше ресурсов.
 
     """
     return await use_case.execute()

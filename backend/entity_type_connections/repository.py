@@ -4,8 +4,8 @@ from entity_type_connections.dto import EntityTypeConnectionDBInsertDTO, \
     EntityTypeConnectionDBUpdateDTO
 from entity_type_connections.exceptions import \
     TypeConnectionAlreadyExistsError
-from infrastructure.db import BaseRepository, EntityTypeConnection, EntityType, \
-    EntityConnection
+from infrastructure.db import BaseRepository, EntityTypeConnection, \
+    EntityType, EntityConnection
 
 
 class EntityTypeConnectionRepository(
@@ -35,6 +35,24 @@ class EntityTypeConnectionRepository(
         )
         type_connection.entity_connections = entity_connections.all()
         return type_connection
+
+    async def get_all_with_connections(
+            self
+    ) -> dict[int, EntityTypeConnection]:
+        type_connections = await self.db.scalars(select(EntityTypeConnection))
+        type_connections = type_connections.all()  # noqa
+
+        entity_connections = await self.db.scalars(select(EntityConnection))
+        entity_connections = entity_connections.all()
+
+        for x in type_connections:
+            x.entity_connections = []
+        type_connections = {x.id: x for x in type_connections}
+
+        for x in entity_connections:
+            type_connections[x.type_connection_id].entity_connections.append(x)
+
+        return type_connections
 
     async def get_by_types(
             self,
