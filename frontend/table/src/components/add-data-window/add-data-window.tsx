@@ -4,7 +4,7 @@ import Select, { SelectInstance, SingleValue } from 'react-select';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { EntityType } from '../../const';
 import { SelectConnectWithOption } from '../../types/types';
-import { postEntity, fetchRelatedEntityTypes } from '../../redux/change-data/api-actions';
+import { postEntity, fetchRelatedEntityTypes, postEntityWithRelatedEntities } from '../../redux/change-data/api-actions';
 import actions from '../../redux/change-data/change-data';
 import {
   getIsLoading,
@@ -12,20 +12,16 @@ import {
   getRelatedEntities,
   getRelatedEntityTypeNames,
   getIsRelatedEntitiesLoading,
-  getChosenEntitiesIDs
+  getChosenEntities,
 } from '../../redux/change-data/selectors';
 import { MultiSelect } from './multi-select';
-
-type AddDataWindowProps = {
-  entityType: EntityType;
-}
 
 type SelectEntityOption = {
   value: EntityType;
   label: string;
 }
 
-export const AddDataWindow = ({ entityType }: AddDataWindowProps): JSX.Element => {
+export const AddDataWindow = (): JSX.Element => {
   const dispatch = useAppDispatch();
 
   const inputRef = useRef<HTMLInputElement | null>(null);
@@ -36,7 +32,7 @@ export const AddDataWindow = ({ entityType }: AddDataWindowProps): JSX.Element =
   const relatedEntities = useAppSelector(getRelatedEntities);
   const relatedEntityTypeNames = useAppSelector(getRelatedEntityTypeNames);
   const isRelatedEntitiesLoading = useAppSelector(getIsRelatedEntitiesLoading);
-  const chosenEntitiesIDs = useAppSelector(getChosenEntitiesIDs);
+  const chosenEntities = useAppSelector(getChosenEntities);
 
   const selectEntityData: SelectEntityOption[] = [
     { value: EntityType.Course, label: 'Курс' },
@@ -60,16 +56,33 @@ export const AddDataWindow = ({ entityType }: AddDataWindowProps): JSX.Element =
 
   const onSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(chosenEntitiesIDs);
 
     if (inputRef.current && selectEntityTypeRef.current) {
-      /* dispatch(postEntity({
-        name: inputRef.current.value,
-        type: selectEntityTypeRef.current.getValue()[0].value,
-        size: 'medium',
-        description: '',
-        study_time: 0
-      })); */
+      const name = inputRef.current.value;
+      const type = selectEntityTypeRef.current.getValue()[0].value;
+
+      if (!chosenEntities) {
+        dispatch(postEntity({
+          name,
+          type,
+          size: 'medium',
+          description: '',
+          study_time: 0
+        }));
+      } else {
+        dispatch(postEntityWithRelatedEntities({
+          entity: {
+            name,
+            type,
+            size: 'medium',
+            description: '',
+            study_time: 0
+          },
+          relatedEntities: chosenEntities
+        }));
+      };
+
+      dispatch(actions.clearRelatedEntities());
     };
   };
 
@@ -113,14 +126,12 @@ export const AddDataWindow = ({ entityType }: AddDataWindowProps): JSX.Element =
               />
             ))
           }
-          <Button type='submit'>
-            {
-              isLoading
-              ? <Spinner animation='border' size='sm' />
-              : 'Добавить'
-            }
-          </Button>
-        </Form> 
+          {
+            isLoading
+            ? <Button disabled><Spinner animation='border' size='sm' /></Button>
+            : <Button type='submit'>Добавить</Button>
+          }
+        </Form>
       </Modal.Body>
     </Modal>
   );

@@ -38,7 +38,6 @@ const QuantumsTable = (): JSX.Element => {
         onSearchChange={setQuery}
         sortingOption={sortingOption}
         onSortingOption={setSortingOption}
-        entityType={EntityType.Quantum}
       />
       {
         isLoading ?

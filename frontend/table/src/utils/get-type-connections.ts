@@ -3,7 +3,7 @@ import { EntityType } from '../const';
 
 type GetTypeConnectionsProps = {
   typeConnections: TypeConnections[];
-  entityType: EntityType;
+  entityType: EntityType | string;
 }
 
 export const filterTypeConnections = ({ typeConnections, entityType }: GetTypeConnectionsProps): TypeConnections[] => {

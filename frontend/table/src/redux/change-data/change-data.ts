@@ -35,6 +35,7 @@ export const changeData = createSlice({
     clearRelatedEntities: (state) => {
       state.relatedEntities = [];
       state.relatedEntityTypeNames = [];
+      state.chosenEntities = [];
     },
     updateChosenEntities: (state, action: {type: string; payload: ChosenEntity}) => {
       const currentChosenEntityType = state.chosenEntities.filter((e) => e.name === action.payload.name)[0];
@@ -59,7 +60,7 @@ export const changeData = createSlice({
       .addCase(postEntity.pending, (state) => {
         state.isLoading = true;
       })
-      .addCase(postEntity.fulfilled, (state) => {
+      .addCase(postEntity.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isAddDataModalOpen = false;
         toast.success('Данные добавлены!', toastifyOptions);

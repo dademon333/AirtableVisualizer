@@ -10,13 +10,13 @@ export const getRelatedEntities = (state: State): Entity[][] => state.DATA.relat
 
 export const getRelatedEntityTypeNames = (state: State): string[] => state.DATA.relatedEntityTypeNames;
 
-export const getChosenEntitiesIDs = (state: State): number[] => {
+export const getChosenEntities = (state: State): Entity[] => {
   const chosenEntities = state.DATA.chosenEntities;
-  const ids = chosenEntities.map((item) => item.entities.map((e) => e.value.id!));
-  if (ids.length > 1) {
-    const result: number[] = [];
-    ids.forEach(e => e.forEach(a => result.push(a!)));
+  const entities = chosenEntities.map((item) => item.entities.map((e) => e.value));
+  if (entities.length > 1) {
+    const result: Entity[] = [];
+    entities.forEach(entity => entity.forEach(e => result.push(e)));
     return result;
   }
-  return ids[0];
-}
+  return entities[0];
+};

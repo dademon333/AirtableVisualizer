@@ -14,10 +14,9 @@ type ToolbarProps = {
   onSearchChange: React.Dispatch<React.SetStateAction<string>>;
   sortingOption: SortingOptions;
   onSortingOption: React.Dispatch<React.SetStateAction<SortingOptions>>;
-  entityType: EntityType;
 } 
 
-const Toolbar = ({onSearchChange, sortingOption, onSortingOption, entityType}: ToolbarProps): JSX.Element => {
+const Toolbar = ({onSearchChange, sortingOption, onSortingOption}: ToolbarProps): JSX.Element => {
   const dispatch = useAppDispatch();
   const [isSortingOptionsOpen, setIsSortingOptionsOpen] = useState<boolean>(false);
 
@@ -56,7 +55,7 @@ const Toolbar = ({onSearchChange, sortingOption, onSortingOption, entityType}: T
           </Link>
         </div>
       </div>
-      <AddDataWindow entityType={entityType} />
+      <AddDataWindow />
     </div> 
   );
 }

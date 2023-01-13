@@ -35,7 +35,7 @@ const TargetsTable = (): JSX.Element => {
   return (
     <>
       <Navigation />
-      <Toolbar onSearchChange={setQuery} sortingOption={sortingOption} onSortingOption={setSortingOption} entityType={EntityType.Target} />
+      <Toolbar onSearchChange={setQuery} sortingOption={sortingOption} onSortingOption={setSortingOption} />
       {
         isLoading ?
           <div className='spinner'>

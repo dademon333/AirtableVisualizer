@@ -41,7 +41,55 @@ export const postEntity = createAsyncThunk<void, Entity, {
       case EntityType.Target:
         await dispatch(fetchTargets());
         break;
-    }
+    };
+  }
+);
+
+export const postEntityWithRelatedEntities = createAsyncThunk<void, {entity: Entity, relatedEntities: Entity[]}, {
+  dispatch: AppDispatch,
+  state: State,
+  extra: AxiosInstance
+}
+>(
+  `${NameSpace.DATA}/postEntityWithRelatedEntities`,
+  async ({entity, relatedEntities}, {dispatch, extra: api, getState}) => {
+    const {name, type, size, description, study_time} = entity;
+    const {data} = await api.post<Entity>(APIRoute.Entities, {
+      name,
+      type,
+      size,
+      description,
+      study_time
+    });
+    
+    const connections = await api.get<TypeConnections[]>(`${APIRoute.TypeConnections}${APIRoute.List}`);
+    const typeConnections = filterTypeConnections({entityType: type!, typeConnections: connections.data});
+    relatedEntities.forEach((entity) => {
+      const filteredType = typeConnections.filter((connection) => connection.child_type === entity.type || connection.parent_type === entity.type)[0];
+      if (filteredType.parent_type === type) {
+        dispatch(postEntityConnections({
+          parent_id: data.id!,
+          child_id: entity.id!
+        }));
+      } else {
+        dispatch(postEntityConnections({
+          parent_id: entity.id!,
+          child_id: data.id!
+        }));
+      }
+    });
+  }
+);
+
+export const postEntityConnections = createAsyncThunk<void, {parent_id: number, child_id: number}, {
+  dispatch: AppDispatch,
+  state: State,
+  extra: AxiosInstance
+}
+>(
+  `${NameSpace.DATA}/postEntityConnections`,
+  async ({parent_id, child_id}, {dispatch, extra: api, getState}) => {
+    await api.post<Entity>(APIRoute.EntityConnections, {parent_id, child_id});
   }
 );
 
