@@ -2,7 +2,7 @@ import { store } from '../redux/store';
 import { EntityType, UserStatus } from '../const';
 
 export type Row = {
-  id: number;
+  id: JSX.Element;
   name: JSX.Element;
   body: JSX.Element;
   add?: JSX.Element;

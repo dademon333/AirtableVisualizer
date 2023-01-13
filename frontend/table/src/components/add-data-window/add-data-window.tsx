@@ -81,8 +81,6 @@ export const AddDataWindow = (): JSX.Element => {
           relatedEntities: chosenEntities
         }));
       };
-
-      dispatch(actions.clearRelatedEntities());
     };
   };
 

@@ -12,6 +12,7 @@ const initialState: {
 } = {
   rows: [],
   columns: [
+    { name: 'id', title: ' ' },
     { name: 'name', title: '' },
     { name: 'body', title: '' },
     { name: 'add', title: '' }
@@ -25,13 +26,13 @@ export const targetsData = createSlice({
   initialState,
   reducers: {
     changeNameColumn: (state, action) => {
-      state.columns[0].title = action.payload;
-    },
-    changeBodyColumn: (state, action) => {
       state.columns[1].title = action.payload;
     },
-    changeAddColumn: (state, action) => {
+    changeBodyColumn: (state, action) => {
       state.columns[2].title = action.payload;
+    },
+    changeAddColumn: (state, action) => {
+      state.columns[3].title = action.payload;
     },
     changeConnectionNumber: (state, action) => {
       state.connectionNumber = action.payload;

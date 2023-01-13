@@ -27,12 +27,17 @@ table th, table td {
   background: #E9E9E9;
 }
 
-.table_container tbody tr td:nth-child(1) .id {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  transition: 0.1s;
+.table_container tbody tr td:first-child {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.table_container tbody tr td .id-column {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .table_container tbody {

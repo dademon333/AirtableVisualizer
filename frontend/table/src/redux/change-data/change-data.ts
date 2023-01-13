@@ -63,6 +63,9 @@ export const changeData = createSlice({
       .addCase(postEntity.fulfilled, (state, action) => {
         state.isLoading = false;
         state.isAddDataModalOpen = false;
+        state.relatedEntities = [];
+        state.relatedEntityTypeNames = [];
+        state.chosenEntities = [];
         toast.success('Данные добавлены!', toastifyOptions);
       })
       .addCase(postEntity.rejected, (state) => {

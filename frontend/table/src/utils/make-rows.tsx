@@ -15,7 +15,7 @@ type MakeRowsProps = {
 export const makeRows = ({ items, types, connectionNumber, entityType, data }: MakeRowsProps): Row[] => {
   const allConnections = getAllConnections({ types, entityType, entity_connections: data.entity_connections });
 
-  return items.map((item) => {
+  return items.map((item, index) => {
     const row = makeEmptyRow();
     const childs: number[][] = [];
     const parents: number[][] = [];
@@ -29,7 +29,7 @@ export const makeRows = ({ items, types, connectionNumber, entityType, data }: M
       column_names.push(element.column_name);
     });
 
-    row.id = item.id!;
+    row.id = <div className='id-column'>{index + 1}</div>;
     row.name = <WrapperFirstColElement entity={item} items={items} column_names={column_names} />;
     row.body = wrapSecondColElements(items[connectionNumber]);
     return row;
@@ -37,7 +37,7 @@ export const makeRows = ({ items, types, connectionNumber, entityType, data }: M
 };
 
 const makeEmptyRow = (): Row => ({
-  id: 0,
+  id: <></>,
   name: <></>,
   body: <></>
 });
