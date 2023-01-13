@@ -50,7 +50,8 @@ export type TypeConnections = {
   child_type: EntityType;
   parent_column_name: string;
   child_column_name: string;
-}
+  entity_connections?: EntityConnection[];
+};
 
 export type UserData = {
   access_token: string;
@@ -61,17 +62,22 @@ export type UserData = {
   email: string,
   status: UserStatus,
   created_at: string;
-}
+};
 
 export type AuthData = {
   email: string;
   password: string;
-}
+};
 
 export type Response = {
   response: string;
   detail: string;
-}
+};
+
+export type SelectConnectWithOption = {
+  value: Entity;
+  label: string;
+};
 
 export type State = ReturnType<typeof store.getState>;
 

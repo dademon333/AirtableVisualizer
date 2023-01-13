@@ -1,7 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosInstance } from 'axios';
 import { State, AppDispatch, UserData, UsersRow} from '../../types/types';
-import { APIRoute, NameSpace, UserStatus } from '../../const';
+import { APIRoute, NameSpace } from '../../const';
 
 export const getUsersListAction = createAsyncThunk<UsersRow[], undefined, {
   dispatch: AppDispatch,

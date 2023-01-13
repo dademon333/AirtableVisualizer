@@ -1,7 +1,8 @@
-import { Entity, EntityConnection, TypeConnections, AllData, Row } from '../types/types';
+import { Entity, TypeConnections, AllData, Row } from '../types/types';
 import { EntityType } from '../const';
 import { getChilds, getParents, getItems } from './get-items';
 import { WrapperFirstColElement, wrapSecondColElements } from './wrap';
+import { getAllConnections } from './get-all-connections';
 
 type MakeRowsProps = {
   items: Entity[];
@@ -12,28 +13,7 @@ type MakeRowsProps = {
 }
 
 export const makeRows = ({ items, types, connectionNumber, entityType, data }: MakeRowsProps): Row[] => {
-  const allConnections = types.map((type) => {
-    const result: {
-      column_name: string;
-      connections: EntityConnection[]
-    } = {
-      column_name: '',
-      connections: []
-    };
-
-    if (type.parent_type === entityType) {
-      result.column_name = type.child_column_name;
-    } else {
-      result.column_name = type.parent_column_name;
-    }
-
-    data.entity_connections.forEach((connection) => {
-      if (connection.type_connection_id === type.id) {
-        result.connections.push(connection);
-      }
-    });
-    return result;
-  });
+  const allConnections = getAllConnections({ types, entityType, entity_connections: data.entity_connections });
 
   return items.map((item) => {
     const row = makeEmptyRow();

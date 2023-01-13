@@ -1,14 +1,28 @@
 import { createSlice } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
 import { NameSpace, toastifyOptions } from '../../const';
-import { postEntity, deleteEntity } from './api-actions';
+import { Entity, SelectConnectWithOption } from '../../types/types';
+import { postEntity, deleteEntity, fetchRelatedEntityTypes, fetchRelatedEntities } from './api-actions';
+
+type ChosenEntity = {
+  name: string;
+  entities: SelectConnectWithOption[];
+}
 
 const initialState: {
   isLoading: boolean;
+  isRelatedEntitiesLoading: boolean;
   isAddDataModalOpen: boolean;
+  relatedEntities: Entity[][];
+  relatedEntityTypeNames: string[];
+  chosenEntities: ChosenEntity[];
 } = {
   isLoading: false,
+  isRelatedEntitiesLoading: false,
   isAddDataModalOpen: false,
+  relatedEntities: [],
+  relatedEntityTypeNames: [],
+  chosenEntities: [],
 };
 
 export const changeData = createSlice({
@@ -17,6 +31,27 @@ export const changeData = createSlice({
   reducers:{
     changeAddDataModalOpen: (state, action) => {
       state.isAddDataModalOpen = action.payload;
+    },
+    clearRelatedEntities: (state) => {
+      state.relatedEntities = [];
+      state.relatedEntityTypeNames = [];
+    },
+    updateChosenEntities: (state, action: {type: string; payload: ChosenEntity}) => {
+      const currentChosenEntityType = state.chosenEntities.filter((e) => e.name === action.payload.name)[0];
+      if (!currentChosenEntityType) {
+        state.chosenEntities.push({
+          name: action.payload.name,
+          entities: action.payload.entities
+        });
+      } else {
+        const chosenType = state.chosenEntities.filter((e) => e.name === currentChosenEntityType.name)[0];
+        const index = state.chosenEntities.indexOf(chosenType);
+        state.chosenEntities.splice(index, 1);
+        
+        if (action.payload.entities.length !== 0) {
+          state.chosenEntities.push(action.payload);
+        }
+      }
     }
   },
   extraReducers(builder) {
@@ -44,6 +79,21 @@ export const changeData = createSlice({
       .addCase(deleteEntity.rejected, (state) => {
         state.isLoading = false;
         toast.warning('Не удалось удалить данные', toastifyOptions);
+      })
+      .addCase(fetchRelatedEntityTypes.pending, (state) => {
+        state.isRelatedEntitiesLoading = true;
+      })
+      .addCase(fetchRelatedEntityTypes.fulfilled, (state, action) => {
+        state.relatedEntities = [];
+        state.relatedEntityTypeNames = [];
+      })
+      .addCase(fetchRelatedEntities.pending, (state) => {
+        state.isRelatedEntitiesLoading = true;
+      })
+      .addCase(fetchRelatedEntities.fulfilled, (state, action) => {
+        state.isRelatedEntitiesLoading = false;
+        state.relatedEntities.push(action.payload.data);
+        state.relatedEntityTypeNames.push(action.payload.name);
       });
   }
 });

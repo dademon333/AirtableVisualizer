@@ -7,6 +7,7 @@ import actions from './courses-data';
 import { getAddMenu } from '../../pages/courses-table/get-add-menu';
 import { dispatchActions } from '../../utils/dispatch-actions';
 import { makeRows } from '../../utils/make-rows';
+import { filterTypeConnections } from '../../utils/get-type-connections';
 
 export const fetchCourses = createAsyncThunk<Row[], undefined, {
   dispatch: AppDispatch,
@@ -21,8 +22,10 @@ export const fetchCourses = createAsyncThunk<Row[], undefined, {
     const typeConnections = await api.get<TypeConnections[]>(`${APIRoute.TypeConnections}${APIRoute.List}`);
     
     const connectionNumber = getState().COURSES.connectionNumber;
-    const types = typeConnections
-      .data.filter(e => (e.parent_type === EntityType.Course || e.child_type === EntityType.Course) && e.child_column_name !== null);
+    const types = filterTypeConnections({
+      typeConnections: typeConnections.data,
+      entityType: EntityType.Course
+    });
     
     dispatchActions({
       connectionNumber,

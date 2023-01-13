@@ -580,3 +580,8 @@ table th, table td {
   left: 50%;
   top: 40%;
 }
+
+.related-loading {
+  display: block;
+  margin-bottom: 1rem;
+}
