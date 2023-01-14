@@ -8,9 +8,10 @@ import actions from '../../redux/change-data/change-data';
 type MultiSelectProps = {
   data: SelectConnectWithOption[];
   entityTypeName: string;
+  isDisabled: boolean;
 }
 
-export const MultiSelect = ({ data, entityTypeName }: MultiSelectProps): JSX.Element => {
+export const MultiSelect = ({ data, entityTypeName, isDisabled }: MultiSelectProps): JSX.Element => {
   const dispatch = useAppDispatch();
 
   const selectConnectWithRef = useRef<SelectInstance<SelectConnectWithOption> | null>(null);
@@ -34,6 +35,7 @@ export const MultiSelect = ({ data, entityTypeName }: MultiSelectProps): JSX.Ele
         placeholder='Связать с ...'
         closeMenuOnSelect={false}
         onChange={handleChange}
+        isDisabled={isDisabled}
       />
     </Form.Group>
   );

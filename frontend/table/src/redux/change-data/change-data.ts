@@ -87,7 +87,7 @@ export const changeData = createSlice({
       .addCase(fetchRelatedEntityTypes.pending, (state) => {
         state.isRelatedEntitiesLoading = true;
       })
-      .addCase(fetchRelatedEntityTypes.fulfilled, (state, action) => {
+      .addCase(fetchRelatedEntityTypes.fulfilled, (state) => {
         state.relatedEntities = [];
         state.relatedEntityTypeNames = [];
       })

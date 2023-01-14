@@ -9,49 +9,13 @@ import { fetchQuauntums } from '../quntums-data/api-actions';
 import { fetchTargets } from '../targets-data/api-actions';
 import { filterTypeConnections } from '../../utils/get-type-connections';
 
-export const postEntity = createAsyncThunk<void, Entity, {
+export const postEntity = createAsyncThunk<void, {entity: Entity, relatedEntities?: Entity[]}, {
   dispatch: AppDispatch,
   state: State,
   extra: AxiosInstance
 }
 >(
   `${NameSpace.DATA}/postEntity`,
-  async ({name, type, size, description, study_time}, {dispatch, extra: api, getState}) => {
-    await api.post<Entity>(APIRoute.Entities, {
-      name,
-      type,
-      size,
-      description,
-      study_time
-    });
-
-    switch (type) {
-      case EntityType.Course:
-        await dispatch(fetchCourses());
-        break;
-      case EntityType.Theme:
-        await dispatch(fetchThemes());
-        break;
-      case EntityType.Knowledge:
-        await dispatch(fetchKnowledges());
-        break;
-      case EntityType.Quantum:
-        await dispatch(fetchQuauntums());
-        break;
-      case EntityType.Target:
-        await dispatch(fetchTargets());
-        break;
-    };
-  }
-);
-
-export const postEntityWithRelatedEntities = createAsyncThunk<void, {entity: Entity, relatedEntities: Entity[]}, {
-  dispatch: AppDispatch,
-  state: State,
-  extra: AxiosInstance
-}
->(
-  `${NameSpace.DATA}/postEntityWithRelatedEntities`,
   async ({entity, relatedEntities}, {dispatch, extra: api, getState}) => {
     const {name, type, size, description, study_time} = entity;
     const {data} = await api.post<Entity>(APIRoute.Entities, {
@@ -61,23 +25,43 @@ export const postEntityWithRelatedEntities = createAsyncThunk<void, {entity: Ent
       description,
       study_time
     });
-    
-    const connections = await api.get<TypeConnections[]>(`${APIRoute.TypeConnections}${APIRoute.List}`);
-    const typeConnections = filterTypeConnections({entityType: type!, typeConnections: connections.data});
-    relatedEntities.forEach((entity) => {
-      const filteredType = typeConnections.filter((connection) => connection.child_type === entity.type || connection.parent_type === entity.type)[0];
-      if (filteredType.parent_type === type) {
-        dispatch(postEntityConnections({
-          parent_id: data.id!,
-          child_id: entity.id!
-        }));
-      } else {
-        dispatch(postEntityConnections({
-          parent_id: entity.id!,
-          child_id: data.id!
-        }));
-      }
-    });
+
+    if (relatedEntities) {
+      const connections = await api.get<TypeConnections[]>(`${APIRoute.TypeConnections}${APIRoute.List}`);
+      const typeConnections = filterTypeConnections({entityType: type!, typeConnections: connections.data});
+      relatedEntities.forEach((entity) => {
+        const filteredType = typeConnections.filter((connection) => connection.child_type === entity.type || connection.parent_type === entity.type)[0];
+        if (filteredType.parent_type === type) {
+          dispatch(postEntityConnections({
+            parent_id: data.id!,
+            child_id: entity.id!
+          }));
+        } else {
+          dispatch(postEntityConnections({
+            parent_id: entity.id!,
+            child_id: data.id!
+          }));
+        }
+      });
+    };
+
+    switch (type) {
+      case EntityType.Course:
+        dispatch(fetchCourses());
+        break;
+      case EntityType.Theme:
+        dispatch(fetchThemes());
+        break;
+      case EntityType.Knowledge:
+        dispatch(fetchKnowledges());
+        break;
+      case EntityType.Quantum:
+        dispatch(fetchQuauntums());
+        break;
+      case EntityType.Target:
+        dispatch(fetchTargets());
+        break;
+    };
   }
 );
 
@@ -105,19 +89,19 @@ export const deleteEntity = createAsyncThunk<void, {id: number, entityType: Enti
 
     switch (entityType) {
       case EntityType.Course:
-        await dispatch(fetchCourses());
+        dispatch(fetchCourses());
         break;
       case EntityType.Theme:
-        await dispatch(fetchThemes());
+        dispatch(fetchThemes());
         break;
       case EntityType.Knowledge:
-        await dispatch(fetchKnowledges());
+        dispatch(fetchKnowledges());
         break;
       case EntityType.Quantum:
-        await dispatch(fetchQuauntums());
+        dispatch(fetchQuauntums());
         break;
       case EntityType.Target:
-        await dispatch(fetchTargets());
+        dispatch(fetchTargets());
         break;
     }
   }

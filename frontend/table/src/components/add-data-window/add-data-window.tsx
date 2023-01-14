@@ -4,7 +4,7 @@ import Select, { SelectInstance, SingleValue } from 'react-select';
 import { useAppDispatch, useAppSelector } from '../../hooks';
 import { EntityType } from '../../const';
 import { SelectConnectWithOption } from '../../types/types';
-import { postEntity, fetchRelatedEntityTypes, postEntityWithRelatedEntities } from '../../redux/change-data/api-actions';
+import { postEntity, fetchRelatedEntityTypes } from '../../redux/change-data/api-actions';
 import actions from '../../redux/change-data/change-data';
 import {
   getIsLoading,
@@ -61,23 +61,19 @@ export const AddDataWindow = (): JSX.Element => {
       const name = inputRef.current.value;
       const type = selectEntityTypeRef.current.getValue()[0].value;
 
+      const entity = {
+        name,
+        type,
+        size: 'medium',
+        description: '',
+        study_time: 0
+      };
+
       if (!chosenEntities) {
-        dispatch(postEntity({
-          name,
-          type,
-          size: 'medium',
-          description: '',
-          study_time: 0
-        }));
+        dispatch(postEntity({ entity }));
       } else {
-        dispatch(postEntityWithRelatedEntities({
-          entity: {
-            name,
-            type,
-            size: 'medium',
-            description: '',
-            study_time: 0
-          },
+        dispatch(postEntity({
+          entity,
           relatedEntities: chosenEntities
         }));
       };
@@ -101,7 +97,7 @@ export const AddDataWindow = (): JSX.Element => {
       <Modal.Body>
         <Form onSubmit={onSubmit}>
           <Form.Group className='mb-3'>
-            <Form.Control type='text' placeholder='Название' ref={inputRef} required />
+            <Form.Control type='text' placeholder='Название' ref={inputRef} required disabled={isLoading} />
           </Form.Group>
           <Form.Group className='mb-3'>
             <Select
@@ -110,6 +106,8 @@ export const AddDataWindow = (): JSX.Element => {
               onChange={handleSelectEntityType}
               name='selectEntity'
               placeholder='Тип'
+              required
+              isDisabled={isLoading}
             />
           </Form.Group>
           {
@@ -121,6 +119,7 @@ export const AddDataWindow = (): JSX.Element => {
                 key={`${data[0]}-${index}`}
                 data={data}
                 entityTypeName={relatedEntityTypeNames[index]}
+                isDisabled={isLoading}
               />
             ))
           }
