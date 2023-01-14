@@ -1,8 +1,10 @@
 import { useState } from 'react';
 import { Modal, Button } from 'react-bootstrap';
 import { Entity } from '../types/types';
-import { useAppDispatch } from '../hooks';
+import { useAppDispatch, useAppSelector } from '../hooks';
 import { deleteEntity } from '../redux/change-data/api-actions';
+import { getAuthorizationStatus } from '../redux/auth-actions/selectors';
+import { UserStatus } from '../const';
 
 type WrapperFirstColElementProps = {
   entity: Entity;
@@ -12,6 +14,7 @@ type WrapperFirstColElementProps = {
 
 export const WrapperFirstColElement = ({entity, items, column_names}: WrapperFirstColElementProps): JSX.Element => {
   const dispatch = useAppDispatch();
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
 
   const [showModal, setShowModal] = useState<boolean>(false);
   const [query, setQuery] = useState<string>('');
@@ -59,9 +62,15 @@ export const WrapperFirstColElement = ({entity, items, column_names}: WrapperFir
             })
           }
         </Modal.Body>
-        <Modal.Footer>
-          <Button variant='danger' onClick={onDeleteHandler}>Удалить</Button>
-        </Modal.Footer>
+        {
+          authorizationStatus !== UserStatus.Unauthorized
+          &&
+          <Modal.Footer>
+            <Button variant='danger' onClick={onDeleteHandler}>
+              Удалить
+            </Button>
+          </Modal.Footer>
+        }
       </Modal>
       <div className='first-column-element' onClick={() => setShowModal(true)} title={entity.name}>{entity.name}</div>
     </>

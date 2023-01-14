@@ -499,6 +499,25 @@ table th, table td {
   outline: none;
 }
 
+.no-rights-popover {
+  border: none;
+  background-color: #EBEBEB;
+  --bs-popover-header-bg: 0;
+  box-shadow: 0 2px 10px #bcbcbc;
+}
+
+.popover-arrow {
+  --bs-popover-bg: #EBEBEB;
+  --bs-popover-border-width: 0px;
+}
+
+.no-rights-popover .popover-header {
+  font-size: 14px;
+  font-family: Montserrat;
+  text-align: center;
+  border: none;
+}
+
 /* SORTING */
 
 .toolbar .sorting {

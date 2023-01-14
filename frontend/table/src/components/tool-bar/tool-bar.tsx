@@ -1,25 +1,36 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { OverlayTrigger, Popover } from 'react-bootstrap';
 import ArrowRightAltOutlinedIcon from '@mui/icons-material/ArrowRightAltOutlined';
 import SyncAltOutlinedIcon from '@mui/icons-material/SyncAltOutlined';
 import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone';
 import SearchIcon from '@mui/icons-material/Search';
 import { ReactComponent as ToGraphIcon } from '../../assets/icons/to_graph.svg';
-import { useAppDispatch } from '../../hooks';
-import { SortingOptions } from '../../const';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+import { SortingOptions, UserStatus } from '../../const';
 import { AddDataWindow } from '../add-data-window/add-data-window';
 import actions from '../../redux/change-data/change-data';
+import { getAuthorizationStatus } from '../../redux/auth-actions/selectors';
 
 type ToolbarProps = {
   onSearchChange: React.Dispatch<React.SetStateAction<string>>;
   sortingOption: SortingOptions;
   onSortingOption: React.Dispatch<React.SetStateAction<SortingOptions>>;
   queryLength: number;
-} 
+};
+
+const NoRightsPopover = (
+  <Popover id="popover-basic" className='no-rights-popover'>
+    <Popover.Header>
+      У Вас нет прав, чтобы добавлять данные
+    </Popover.Header>
+  </Popover>
+);
 
 const Toolbar = ({onSearchChange, sortingOption, onSortingOption, queryLength}: ToolbarProps): JSX.Element => {
   const dispatch = useAppDispatch();
   const [isSortingOptionsOpen, setIsSortingOptionsOpen] = useState<boolean>(false);
+
+  const authorizationStatus = useAppSelector(getAuthorizationStatus);
 
   return (
     <div className="toolbar">
@@ -45,9 +56,23 @@ const Toolbar = ({onSearchChange, sortingOption, onSortingOption, queryLength}: 
               </div>
           </div>
         </div>
-        <div className="add-element button" onClick={() => dispatch(actions.changeAddDataModalOpen(true))}>
-          <AddCircleTwoToneIcon /> Добавить данные
-        </div>
+        {
+          authorizationStatus === UserStatus.Unauthorized
+          ?
+          <OverlayTrigger
+            placement='bottom'
+            overlay={NoRightsPopover}
+            children={
+              <div className="add-element button">
+                <AddCircleTwoToneIcon /> Добавить данные
+              </div>  
+            }
+          />
+          :
+          <div className="add-element button" onClick={() => dispatch(actions.changeAddDataModalOpen(true))}>
+            <AddCircleTwoToneIcon /> Добавить данные
+          </div>
+        }
       </div>
       <div className="right">
         <div className="toGraph button">
