@@ -51,9 +51,9 @@ const Toolbar = ({onSearchChange, sortingOption, onSortingOption, queryLength}: 
       </div>
       <div className="right">
         <div className="toGraph button">
-          <Link to='#'>
+          <a href='http://corevision.ru'>
             <ToGraphIcon />Перейти к графу
-          </Link>
+          </a>
         </div>
       </div>
       <AddDataWindow />
