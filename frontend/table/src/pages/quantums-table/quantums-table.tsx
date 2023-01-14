@@ -38,6 +38,7 @@ const QuantumsTable = (): JSX.Element => {
         onSearchChange={setQuery}
         sortingOption={sortingOption}
         onSortingOption={setSortingOption}
+        queryLength={query.length}
       />
       {
         isLoading ?

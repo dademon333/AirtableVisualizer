@@ -6,7 +6,7 @@ import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone';
 import SearchIcon from '@mui/icons-material/Search';
 import { ReactComponent as ToGraphIcon } from '../../assets/icons/to_graph.svg';
 import { useAppDispatch } from '../../hooks';
-import { EntityType, SortingOptions } from '../../const';
+import { SortingOptions } from '../../const';
 import { AddDataWindow } from '../add-data-window/add-data-window';
 import actions from '../../redux/change-data/change-data';
 
@@ -14,20 +14,21 @@ type ToolbarProps = {
   onSearchChange: React.Dispatch<React.SetStateAction<string>>;
   sortingOption: SortingOptions;
   onSortingOption: React.Dispatch<React.SetStateAction<SortingOptions>>;
+  queryLength: number;
 } 
 
-const Toolbar = ({onSearchChange, sortingOption, onSortingOption}: ToolbarProps): JSX.Element => {
+const Toolbar = ({onSearchChange, sortingOption, onSortingOption, queryLength}: ToolbarProps): JSX.Element => {
   const dispatch = useAppDispatch();
   const [isSortingOptionsOpen, setIsSortingOptionsOpen] = useState<boolean>(false);
 
   return (
     <div className="toolbar">
       <div className="left">
-        <div className="search button">
+        <div className={`search button ${queryLength !== 0 && 'active'}`}>
           <SearchIcon />
-          <input 
-              placeholder="Поиск" 
-              onChange={event => onSearchChange(event.target.value)}
+          <input
+            placeholder="Поиск" 
+            onChange={event => onSearchChange(event.target.value)}
           />
         </div>
         <div className={`sorting ${isSortingOptionsOpen && 'opened'} button`} 
@@ -37,10 +38,10 @@ const Toolbar = ({onSearchChange, sortingOption, onSortingOption}: ToolbarProps)
           <div className={isSortingOptionsOpen ? "options" : "options closed"}>
               <div className={`${sortingOption === SortingOptions.DEFAULT && 'option clicked'}`} onClick={() => onSortingOption(SortingOptions.DEFAULT)}>По дате</div>
               <div className={`${sortingOption === SortingOptions.ASC && 'option clicked'}`} onClick={() => onSortingOption(SortingOptions.ASC)}>
-                  А<ArrowRightAltOutlinedIcon fontSize='small' />Я
+                А<ArrowRightAltOutlinedIcon fontSize='small' />Я
               </div>
               <div className={`${sortingOption === SortingOptions.DESC && 'option clicked'}`} onClick={() => onSortingOption(SortingOptions.DESC)}>
-                  Я<ArrowRightAltOutlinedIcon fontSize='small' />А
+                Я<ArrowRightAltOutlinedIcon fontSize='small' />А
               </div>
           </div>
         </div>

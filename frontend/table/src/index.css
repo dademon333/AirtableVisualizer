@@ -486,8 +486,13 @@ table th, table td {
   transition: 0.2s;
 }
 
-.toolbar .search:focus-within {
+.toolbar .search:focus-within,
+.toolbar .search.active {
   width: 200px;
+}
+
+.toolbar .search.active, .toolbar .search.active input {
+  background: #EBEBEB;
 }
 
 .toolbar .search input:focus {
