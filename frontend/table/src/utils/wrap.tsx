@@ -12,12 +12,14 @@ type WrapperFirstColElementProps = {
 
 export const WrapperFirstColElement = ({entity, items, column_names}: WrapperFirstColElementProps): JSX.Element => {
   const dispatch = useAppDispatch();
+
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [query, setQuery] = useState<string>('');
   
   const onDeleteHandler = () => {
     dispatch(deleteEntity({id: entity.id!, entityType: entity.type!}));
     setShowModal(false);
-  }
+  };
 
   return (
     <>
@@ -26,16 +28,31 @@ export const WrapperFirstColElement = ({entity, items, column_names}: WrapperFir
           {entity.name.toUpperCase()}
         </Modal.Header>
         <Modal.Body>
+          <input
+            className='modal-block__search'
+            type='text'
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder='Поиск'
+          />
           {
             items.map((elements, index) => {
+              const resultElements = elements.filter(item => {
+                if (query === "") {
+                    return item;
+                } else if (item.props.children.toLowerCase().trim().includes(query.toLowerCase().trim())) {
+                    return item;
+                } else return null;
+              });
+
               return (
                 <div className='modal-block' key={`${elements[index]}-${index}`}>
                   <div className='modal-block__column-name'>
                     { column_names[index] }
                   </div>
-                  { elements.length === 0
+                  { resultElements.length === 0
                     ? 'Нет даных'
-                    : <div className='modal-block__elements'>{elements}</div>
+                    : <div className='modal-block__elements'>{resultElements}</div>
                   }
                 </div>
               );

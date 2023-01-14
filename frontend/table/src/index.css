@@ -91,7 +91,7 @@ table th, table td {
 
 .modal-dialog .modal-block__column-name {
   text-transform: uppercase;
-  margin-top: 5px;
+  margin: 5px 0;
 }
 
 .modal-dialog .modal-block__elements {
@@ -106,6 +106,20 @@ table th, table td {
   margin-bottom: 5px;
   line-height: 30px;
   padding: 0 6px;
+}
+
+.modal-block__search {
+  width: 100%;
+  background-color: #F4F4F4;
+  border: none;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  border-radius: 5px;
+  padding: 5px;
+  margin-bottom: 5px;
+  outline: none;
+  font-size: 14px;
+  transition: 0.2s;
 }
 
 .modal-footer {
